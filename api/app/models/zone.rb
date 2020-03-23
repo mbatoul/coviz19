@@ -24,22 +24,17 @@ class Zone < ApplicationRecord
   end
 
   def self.current_total(category)
-    DataPoint.most_recent_by_zone.
-      where(category: category).
-      pluck(:value).
-      sum
+    DataPoint.where(category: category).
+      most_recent_by_zone.
+      sum(:value)
   end
 
   def total(category, opts = {})
-    date = opts[:date] || data_points.last&.date || DataPoint.maximum(:date)
-    
-    ids = [id, all_children.map(&:id)].flatten
-
-    DataPoint.where(zone_id: ids).
+    DataPoint.includes(:zone).
+      where(zone_id: [id, all_children.map(&:id)].flatten).
       where(category: category).
-      where(date: date).
-      pluck(:value).
-      sum
+      most_recent_by_zone.
+      sum(:value)
   end
 
   def diff_between(from, to, category)

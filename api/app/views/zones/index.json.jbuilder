@@ -2,9 +2,9 @@ json.set! :zones do
   @zones.each do |zone|
     json.set! zone.parameterized_name do
       json.name zone.name
+      json.parameterized_name zone.parameterized_name
       json.lat zone.lat
       json.lng zone.lng
-      json.isoCode zone.code
       json.values do
         json.death zone.total('death')
         json.confirmed zone.total('confirmed')
@@ -14,6 +14,8 @@ json.set! :zones do
   end
 
   json.world do
+    json.name 'World'
+    json.parameterized_name 'world'
     json.values do
       json.death Zone.current_total('death')
       json.confirmed Zone.current_total('confirmed')

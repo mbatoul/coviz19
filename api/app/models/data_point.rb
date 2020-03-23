@@ -1,5 +1,6 @@
 class DataPoint < ApplicationRecord
   belongs_to :zone
+
   default_scope { order(:date) }
   scope :most_recent_by_zone, -> do
     from(

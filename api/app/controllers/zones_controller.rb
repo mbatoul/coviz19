@@ -2,7 +2,7 @@ class ZonesController < ApplicationController
   # GET /zones
   # GET /zones.json
   def index
-    @zones = Zone.where.not(lat: nil).where.not(lng: nil)
+    @zones = Zone.where('lat IS NOT NULL AND lng IS NOT NULL')
   end
 
   # GET /zones
