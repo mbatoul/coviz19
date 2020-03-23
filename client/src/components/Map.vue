@@ -185,7 +185,7 @@ export default {
 
 <style>
 .map-container {
-  height: 100%;
+  height: 800px;
 }
 .leaflet-map {
   height: 100%;

@@ -89,25 +89,32 @@
           </div>
 
           <div class="column left">
-            <div class="section">
-              <b-field grouped>
-                <b-field label="Zones">
-                  <b-select>
-                    <option>France</option>
-                    <option>Italy</option>
-                    <option>Germany</option>
-                    <option>United-States</option>
-                  </b-select>
-                </b-field>
-                <b-field label="Time period">
-                  <b-datepicker
-                      placeholder="Click to select..."
-                      v-model="dates"
-                      range>
-                  </b-datepicker>
-                </b-field>
+            <b-field grouped class='options-fields'>
+              <b-field label="Zones">
+                <Multiselect
+                  v-model="multiselectValue"
+                  placeholder="Search or select one or multiple zones"
+                  label="name"
+                  track-by="parameterized_name"
+                  v-bind:options="selectableZones"
+                  v-bind:multiple="true"
+                  v-bind:taggable="true"
+                  v-bind:close-on-select="false"
+                  v-bind:loading="isLoading"
+                />
               </b-field>
-            </div>
+              
+              <b-field label="Time period">
+                <b-datepicker
+                    placeholder="Click to select..."
+                    v-model="dates"
+                    v-bind:min-date='minDate'
+                    v-bind:max-date='maxDate'
+                    range>
+                </b-datepicker>
+              </b-field>
+            </b-field>
+            
           </div>
         </div>
         <div class="columns">
@@ -160,34 +167,49 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect';
 import Map from './components/Map.vue';
 import SvgItem from './components/SvgItem.vue';
 import NewsList from './components/NewsList.vue';
 import TweetsList from './components/TweetsList.vue';
 import StringFormatter from './mixins/string-formatter.js';
+import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 export default {
   components: {
+    Multiselect,
     Map,
     SvgItem,
     NewsList,
-    TweetsList
+    TweetsList,
   },
 
   mixins: [StringFormatter],
 
   data () {
     return {
+      isLoading: false,
       totalDeaths: null,
       totalConfirmed: null,
       totalRecovered: null,
       category: 'confirmed',
       parameterizedCountry: 'world',
       displayedCountry: 'World',
-      dates: [],
+      multiselectValue: [
+        { name: 'World', code: 'js' }
+      ],
+      dates: [new Date(2020, 0, 21), new Date()],
+      minDate: new Date(2020, 0, 21),
+      maxDate: new Date(),
       geojsons: [],
       zones: {},
       ceilings: {},
+    }
+  },
+
+  computed: {
+    selectableZones: function () {
+      return Object.values(this.zones);
     }
   },
 
@@ -198,33 +220,39 @@ export default {
   methods: {
     getZones: async function () {
       try {
+        this.isLoading = true;
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
         this.ceilings = response.data.ceilings;
         this.setTotals();
+        this.isLoading = false;
       } catch (error) {
         console.error(error);
       }
     },
-
     handleCountryChange: function (event) {
       this.displayedCountry = event.target.feature.zone_data.name;
       this.parameterizedCountry = event.target.feature.zone_data.parameterized_name;
       this.setTotals();
     },
-
     setTotals: function () {
       this.totalDeaths = this.zones[this.parameterizedCountry].values.death;
       this.totalConfirmed = this.zones[this.parameterizedCountry].values.confirmed;
       this.totalRecovered = this.zones[this.parameterizedCountry].values.recovered;
     },
-
     setCategory(category) {
       this.category = category;
     },
-
     numberWithCommas: function (number) {
       return number.toLocaleString();
+    },
+    addTag (newTag) {
+      const tag = {
+        name: newTag,
+        code: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
+      }
+      this.multiselectOptions.push(tag)
+      this.multiselectValue.push(tag)
     }
   },
 }
@@ -236,12 +264,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #646464;
-}
-.column{
-  height: calc(100vh - 100px);
-}
-.column.right{
-  height: calc(100vh - 200px);
 }
 .column.left .section{
   height: 50%;
@@ -319,6 +341,16 @@ export default {
 }
 .fa-newspaper{
   color: #838a89;
+}
+.options-fields > .field {
+  width: 50%;
+}
+.options-fields input, .multiselect, .multiselect__select, .multiselect__tags {
+  min-height: 50px;
+}
+.options-fields .multiselect__tags {
+  border: 1px solid #e8e8e8;
+  padding: 13px 40px 0 8px;
 }
 .loading {
   display: inline-block;

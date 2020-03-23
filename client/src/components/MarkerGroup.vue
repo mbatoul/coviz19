@@ -2,30 +2,6 @@
   <div>
      <transition name='fade' appear>
       <LCircleMarker
-        v-if="currentCategory === 'death'"
-        key=1
-        v-bind:lat-lng="coordinates"
-        v-bind:weight='1'
-        v-bind:radius='radius'
-        v-bind:fill-color='fillColor'
-        v-bind:color='fillColor'
-        v-bind:fill-opacity='0.5'
-        v-bind:pane="'mapPane'"
-      />
-      <LCircleMarker
-        v-else-if="currentCategory === 'confirmed'"
-        key=2
-        v-bind:lat-lng="coordinates"
-        v-bind:weight='1'
-        v-bind:radius='radius'
-        v-bind:fill-color='fillColor'
-        v-bind:color='fillColor'
-        v-bind:fill-opacity='0.5'
-        v-bind:pane="'mapPane'"
-      />
-      <LCircleMarker
-        v-else
-        key=3
         v-bind:lat-lng="coordinates"
         v-bind:weight='1'
         v-bind:radius='radius'
@@ -77,18 +53,15 @@ export default {
   },
 
   computed: {
-    currentCategory: function () {
-      return this.category;
-    },
     radius: function () {
       var x = d3.scaleLinear()
         .domain([0, this.ceilings[this.category]])
-        .range([2, 50]);
+        .range([2, 75]);
         
       return x(this.values[this.category]);
     },
     fillColor: function () {
-      return this.colors[this.currentCategory]
+      return this.colors[this.category]
     }
   },
 }
