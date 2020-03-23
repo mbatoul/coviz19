@@ -1,1 +1,1 @@
-# Data visualization of COVID-19 spread
+# Visualisation dashboard for COVID-19

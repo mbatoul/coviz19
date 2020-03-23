@@ -1,4 +1,4 @@
-# coviz19 - client
+# COVIZ19 - client
 
 ## Project setup
 ```
