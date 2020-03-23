@@ -1,0 +1,84 @@
+.DS_Store
+.vscode/
+
+### Rails ###
+
+api/*.rbc
+api/capybara-*.html
+api/.rspec
+api/db/*.sqlite3
+api/db/*.sqlite3-journal
+api/public/system
+api/coverage/
+api/spec/tmp
+api/*.orig
+api/rerun.txt
+api/pickle-email-*.html
+
+# Ignore all logfiles and tempfiles.
+api/log/*
+api/tmp/*
+api/!/log/.keep
+api/!/tmp/.keep
+
+# TODO Comment out this rule if you are OK with secrets being uploaded to the repo
+api/config/initializers/secret_token.rb
+api/config/master.key
+
+# Only include if you have production secrets in this file, which is no longer a Rails default
+# config/secrets.yml
+
+# dotenv
+# TODO Comment out this rule if environment variables can be committed
+api/.env
+
+## Environment normalization:
+api/.bundle
+api/vendor/bundle
+
+# these should all be checked in to normalize the environment:
+# Gemfile.lock, .ruby-version, .ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+api/.rvmrc
+
+# if using bower-rails ignore default bower_components path bower.json files
+api/vendor/assets/bower_components
+api/*.bowerrc
+api/bower.json
+
+# Ignore pow environment settings
+api/.powenv
+
+# Ignore Byebug command history file.
+api/.byebug_history
+
+# Ignore node_modules
+api/node_modules/
+
+# Ignore precompiled javascript packs
+api/public/packs
+api/public/packs-test
+api/public/assets
+
+# Ignore yarn files
+api/yarn-error.log
+api/yarn-debug.log*
+api/.yarn-integrity
+
+# Ignore uploaded files in development
+api/storage/*
+api/!/storage/.keep
+
+### Vuejs ###
+
+client/.DS_Store
+client/node_modules
+client//dist
+client/node_modules/
+client/dist/
+client/npm-debug.log
+client/yarn-error.log
+client/.env
+client/.env.local
+client/.env.*.local
