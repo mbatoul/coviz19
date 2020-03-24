@@ -30,8 +30,8 @@ export default {
 <style scoped>
 .img-container {
   display: inline-block;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
 }
 .img {
   width: 100%;

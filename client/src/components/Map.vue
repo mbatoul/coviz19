@@ -16,7 +16,7 @@
       />
       <template>
         <MarkerGroup
-          v-for='(zone, id) in zonesWithCoordinates'
+          v-for='(zone, id) in zonesWithMarkers'
           v-bind:key='id'
           v-bind:category='currentCategory'
           v-bind:coordinates='[zone.lat, zone.lng]'
@@ -44,6 +44,14 @@ export default {
   },
 
   props: {
+    worldSelected: {
+      type: Boolean,
+      required: true
+    },
+    selectedZones: {
+      type: Array,
+      required: true
+    },
     category: {
       type: String,
       required: true
@@ -89,14 +97,17 @@ export default {
     currentCategory: function() {
       return this.category;
     },
+    zonesWithMarkers: function () {
+      let filteredZones = Object.keys(this.zones).filter(key => this.zones[key].lat !== undefined && this.zones[key].lng !== undefined);
+      
+      if (!this.worldSelected) {
+        filteredZones = filteredZones.filter(key => (this.selectedZones).map(zone => zone.parameterized_name).includes(key));
+      }
 
-    zonesWithCoordinates () {
-      return Object.keys(this.zones)
-        .filter(key => this.zones[key].lat !== undefined && this.zones[key] !== undefined)
-        .reduce((obj, key) => {
-          obj[key] = this.zones[key];
-          return obj;
-        }, {});
+      return filteredZones.reduce((obj, key) => {
+        obj[key] = this.zones[key];
+        return obj;
+      }, {});
     }
   },
 

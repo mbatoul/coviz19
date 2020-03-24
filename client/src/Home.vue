@@ -3,7 +3,7 @@
     <div class="section">
       <div class="container is-fluid">
         <div class="columns">
-          <div class="column is-half right">
+          <div class="column is-half">
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div
@@ -69,34 +69,42 @@
             </nav>
             
             <div class="is-relative" style='height: 100%;'>
-              <div class='country-container flexbox'>
-                <SvgItem
-                  v-bind:folder="'flags'"
-                  v-bind:name='parameterizedCountry'
-                />
-                <h2 class="title is-3">
-                  {{ displayedCountry }}
-                </h2>
+              <div class="list-of-zones">
+                <div
+                  class='country-container flexbox'
+                  v-for='(zone, id) in displayedListOfZones'
+                  v-bind:key='id'
+                >
+                  <SvgItem
+                    v-bind:folder="'flags'"
+                    v-bind:name='zone.parameterized_name'
+                  />
+                  <h5 class="subtitle title">
+                    {{ zone.name }}
+                  </h5>
+                </div>
               </div>
               <Map
                 v-bind:category='category'
                 v-bind:geojsons='geojsons'
                 v-bind:zones='zones'
                 v-bind:ceilings='ceilings'
+                v-bind:selectedZones='selectedZones'
+                v-bind:worldSelected='worldSelected'
                 v-on:countrySelected='handleCountryChange'
               />
             </div>
           </div>
 
-          <div class="column left">
+          <div class="column">
             <b-field grouped class='options-fields'>
               <b-field label="Zones">
                 <Multiselect
-                  v-model="multiselectValue"
+                  v-model="selectedZones"
                   placeholder="Search or select one or multiple zones"
                   label="name"
                   track-by="parameterized_name"
-                  v-bind:options="selectableZones"
+                  v-bind:options="listOfSelectableZones"
                   v-bind:multiple="true"
                   v-bind:taggable="true"
                   v-bind:close-on-select="false"
@@ -114,9 +122,13 @@
                 </b-datepicker>
               </b-field>
             </b-field>
-            
+
+            <LineChart
+              v-bind:selectedZones='selectedZones'
+            />
           </div>
         </div>
+
         <div class="columns">
           <div class="column">
             <div class="section box">
@@ -172,6 +184,7 @@ import Map from './components/Map.vue';
 import SvgItem from './components/SvgItem.vue';
 import NewsList from './components/NewsList.vue';
 import TweetsList from './components/TweetsList.vue';
+import LineChart from './components/LineChart.vue';
 import StringFormatter from './mixins/string-formatter.js';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 
@@ -182,9 +195,12 @@ export default {
     SvgItem,
     NewsList,
     TweetsList,
+    LineChart,
   },
 
-  mixins: [StringFormatter],
+  mixins: [
+    StringFormatter
+  ],
 
   data () {
     return {
@@ -194,51 +210,99 @@ export default {
       totalRecovered: null,
       category: 'confirmed',
       parameterizedCountry: 'world',
-      displayedCountry: 'World',
-      multiselectValue: [
-        { name: 'World', code: 'js' }
-      ],
+      selectedZones: [],
       dates: [new Date(2020, 0, 21), new Date()],
       minDate: new Date(2020, 0, 21),
       maxDate: new Date(),
       geojsons: [],
       zones: {},
       ceilings: {},
+      worldSelected: true,
     }
   },
 
   computed: {
-    selectableZones: function () {
+    listOfSelectableZones: function () {
       return Object.values(this.zones);
+    },
+    displayedListOfZones: function () {
+      if (this.worldSelected) {
+        return [this.zones.world];
+      } else {
+        return this.selectedZones;
+      }
+    }
+  },
+
+  watch: {
+    selectedZones: function () {
+      console.log(this.selectedZones)
+      console.log(this.selectedZones.map(zone => zone.parameterized_name).includes('world'))
+      if (this.selectedZones.map(zone => zone.parameterized_name).includes('world')) {
+        this.worldSelected = true;
+      } else {
+        this.worldSelected = false;
+      }
+
+      this.setTotals();
     }
   },
 
   created () {
+    this.isLoading = true;
     this.getZones();
+    this.getHistoricalData();
+    this.isLoading = false;
   },
 
   methods: {
     getZones: async function () {
       try {
-        this.isLoading = true;
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
-        this.ceilings = response.data.ceilings;
+        this.selectedZones.push(this.zones.world);
         this.setTotals();
-        this.isLoading = false;
+        this.ceilings = response.data.ceilings;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    getHistoricalData: async function () {
+      try {
+        const response = await this.$http.get(
+          '/zones/historical_data.json',
+          {
+            zones: this.selectedZones,
+            start_date: this.dates[0],
+            end_date: this.dates[1],
+          }
+        )
+        console.log(response)
       } catch (error) {
         console.error(error);
       }
     },
     handleCountryChange: function (event) {
-      this.displayedCountry = event.target.feature.zone_data.name;
-      this.parameterizedCountry = event.target.feature.zone_data.parameterized_name;
-      this.setTotals();
+      this.selectedZones = [];
+      this.selectedZones.push(this.zones[event.target.feature.zone_data.parameterized_name])
     },
     setTotals: function () {
-      this.totalDeaths = this.zones[this.parameterizedCountry].values.death;
-      this.totalConfirmed = this.zones[this.parameterizedCountry].values.confirmed;
-      this.totalRecovered = this.zones[this.parameterizedCountry].values.recovered;
+      if (this.worldSelected) {
+        this.totalDeaths = this.zones.world.values.death;
+        this.totalConfirmed = this.zones.world.values.confirmed;
+        this.totalRecovered = this.zones.world.values.recovered;
+        return;
+      }
+
+      this.totalDeaths = 0;
+      this.totalConfirmed = 0;
+      this.totalRecovered = 0;
+      const that = this;
+      this.selectedZones.forEach((zone) => {
+        that.totalDeaths = that.totalDeaths + zone.values.death
+        that.totalConfirmed = that.totalConfirmed + zone.values.confirmed
+        that.totalRecovered = that.totalRecovered + zone.values.recovered
+      })
     },
     setCategory(category) {
       this.category = category;
@@ -246,14 +310,6 @@ export default {
     numberWithCommas: function (number) {
       return number.toLocaleString();
     },
-    addTag (newTag) {
-      const tag = {
-        name: newTag,
-        code: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
-      }
-      this.multiselectOptions.push(tag)
-      this.multiselectValue.push(tag)
-    }
   },
 }
 </script>
@@ -309,20 +365,19 @@ export default {
 .flexbox  {
   display: flex;
   align-items: center;;
-  justify-content: center;
+  justify-content: end;
 }
 .flexbox.col {
   flex-direction: column;
 }
-.country-container{
+.list-of-zones {
   position: absolute;
   z-index: 1000;
   right: 15px;
   top: 15px;
   padding: 5px;
-  background-color: rgb(0,0,0, 0.2);
 }
-.country-container h2 {
+.country-container h5 {
   margin: 0 !important;
   margin-left: 15px !important;
   color: white;

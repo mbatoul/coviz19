@@ -56,7 +56,7 @@ export default {
     radius: function () {
       var x = d3.scaleLinear()
         .domain([0, this.ceilings[this.category]])
-        .range([2, 75]);
+        .range([2, 100]);
         
       return x(this.values[this.category]);
     },

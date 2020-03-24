@@ -3,6 +3,7 @@ json.set! :zones do
     json.set! zone.parameterized_name do
       json.name zone.name
       json.parameterized_name zone.parameterized_name
+      json.parent_parameterized_name zone.parent&.parameterized_name
       json.lat zone.lat
       json.lng zone.lng
       json.values do
@@ -17,16 +18,15 @@ json.set! :zones do
     json.name 'World'
     json.parameterized_name 'world'
     json.values do
-      json.death Zone.current_total('death')
-      json.confirmed Zone.current_total('confirmed')
-      json.recovered Zone.current_total('recovered')
+      json.death Zone.total('death')
+      json.confirmed Zone.total('confirmed')
+      json.recovered Zone.total('recovered')
     end
   end
-
 end
 
 json.ceilings do
-  json.death DataPoint.most_recent_by_zone.where(category: 'death').pluck(:value).max
-  json.confirmed DataPoint.most_recent_by_zone.where(category: 'confirmed').pluck(:value).max
-  json.recovered DataPoint.most_recent_by_zone.where(category: 'recovered').pluck(:value).max
+  json.death DataPoint.where(category: 'death').most_recent_by_zone.sum(:value)
+  json.confirmed DataPoint.where(category: 'confirmed').most_recent_by_zone.sum(:value)
+  json.recovered DataPoint.where(category: 'recovered').most_recent_by_zone.sum(:value)
 end

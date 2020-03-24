@@ -23,7 +23,7 @@ class Zone < ApplicationRecord
     children_array
   end
 
-  def self.current_total(category)
+  def self.total(category)
     DataPoint.where(category: category).
       most_recent_by_zone.
       sum(:value)
