@@ -8,9 +8,3 @@
     </div>
   </footer>
 </template>
-
-<style scoped>
-  .footer {
-    margin-top: 25px;
-  }
-</style>

@@ -187,10 +187,10 @@
 
             </div>
           </div>
-          <TheFooter />
         </div>
       </div>
     </div>
+    <TheFooter />
   </div>
 </template>
 
