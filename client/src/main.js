@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import Buefy from 'buefy';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
@@ -14,27 +13,8 @@ library.add(fab)
 Vue.config.productionTip = false
 Vue.prototype.$http = baseApi;
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-Vue.use(VueRouter)
 Vue.use(Buefy);
-
-const routes = [
-  { path: '*', redirect: '/map' },
-  { path: '/', redirect: '/map' },
-  {
-    path: '/map',
-    component: {
-      template: '<TheHome />',
-      components: { TheHome }
-    }
-  }
-]
-
-const router = new VueRouter({
-  mode: 'history',
-  routes
-})
 
 new Vue({
   render: h => h(TheHome),
-  router
 }).$mount('#app')
