@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Import
   module DataPoints
     class HistoricalService
@@ -8,9 +10,9 @@ module Import
       require 'json'
   
       SOURCES = {
-        death: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv',
-        confirmed: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv',
-        recovered: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
+        death: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv',
+        confirmed: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',
+        recovered: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
       }
   
       COUNTRY_CODE_URL = 'https://restcountries.eu/rest/v2/name/{}?fullText=true'
@@ -29,27 +31,27 @@ module Import
           csv = CSV.parse(csv, encoding: 'utf-8', col_sep: ',', headers: true)
 
           csv.each do |row|
-            hash = row.to_h
+            p hash = row.to_h
           
             lat = hash['Lat'].to_f
             lng = hash['Long'].to_f
 
             parent_name = hash['Country/Region'].force_encoding(Encoding::UTF_8)
-            parameterized_name = parent_name.parameterize
+            kebab_name = parent_name.parameterize
 
-            zone = Zone.find_or_create_by(parameterized_name: parameterized_name, nature: 'country') do |zone|
+            zone = Zone.find_or_create_by(kebab_name: kebab_name, nature: 'country') do |zone|
               zone.name = parent_name
               zone.lat = lat
               zone.lng = lng
-              zone.code = get_code(parameterized_name)
+              zone.code = get_code(kebab_name)
             end
 
             if hash['Province/State'].present?
               parent = zone
               child_name = hash['Province/State'].force_encoding(Encoding::UTF_8)
-              parameterized_name = child_name.parameterize
+              kebab_name = child_name.parameterize
               nature = CHILDREN_NAMES[parent_name.downcase]
-              zone = Zone.find_or_create_by(parameterized_name: parameterized_name) do |zone|
+              zone = Zone.find_or_create_by(kebab_name: kebab_name) do |zone|
                 zone.name = child_name
                 zone.nature = Zone.natures[nature || 'state']
                 zone.lat = lat

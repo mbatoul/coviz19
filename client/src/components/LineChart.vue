@@ -1,23 +1,19 @@
-<template>
-  <div>
-    <ul>
-      <li v-for='(zone, id) in selectedZones' v-bind:key='id'>
-        {{ zone }}
-      </li>
-    </ul>
-  </div>
-</template>
-
 <script>
-export default {
-  props: {
-    selectedZones: {
-      type: Array
-    }
+  import { Line } from 'vue-chartjs'
+  export default {
+    extends: Line,
+    data () {
+      return {
+      }
+    },
+    props: ['data', 'options', 'plugins'],
+    mounted () {
+      this.renderChart(this.data, this.options)
+    },
+    watch: {
+      data() {
+        this.renderChart(this.data, this.options)
+      }
+    },
   }
-}
 </script>
-
-<style>
-
-</style>

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # See https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets for more info.
 module Twitter
   class Search < Twitter::Api

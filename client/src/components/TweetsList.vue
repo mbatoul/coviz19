@@ -24,8 +24,8 @@ export default {
   },
 
   props: {
-    country: {
-      type: String,
+    selectedZonesNames: {
+      type: Array,
       required: true
     }
   },
@@ -38,13 +38,13 @@ export default {
   },
 
   computed: {
-    currentCountry: function () {
-      return this.country;
+    currentSelectedZonesNames: function () {
+      return this.selectedZonesNames;
     }
   },
 
   watch: {
-    currentCountry: function () {
+    currentSelectedZonesNames: function () {
       this.getTweets();
     }
   },
@@ -55,27 +55,24 @@ export default {
 
   methods: {
     getTweets: async function () {
+      let queryString;
+
+      if (this.selectedZonesNames.length) {
+        queryString = this.selectedZonesNames[this.selectedZonesNames.length - 1];
+      } else {
+        queryString = 'world';
+      }
+
       try {
         this.isLoading = true;
-        const response = await this.$http.get(`/tweets.json?country=${this.country}`);
+        const response = await this.$http.get(`/tweets.json?zones=${queryString}`);
         this.tweetsList = [];
         this.tweetsList.push(... response.data[0][1]);
-        this.setTweetsWidth();
         this.isLoading = false
       } catch (error) {
         console.error(error)
       }
     },
-
-    setTweetsWidth: function () {
-      setTimeout((function() {
-        return document.querySelectorAll('.twitter-tweet').forEach((div) => {
-          div.style.width = '100%';
-          div.shadowRoot.querySelector('.SandboxRoot').querySelector('.EmbeddedTweet').style.width = '99%';
-          div.shadowRoot.querySelector('.SandboxRoot').querySelector('.EmbeddedTweet').style.maxWidth = '100%';
-        });
-      }), 3000);
-    }
   }
 }
 </script>

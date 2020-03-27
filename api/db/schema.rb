@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 2020_03_16_194520) do
     t.date "date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["category"], name: "index_data_points_on_category"
+    t.index ["date"], name: "index_data_points_on_date"
     t.index ["zone_id"], name: "index_data_points_on_zone_id"
   end
 
@@ -35,15 +37,19 @@ ActiveRecord::Schema.define(version: 2020_03_16_194520) do
 
   create_table "zones", force: :cascade do |t|
     t.integer "nature"
-    t.string "parameterized_name"
+    t.string "kebab_name"
     t.string "name"
     t.string "abbreviation"
     t.string "code"
     t.float "lat"
     t.float "lng"
+    t.integer "latest_death_count"
+    t.integer "latest_confirmed_count"
+    t.integer "latest_recovered_count"
     t.bigint "parent_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["kebab_name"], name: "index_zones_on_kebab_name"
     t.index ["parent_id"], name: "index_zones_on_parent_id"
   end
 

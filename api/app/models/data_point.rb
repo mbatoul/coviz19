@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 class DataPoint < ApplicationRecord
   belongs_to :zone
 
-  default_scope { order(:date) }
+  scope :just_before, -> (date) { where('date < (?)', date).order(date: :desc).limit(1) }
+
   scope :most_recent_by_zone, -> do
     from(
       <<~SQL

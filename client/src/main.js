@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Home from './Home.vue'
 import VueRouter from 'vue-router'
 import Buefy from 'buefy';
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -8,15 +7,15 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import baseApi from './plugins/base-api.js';
 import 'buefy/dist/buefy.css';
+import TheHome from './TheHome.vue'
 
 library.add(fas)
 library.add(fab)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-
 Vue.config.productionTip = false
+Vue.prototype.$http = baseApi;
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueRouter)
 Vue.use(Buefy);
-Vue.prototype.$http = baseApi;
 
 const routes = [
   { path: '*', redirect: '/map' },
@@ -24,8 +23,8 @@ const routes = [
   {
     path: '/map',
     component: {
-      template: '<Home />',
-      components: { Home }
+      template: '<TheHome />',
+      components: { TheHome }
     }
   }
 ]
@@ -36,6 +35,6 @@ const router = new VueRouter({
 })
 
 new Vue({
-  render: h => h(Home),
+  render: h => h(TheHome),
   router
 }).$mount('#app')

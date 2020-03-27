@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Module used to build a service.
 #
 # Example usage :

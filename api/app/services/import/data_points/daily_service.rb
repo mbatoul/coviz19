@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Import
   module DataPoints
     class DailyService
@@ -43,7 +45,7 @@ module Import
         def find_zone_from(hash)
           searchable = hash['Province/State'] || hash['Country/Region']
           searchable = searchable.force_encoding(Encoding::UTF_8).parameterize
-          Zone.find_by(parameterized_name: searchable)
+          Zone.find_by(kebab_name: searchable)
         end
     end
   end

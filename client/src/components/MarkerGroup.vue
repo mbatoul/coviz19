@@ -1,17 +1,13 @@
 <template>
-  <div>
-     <transition name='fade' appear>
-      <LCircleMarker
-        v-bind:lat-lng="coordinates"
-        v-bind:weight='1'
-        v-bind:radius='radius'
-        v-bind:fill-color='fillColor'
-        v-bind:color='fillColor'
-        v-bind:fill-opacity='0.5'
-        v-bind:pane="'mapPane'"
-      />
-    </transition>
-  </div>
+  <LCircleMarker
+    v-bind:lat-lng="coordinates"
+    v-bind:weight='1'
+    v-bind:radius='radius'
+    v-bind:fill-color='fillColor'
+    v-bind:color='fillColor'
+    v-bind:fill-opacity='0.5'
+    v-bind:pane="'mapPane'"
+  />
 </template>
 
 <script>
@@ -56,7 +52,7 @@ export default {
     radius: function () {
       var x = d3.scaleLinear()
         .domain([0, this.ceilings[this.category]])
-        .range([2, 100]);
+        .range([2, 200]);
         
       return x(this.values[this.category]);
     },
@@ -66,15 +62,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity .5s
-}
-
-.fade-enter,
-.fade-leave-to {
-    opacity: 0
-}
-</style>

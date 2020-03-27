@@ -30,7 +30,7 @@ module Import
     def feature_with_zone_data(zone, feature)
       feature['zone_data'] = {
         name: zone.name,
-        parameterized_name: zone.parameterized_name,
+        kebab_name: zone.kebab_name,
         iso_code: zone.code,
         death: zone.total('death'),
         confirmed: zone.total('confirmed'),

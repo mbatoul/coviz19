@@ -32,6 +32,7 @@ export default {
   display: inline-block;
   width: 30px;
   height: 30px;
+  margin-left: 10px;
 }
 .img {
   width: 100%;

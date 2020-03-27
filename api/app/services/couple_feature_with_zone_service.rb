@@ -46,7 +46,7 @@ class CoupleFeatureWithZoneService
 
   def find_with(value)
     value = value.parameterize
-    zone = Zone.countries.find_by('parameterized_name ILIKE (?)', "#{value}")
+    zone = Zone.countries.find_by('kebab_name ILIKE (?)', "#{value}")
     
     return zone if zone.present?
 
@@ -60,7 +60,7 @@ class CoupleFeatureWithZoneService
         splitted.combination(i).each do |combination|
           query = "#{combination.join('-')}"
           result = Zone.countries.
-            where('parameterized_name ILIKE (?)', query).
+            where('kebab_name ILIKE (?)', query).
             joins('LEFT JOIN geojson_features ON geojson_features.zone_id = zones.id').
             where('geojson_feature.zone_id IS NULL')
           zones << result
