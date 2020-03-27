@@ -25,16 +25,6 @@
           </b-navbar-item>
         </b-navbar-dropdown>
       </template>
-
-      <template slot="end">
-        <b-navbar-item tag="div">
-          <div class="buttons">
-            <a class="button is-info">
-              <strong>Volunteer</strong>
-            </a>
-          </div>
-      </b-navbar-item>
-    </template>
   </b-navbar>
 </template>
 
