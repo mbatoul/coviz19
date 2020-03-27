@@ -61,6 +61,19 @@
         </p>
       </div>
     </div>
+
+    <div class="level-item has-text-centered">
+      <div
+        class='has-text-grey-light has-background-light box-category shadow'
+      >
+        <p class="heading is-size-8">Total Tested</p>
+        <p
+          class="subtitle has-text-grey-light"
+        >
+          Coming...
+        </p>
+      </div>
+    </div>
   </nav>
 </template>
 
@@ -106,7 +119,7 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     border: 1px solid #EAEAEA;
-    width: 160px;
+    width: 200px;
     height: 100px;
     display: flex;
     align-items: center;

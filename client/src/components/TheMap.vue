@@ -209,7 +209,7 @@ export default {
 
 <style>
   .map-container {
-    height: 800px;
+    flex-grow: 1;
   }
 
   .leaflet-map {

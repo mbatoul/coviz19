@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class FormatChartDataService
-  COLORS = %w[#003f5c #58508d #bc5090 #ff6361 #ffa600].freeze
+  COLORS = %w[#36a3eb #4bc0c0 ​#ffa040 #9966ff #ff6385 #ffcc56].freeze
 
   def initialize(zones_names, categories, start_date, end_date)
-    p @zones = Zone.where(kebab_name: zones_names)
+    @zones = Zone.where(kebab_name: zones_names)
     @categories = categories
     @start_date = Date.parse(start_date)
     @end_date = Date.parse(end_date)
+    @is_world = zones_names == ['world']
   end
 
   def self.call(*args)
@@ -24,13 +25,19 @@ class FormatChartDataService
     data = {
       datasets: []
     }
-    @zones.each_with_index do |zone, index|
-      data[:datasets] << {
-        data: data(zone),
-        label: zone.name,
-        borderColor: COLORS[index],
-        fill: false
-      }
+    if @is_world
+
+    else
+      @zones.each_with_index do |zone, index|
+        data[:datasets] << {
+          data: data(zone),
+          label: zone.name,
+          borderColor: COLORS[index],
+          fill: false,
+          borderWidth: 4,
+          pointRadius: 0
+        }
+      end
     end
     data
   end
