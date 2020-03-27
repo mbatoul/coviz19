@@ -1,61 +1,70 @@
 <template>
   <div id="app">
-    <TheNavbar />
 
-    <div class="section" style='padding: 1.25rem;'>
-      <div class="container is-fluid">
-        <div class="columns">
-          <div class="column is-two-fifths is-relative">
-            <div class="left-column-content">
-              <TheMap
-                v-bind:currentCategory='currentCategory'
-                v-bind:ceilings='ceilings'
-                v-bind:selectedZones='selectedZones'
-                v-bind:zonesWithMarkers='zonesWithMarkers'
-                v-bind:isWorldSelected='isWorldSelected'
-                v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
-                v-on:zoneSelected='updateSelectedZonesNames'
-              />
-              <div class="selection-mode-checkbox-container">
-                <div class="field">
-                  <b-checkbox
-                    size="is-medium"
-                    type='is-white'
-                    v-model='isMultipleSelectionActive'
-                  >
-                    Multiple selection
-                  </b-checkbox>
-                </div>
-              </div>
-            </div>    
-          </div>
-
-          <div class="column">
-            <CategoriesBar
+    <div class="container is-fluid is-marginless">
+      <TheNavbar />
+      <div class="columns is-marginless">
+        <div class="column is-two-fifths is-paddingless left-side">
+          <div class="column-inner">
+            <TheMap
               v-bind:currentCategory='currentCategory'
-              v-bind:totalDeath='totalDeath'
-              v-bind:totalConfirmed='totalConfirmed'
-              v-bind:totalRecovered='totalRecovered'
-              v-bind:isLoading='isLoading'
-              v-on:categorySelected='updateCurrentCategory'
+              v-bind:ceilings='ceilings'
+              v-bind:selectedZones='selectedZones'
+              v-bind:zonesWithMarkers='zonesWithMarkers'
+              v-bind:isWorldSelected='isWorldSelected'
+              v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
+              v-on:zoneSelected='updateSelectedZonesNames'
             />
-            <div class="tile is-ancestor">
-              <div class="tile is-6 is-vertical is-parent">
-                <div class="tile is-child box">
-                  <p class="subtitle">Options</p>
+            <div
+              class="multiple-selection"
+              v-bind:class="{ 'active': isMultipleSelectionActive}"
+            >
+              <div class="field">
+                <b-checkbox
+                  size="is-medium"
+                  type='is-white'
+                  v-model='isMultipleSelectionActive'
+                >
+                  Multiple selection
+                </b-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column has-padding-large">
+          <CategoriesBar
+            v-bind:currentCategory='currentCategory'
+            v-bind:totalDeath='totalDeath'
+            v-bind:totalConfirmed='totalConfirmed'
+            v-bind:totalRecovered='totalRecovered'
+            v-bind:isLoading='isLoading'
+            v-on:categorySelected='updateCurrentCategory'
+          />
+
+          <div class="columns is-multiline">
+            <!-- options -->
+            <div class="column  is-half">
+              <div class="box options">
+                <div class="information-section">
                   <div class="notification">
                     <button class="delete"></button>
                       The data is updated <strong>everyday at midnight</strong>. It may not be <i>perfectly</i> accurate at the time you visualize it.
                   </div>
                   <div class="content">
+                    <label class="label">
+                      Instructions
+                    </label>
                     <p class="text">
                       Select one or multiple zones (max. 5) and a time period between January 22, 2020 and today. Check the Multiple Selection box to select zones on the map.
                     </p>
                   </div>
+                </div>
+                <div class="options-section">
                   <div class='field'>
                     <label class="label">Zones</label>
                     <div class="field-body">
-                      <div class="field">
+                      <div class="field multiselect-field">
                         <b-field>
                           <Multiselect
                             placeholder="Search or select one or multiple zones"
@@ -67,7 +76,7 @@
                             v-bind:options='arrayOfAllZones'
                             v-bind:multiple='true'
                             v-bind:taggable='true'
-                            v-bind:close-on-select='false'
+                            v-bind:close-on-select='true'
                             v-bind:loading='isLoading'
                           />
                         </b-field>
@@ -96,88 +105,92 @@
                   <div class="buttons">
                     <button
                       class="button is-info is-light"
-                      v-on:click='updateDates(lastWeekDates)'
+                      v-past:click='updateDates(lastWeekDates)'
                     >
-                      Last week
+                      Show past week
                     </button>
                     <button
                       class="button is-success is-light"
-                      v-on:click='updateDates(lastWeekDates)'
+                      v-on:click='updateDates([minDate, maxDate])'
                     >
-                      Since 22/01/2020
+                      Reset
                     </button>
                   </div>
-                  
-                </div>
-                <div class="tile is-child box">
-                  <p class="subtitle">Deaths</p>
-                  <LineChart
-                    v-bind:selectedZonesNames='selectedZonesNames'
-                    v-bind:data='chartData'
-                    v-bind:options='chartOptions'
-                  />
                 </div>
               </div>
-              <div class="tile is-6 is-vertical is-parent">
-                <div class="tile is-child box">
-                  <p class="subtitle">Confirmed</p>
-                  <LineChart
-                    v-bind:selectedZonesNames='selectedZonesNames'
-                    v-bind:data='chartData'
-                    v-bind:options='chartOptions'
-                  />
-                </div>
-                <div class="tile is-child box">
-                  <p class="subtitle">Recovered</p>
-                  <LineChart
-                    v-bind:selectedZonesNames='selectedZonesNames'
-                    v-bind:data='chartData'
-                    v-bind:options='chartOptions'
-                  />
-                </div>
+
+            </div>
+             <!-- confirmed -->
+            <div class="column is-half">
+              <div class="">
+                <LineChart
+                  v-bind:selectedZonesNames='selectedZonesNames'
+                  v-bind:data='chartData'
+                  v-bind:options="chartOptions('Deaths')"
+                />
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="columns">
-          <div class="column is-two-thirds">
-            <div class="box">
-              <div class="flexbox">
+            <!-- deaths -->
+            <div class="column is-half">
+              <div class="">
+                <LineChart
+                  v-bind:selectedZonesNames='selectedZonesNames'
+                  v-bind:data='chartData'
+                  v-bind:options="chartOptions('Confirmed')"
+                />
+              </div>
+            </div>
+            <!-- recovered -->
+            <div class="column is-half">
+              <div class="">
+                <LineChart
+                  v-bind:selectedZonesNames='selectedZonesNames'
+                  v-bind:data='chartData'
+                  v-bind:options="chartOptions('Recovered')"
+                />
+              </div>
+            </div>
+            <!-- news -->
+            <div class="column is-half">
+              <div class="media-header flexbox">
                 <font-awesome-icon
                   v-bind:icon="['fas', 'newspaper']"
-                  size='3x'
+                  size='2x'
                 />
-                <p class="subtitle is-4">Articles</p>
+                <p class="subtitle has-text-weight-bold is-5">Articles</p>
               </div>
-              <div class="news-container scrollable">
-                <NewsList
-                  v-bind:country="''"
-                />
+              <div class="box">
+                <div class="news-container scrollable">
+                  <NewsList
+                    v-bind:country="''"
+                  />
+                </div>
               </div>
+
             </div>
-          </div>
-          <div class="column">
-            <div class="box">
-              <div class="flexbox">
+            <!-- tweets -->
+            <div class="column is-half">
+              <div class="media-header flexbox">
                 <font-awesome-icon
                   v-bind:icon="['fab', 'twitter-square']"
-                  size='3x'
+                  size='2x'
                 />
-                <p class="subtitle is-4">Tweets</p>
+                <p class="subtitle has-text-weight-bold is-5">Tweets</p>
               </div>
-              <div class="tweets-container scrollable">
-                <TweetsList
-                  v-bind:selectedZonesNames='selectedZonesNames'
-                />
+              <div class="box">
+                <div class="tweets-container scrollable">
+                  <TweetsList
+                    v-bind:selectedZonesNames='selectedZonesNames'
+                  />
+                </div>
               </div>
+
             </div>
           </div>
+          <TheFooter />
         </div>
       </div>
-
     </div>
-    <TheFooter />
   </div>
 </template>
 
@@ -261,33 +274,11 @@ export default {
           return zonesWithMarkers;
         }, {});
     },
-    chartOptions: function () {
-      return {
-        responsive: true,
-        tooltips: {
-					mode: 'index',
-					intersect: false,
-				},
-				hover: {
-					mode: 'nearest',
-					intersect: true
-				},
-        scales: {
-          xAxes: [{
-            type: "time",
-            time: {
-              format: 'DD/MM/YYYY',
-              tooltipFormat: 'll',
-              minUnit: 'day'
-            },
-          }],
-        }
-      }
+    pastWeekDates: function () {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      return [oneWeekAgo, new Date()];
     },
-    lastWeekDates: function () {
-      const today = new Date();
-      return [today.getDate() - 7, today];
-    }
   },
 
   watch: {
@@ -354,6 +345,35 @@ export default {
         console.error(error);
       }
     },
+    chartOptions: function (category) {
+      return {
+        responsive: true,
+        title: {
+          display: true,
+          text: category,
+          fontSize: 14,
+
+        },
+        tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+        scales: {
+          xAxes: [{
+            type: "time",
+            time: {
+              format: 'DD/MM/YYYY',
+              tooltipFormat: 'll',
+              minUnit: 'day'
+            },
+          }],
+        }
+      }
+    },
     updateSelectedZonesNames: function (kebabName) {
       const isCountryAlreadySelected = this.selectedZonesNames
         .map(zone => zone.kebab_name)
@@ -394,7 +414,7 @@ export default {
       this.dates = dates;
     },
     onZoneSelected: function (zone) {
-      this.selectedZonesNames.push(zone.kebab_name);
+      this.updateSelectedZonesNames(zone.kebab_name);
     },
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
@@ -402,10 +422,6 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-  
-</style>
 
 <style>
   #app {
@@ -416,10 +432,40 @@ export default {
     background: #f1f4f6;
   }
 
-  .left-column-content {
+  .left-side {
+    position: sticky;
+    height: calc(100vh - 84px);
+    top: 84px;
+  }
+
+  .column.has-padding-large {
+    padding: 1.5em !important;
+  }
+
+  .column-inner {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
+  }
+
+  .multiple-selection {
+    position: absolute;
+    z-index: 100000;
+    bottom: 20px;
+    left: 30px;
+    color: white;
+  }
+
+  .multiple-selection .control-label {
+    color: #7a7a7a;
+  }
+
+  .multiple-selection.active .control-label {
+    color: white;
+  }
+
+  .multiple-selection .control-label:hover {
+    color: white;
   }
 
   .box {
@@ -431,6 +477,10 @@ export default {
     -moz-box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
     -webkit-box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
     -o-box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
+  }
+
+  .media-header {
+    padding: 20px 0px;
   }
 
   .flexbox  {
@@ -461,7 +511,7 @@ export default {
   }
 
   .fa-newspaper{
-    color: #838a89;
+    color: #24b37e;;
   }
 
   .selection-mode-checkbox-container .checkbox:hover {
@@ -472,14 +522,10 @@ export default {
     width: 100%;
   }
 
-  .selection-mode-checkbox-container {
-    position: absolute;
-    top: 25px;
-    left: 65px;
-    z-index: 1000;
-    color: white;
-    font-weight: bolder;
-    height: 30px;
+  .options {
+    height: 75px;
+    background-color: white;
+    border: 1px solid #EAEAEA;
   }
 
   .loading {
@@ -520,5 +566,16 @@ export default {
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  .box.options {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+
+  .multiselect-field {
+    height: 50px;
   }
 </style>

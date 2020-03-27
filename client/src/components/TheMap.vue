@@ -1,5 +1,5 @@
 <template>
-  <div class="map-container is-relative">
+  <div class="map-container">
     <div
       class="list-of-zones"
     >
@@ -17,31 +17,35 @@
         />
       </div>
     </div>
-    <LMap class="leaflet-map"
-      v-bind:minZoom="minZoom"
-      v-bind:maxZoom="maxZoom"
-      v-bind:zoom="zoom"
-      v-bind:center="mapCenter"
-      v-bind:maxBoundsViscosity='maxBoundsViscosity'
-      v-bind:maxBounds='maxBounds'
-    >
-      <LTileLayer
-        v-bind:url='basemapUrl'
-      />
-      <LGeoJson
-        v-bind:geojson="geojsons"
-        v-bind:options='options'
-        ref='geoJson'
-      />
-      <MarkerGroup
-        v-for='(zone, id) in zonesWithMarkers'
-        v-bind:key='id'
-        v-bind:category='currentCategory'
-        v-bind:coordinates='[zone.lat, zone.lng]'
-        v-bind:values='zone.values'
-        v-bind:ceilings='ceilings'
-      />
-    </LMap>
+
+    <div class="leaflet-container">
+      <LMap class="leaflet-map"
+        v-bind:minZoom="minZoom"
+        v-bind:maxZoom="maxZoom"
+        v-bind:zoom="zoom"
+        v-bind:center="mapCenter"
+        v-bind:maxBoundsViscosity='maxBoundsViscosity'
+        v-bind:maxBounds='maxBounds'
+        v-bind:options="{ scrollWheelZoom: scrollWheelZoom }"
+      >
+        <LTileLayer
+          v-bind:url='basemapUrl'
+        />
+        <LGeoJson
+          v-bind:geojson="geojsons"
+          v-bind:options='options'
+          ref='geoJson'
+        />
+        <MarkerGroup
+          v-for='(zone, id) in zonesWithMarkers'
+          v-bind:key='id'
+          v-bind:category='currentCategory'
+          v-bind:coordinates='[zone.lat, zone.lng]'
+          v-bind:values='zone.values'
+          v-bind:ceilings='ceilings'
+        />
+      </LMap>
+    </div>
   </div>
 </template>
 
@@ -107,6 +111,7 @@ export default {
       zoom: 3,
       mapCenter: [51.505, -0.09],
       maxBoundsViscosity: 1.0,
+      scrollWheelZoom: false,
       maxBounds: Leaflet.latLngBounds(Leaflet.latLng(-90, -200), Leaflet.latLng(90, 200)),
       options: {
         onEachFeature: this.onEachFeature
@@ -208,17 +213,23 @@ export default {
 </script>
 
 <style>
-  .map-container {
-    flex-grow: 1;
-  }
-
   .leaflet-map {
     height: 100%;
     width: 100%;
   }
+  .map-container {
+    flex-grow: 1;
+  }
 </style>
 
 <style scoped>
+  .leaflet-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex-grow: 1;
+  }
+  
   .list-of-zones {
     position: absolute;
     z-index: 1000;

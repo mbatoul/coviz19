@@ -1,6 +1,6 @@
 <template>
   <a v-bind:href="url" target='_blank'>
-    <div class="news is-flex box">
+    <div class="news is-flex">
       <div class="flex-item">
         <div class='content' v-html='title'>
         </div>
@@ -49,9 +49,9 @@ export default {
 .news{
   align-items: center;
   justify-content: space-between;
-  width: 95%;
-  margin-bottom: 1em;
-  margin-left: 1em;
+  color: #646464;
+  padding: 1.25rem;
+  border-bottom: 1px solid #EAEAEA;
 }
 .news:hover{
   transform: translateY(-2px);

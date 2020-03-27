@@ -1,10 +1,13 @@
 <template>
-  <b-navbar spaced>
+  <b-navbar
+    spaced
+    v-bind:fixed-top='true'
+  >
     <template slot="brand">
-      <b-navbar-item tag="router-link" :to="{ path: '/' }">
+      <b-navbar-item tag="router-link" :to="{ path: '/map' }">
         <img
           src="../assets/logo.png"
-          alt="Lightweight UI components for Vue.js based on Bulma"
+          alt="Data visualization dashboard of COVID-19 spread"
           width='100'
         >
       </b-navbar-item>
@@ -34,3 +37,10 @@
     </template>
   </b-navbar>
 </template>
+
+<style>
+  .navbar {
+    z-index: 10000 !important;
+    border-bottom: 1px solid #EAEAEA;
+  }
+</style>
