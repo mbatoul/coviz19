@@ -47,10 +47,6 @@
             <div class="column  is-half">
               <div class="box options">
                 <div class="information-section">
-                  <div class="notification">
-                    <button class="delete"></button>
-                      The data is updated <strong>everyday at midnight</strong>. It may not be <i>perfectly</i> accurate at the time you visualize it.
-                  </div>
                   <div class="content">
                     <label class="label">
                       Instructions
@@ -58,6 +54,10 @@
                     <p class="text">
                       Select one or multiple zones (max. 5) and a time period between January 22, 2020 and today. Check the Multiple Selection box to select zones on the map.
                     </p>
+                  </div>
+                  <div class="notification">
+                    <button class="delete"></button>
+                      The data is updated <strong>everyday at midnight</strong>. It may not be <i>perfectly</i> accurate at the time you visualize it.
                   </div>
                 </div>
                 <div class="options-section">
@@ -67,7 +67,7 @@
                       <div class="field multiselect-field">
                         <b-field>
                           <Multiselect
-                            placeholder="Search or select one or multiple zones"
+                            placeholder="Select one or multiple zones..."
                             label='name'
                             track-by='kebab_name'
                             v-on:select='onZoneSelected'
@@ -95,7 +95,7 @@
                             v-model="dates"
                             v-bind:min-date='minDate'
                             v-bind:max-date='maxDate'
-                            class='is-medium'
+                            class='is-small'
                             range>
                           </b-datepicker>
                         </b-field>
@@ -105,7 +105,7 @@
                   <div class="buttons">
                     <button
                       class="button is-info is-light"
-                      v-past:click='updateDates(lastWeekDates)'
+                      v-on:click='updateDates(pastWeekDates)'
                     >
                       Show past week
                     </button>
@@ -126,7 +126,7 @@
                 <LineChart
                   v-bind:selectedZonesNames='selectedZonesNames'
                   v-bind:data='chartData'
-                  v-bind:options="chartOptions('Deaths')"
+                  v-bind:options="chartOptions('Confirmed reported')"
                 />
               </div>
             </div>
@@ -136,7 +136,7 @@
                 <LineChart
                   v-bind:selectedZonesNames='selectedZonesNames'
                   v-bind:data='chartData'
-                  v-bind:options="chartOptions('Confirmed')"
+                  v-bind:options="chartOptions('Deaths')"
                 />
               </div>
             </div>
@@ -146,7 +146,7 @@
                 <LineChart
                   v-bind:selectedZonesNames='selectedZonesNames'
                   v-bind:data='chartData'
-                  v-bind:options="chartOptions('Recovered')"
+                  v-bind:options="chartOptions('Recovered cases')"
                 />
               </div>
             </div>
@@ -157,7 +157,7 @@
                   v-bind:icon="['fas', 'newspaper']"
                   size='2x'
                 />
-                <p class="subtitle has-text-weight-bold is-5">Articles</p>
+                <p class="subtitle has-text-weight-bold is-5">News</p>
               </div>
               <div class="box">
                 <div class="news-container scrollable">
@@ -320,7 +320,7 @@ export default {
       try {
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
-        this.selectedZonesNames.push('france');
+        this.selectedZonesNames.push('world');
         this.updateTotals();
         this.ceilings = response.data.ceilings;
       } catch (error) {
@@ -345,13 +345,14 @@ export default {
         console.error(error);
       }
     },
-    chartOptions: function (category) {
+    chartOptions: function (title) {
       return {
         responsive: true,
+        scaleBeginAtZero: true,
         title: {
           display: true,
-          text: category,
-          fontSize: 14,
+          text: title,
+          fontSize: 18,
 
         },
         tooltips: {
@@ -370,6 +371,11 @@ export default {
               tooltipFormat: 'll',
               minUnit: 'day'
             },
+          }],
+          yAxes: [{
+            ticks: {
+              precision: 0,
+            }
           }],
         }
       }
@@ -418,7 +424,7 @@ export default {
     },
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
-    }
+    },
   },
 }
 </script>
