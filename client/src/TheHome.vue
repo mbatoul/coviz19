@@ -87,7 +87,10 @@
                         Full-width
                       </button>
                   </div>
-                  <div class='field zones'>
+                  <div
+                    class='field multiselect-zones'
+                    v-bind:class="{ 'high': !fullWidthMode }"
+                  >
                     <label class="label">Zones</label>
                     <div class="field-body">
                       <div class="field multiselect-field">
@@ -104,11 +107,12 @@
                             v-bind:taggable='true'
                             v-bind:close-on-select='true'
                             v-bind:loading='isLoading'
+                            class='is-danger'
                           />
                         </b-field>
                       </div>
                     </div>
-                    <span v-if='selectedZonesNames.length > 4' class='error has-text-danger'>You can not select more that 5 zones</span>
+                    <span v-if='selectedZonesNames.length > 4' class='error has-text-danger'>Max. number of zones selected</span>
                   </div>
                   
                   <div class="field">
@@ -701,15 +705,18 @@ export default {
     margin-top: 0;
   }
 
-  .field.zones {
-    height: 120px;
+  .field.multiselect-zones {
     position: relative;
   }
 
+  .field.multiselect-zones.high {
+    height: 120px;
+  }
+
   .error {
-    position: absolute;
-    bottom: -10px;
     font-size: 12px;
+    position: absolute;
+    bottom: 12px;
   }
 </style>
 
@@ -728,6 +735,9 @@ export default {
   $light-invert: findColorInvert($light);
 
   $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert) )
+  
+  .multiselect__tag { background: $success; };
+  .multiselect__tag-icon { background: $success; }
 
   @import "~bulma";
   @import "~buefy/src/scss/buefy";
