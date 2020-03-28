@@ -471,13 +471,8 @@ export default {
     border-color: white !important;
   }
 
-  .multiple-selection.active .control-label, span.check.is-white {
-    color: white;
-    border-color: white !important;
-  }
-
-  .multiple-selection:not(.active) .control-label:hover, span.check.is-white {
-    color: #7a7a7a;
+  .multiple-selection:not(.active) .control-label:hover {
+    opacity: 0.5;
   }
 
   .box {
