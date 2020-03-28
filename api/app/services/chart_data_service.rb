@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ChartDataService
-  COLORS = %w[#36a3eb #4bc0c0 ​#ffa040 #9966ff #ff6385 #ffcc56].freeze
+  COLORS = %w[#d00000 #ffba08 #3f88c5 #032b43 #136f63]
   WORLD_COLOR = '#000'
 
   def initialize(zones_names, category, start_date, end_date)

@@ -5,7 +5,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import baseApi from './plugins/base-api.js';
-import TheHome from './TheHome.vue'
+import Main from './Main.vue'
 
 library.add(fas)
 library.add(fab)
@@ -16,5 +16,5 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(Buefy);
 
 new Vue({
-  render: h => h(TheHome),
+  render: h => h(Main),
 }).$mount('#app')

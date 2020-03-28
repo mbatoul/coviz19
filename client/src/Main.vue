@@ -88,14 +88,14 @@
                     <label class="label"></label>
                       <button
                         class="button is-info"
-                        v-on:click='toggleLayout'
+                        v-on:click='toggleFullWidthMode'
                         v-if='fullWidthMode'
                       >
                         Grid
                       </button>
                       <button
                         class="button is-info"
-                        v-on:click='toggleLayout'
+                        v-on:click='toggleFullWidthMode'
                         v-else
                       >
                         Full-width
@@ -126,7 +126,6 @@
                         </b-field>
                       </div>
                     </div>
-                    <span v-if='selectedZonesNames.length > 4' class='error has-text-danger'>Max. number of zones selected</span>
                   </div>
                   
                   <div class="field">
@@ -429,9 +428,9 @@ export default {
       }
     },
     getChartData: async function () {
-      this.deathChartData = null;
-      this.confirmedChartData = null;
-      this.recoveredChartData = null;
+      this.deathChartData = {};
+      this.confirmedChartData = {};
+      this.recoveredChartData = {};
       try {
         const response = await this.$http.get(
           '/zones/chart_data.json',
@@ -475,7 +474,7 @@ export default {
             time: {
               format: 'DD/MM/YYYY',
               tooltipFormat: 'll',
-              minUnit: 'day'
+              unit: 'day'
             },
           }],
           yAxes: [{
@@ -535,7 +534,7 @@ export default {
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
     },
-    toggleLayout: function () {
+    toggleFullWidthMode: function () {
       this.fullWidthMode = !this.fullWidthMode;
       this.chartConfirmedKey = this.chartConfirmedKey + 1;
       this.chartDeathKey = this.chartDeathKey + 1;

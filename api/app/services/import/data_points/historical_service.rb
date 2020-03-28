@@ -31,7 +31,7 @@ module Import
           csv = CSV.parse(csv, encoding: 'utf-8', col_sep: ',', headers: true)
 
           csv.each do |row|
-            p hash = row.to_h
+            hash = row.to_h
           
             lat = hash['Lat'].to_f
             lng = hash['Long'].to_f
