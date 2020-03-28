@@ -2,18 +2,18 @@
   <nav class="level">
     <div class="level-item has-text-centered">
       <div
-        class='has-text-danger has-background-light box-category shadow'
+        class='has-text-danger box-category shadow'
         v-on:click="onCategorySelected('death')"
         v-bind:class=" { 'selected': currentCategory === 'death' }"
       >
-        <p class="heading is-size-8">Total Deaths</p>
+        <p class="heading is-size-8 has-text-weight-bold">Deaths</p>
         <div class="box-category-figure">
           <div
-            class='loading small'
+            class='loading white small'
             v-if='totalDeath === null'>
           </div>
           <p
-            class="title is-size-4"
+            class="title is-size-4 has-text-light"
             v-else
           >
             {{ numberWithCommas(totalDeath) }}
@@ -24,17 +24,17 @@
 
     <div class="level-item has-text-centered">
       <div
-        class='has-text-info has-background-light box-category shadow'
+        class='has-text-info box-category shadow'
         v-on:click="onCategorySelected('confirmed')"
         v-bind:class=" { 'selected': currentCategory === 'confirmed' }"
       >
-        <p class="heading is-size-8">Total Confirmed</p>
+        <p class="heading is-size-8 has-text-weight-bold">Confirmed</p>
         <div
-          class='loading small'
+          class='loading white small'
           v-if='totalConfirmed === null'>
         </div>
         <p
-          class="title is-size-4"
+          class="title is-size-4 has-text-light"
           v-else 
         >
           {{ numberWithCommas(totalConfirmed) }}
@@ -44,33 +44,20 @@
 
     <div class="level-item has-text-centered">
       <div
-        class='has-text-success has-background-light box-category shadow'
+        class='has-text-success box-category shadow'
         v-on:click="onCategorySelected('recovered')"
         v-bind:class=" { 'selected': currentCategory === 'recovered' }"
       >
-        <p class="heading is-size-8">Total Recovered</p>
+        <p class="heading is-size-8 has-text-weight-bold">Recovered</p>
         <div
-          class='loading small'
+          class='loading white small'
           v-if='totalRecovered === null'>
         </div>
         <p
-          class="title is-size-4"
+          class="title is-size-4 has-text-light"
           v-else 
         >
           {{ numberWithCommas(totalRecovered) }}
-        </p>
-      </div>
-    </div>
-
-    <div class="level-item has-text-centered">
-      <div
-        class='has-text-grey-light has-background-light box-category shadow'
-      >
-        <p class="heading is-size-8">Total Tested</p>
-        <p
-          class="subtitle has-text-grey-light"
-        >
-          Coming...
         </p>
       </div>
     </div>
@@ -118,22 +105,23 @@ export default {
     padding: 20px;
     border-radius: 5px;
     cursor: pointer;
-    border: 1px solid #EAEAEA;
-    width: 200px;
-    height: 100px;
+    border: 1px solid #646464;
+    width: 160px;
+    height: 65px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    background-color: rgba(0,0,0,.5);
   }
 
   .box-category:hover {
-    transform: translateY(-2px);
-    transition: 0.3s ease all;
+    transform: translateY(-1px);
+    transition: 0.1s ease all;
   }
 
   .box-category.selected {
-    border: 1px solid #646464;
+    border: 2px solid white;
   }
 
   .box-category .box-category-figure{

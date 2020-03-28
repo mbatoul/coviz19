@@ -26,7 +26,7 @@
         v-bind:center="mapCenter"
         v-bind:maxBoundsViscosity='maxBoundsViscosity'
         v-bind:maxBounds='maxBounds'
-        v-bind:options="{ scrollWheelZoom: scrollWheelZoom }"
+        v-bind:options="{ scrollWheelZoom: scrollWheelZoom, attributionControl: attributionControl }"
       >
         <LTileLayer
           v-bind:url='basemapUrl'
@@ -112,6 +112,7 @@ export default {
       mapCenter: [51.505, -0.09],
       maxBoundsViscosity: 1.0,
       scrollWheelZoom: false,
+      attributionControl: false,
       maxBounds: Leaflet.latLngBounds(Leaflet.latLng(-90, -200), Leaflet.latLng(90, 200)),
       options: {
         onEachFeature: this.onEachFeature
@@ -126,11 +127,17 @@ export default {
       } else {
         return Object.values(this.selectedZones);
       }
+    },
+    selectedZonesNames: function () {
+      return Object.keys(this.selectedZones);
     }
   },
 
   watch: {
     currentCategory: function () {
+      this.updateGeoJsonStyle();
+    },
+    selectedZones: function () {
       this.updateGeoJsonStyle();
     }
   },
@@ -151,34 +158,37 @@ export default {
     },
 
     updateGeoJsonStyle: function() {
-      const newLayerStyle = this.layerStyle();
-
+      const that = this;
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           this.$refs.geoJson.mapObject.eachLayer((layer) => {
-            layer.setStyle(newLayerStyle);
+            layer.setStyle(that.layerStyle(this.selectedZonesNames.includes(layer.feature.zone_data.kebab_name)));
           });
         }
       });
     },
 
-    layerStyle: function() {
+    layerStyle: function(isSelected) {
+      const weight = isSelected ? this.defaultWeight + 2 : this.defaultWeight;
+
       return {
         fill: true,
         color: this.defaultColors[this.currentCategory],
-        weight: this.defaultWeight,
+        weight: weight,
         fillColor: this.defaultColors[this.currentCategory],
         fillOpacity: this.defaultOpacity
       }
     },
 
     onEachFeature: function (feature, layer) {
-      const map = this;
-      layer.setStyle(this.layerStyle);
+      const that = this;
+      
+      layer.setStyle(that.layerStyle(this.selectedZonesNames.includes(layer.feature.zone_data.kebab_name)));
+
       layer.bindTooltip(
         `<div>
           <p><strong>${feature.zone_data.name}</strong></p>
-          <p>${map.maybePluralize(feature.zone_data.death, 'death')}</p>
+          <p>${that.maybePluralize(feature.zone_data.death, 'death')}</p>
           <p>${feature.zone_data.confirmed} confirmed</p>
           <p>${feature.zone_data.recovered} recovered</p>
         </div>`,
@@ -190,22 +200,18 @@ export default {
 
       layer.on('mouseover', function () {
         this.setStyle({
-          weight: map.defaultWeight + 1,
-          fillOpacity: map.defaultOpacity + 0.2
+          fillOpacity: that.defaultOpacity + 0.2
         })
       });
 
       layer.on('mouseout', function () {
-        this.setStyle({
-          weight: map.defaultWeight,
-          fillOpacity: map.defaultOpacity
-        })
+        this.setStyle(that.layerStyle(this.selectedZonesNames.includes(this.feature.zone_data.kebab_name)));
       });
       
-      layer.on('click', this.handleClick);
+      layer.on('click', this.onLayerClicked);
     },
 
-    handleClick: function (event) {
+    onLayerClicked: function (event) {
       this.$emit('zoneSelected', event.target.feature.zone_data.kebab_name);
     },
   }
@@ -219,6 +225,11 @@ export default {
   }
   .map-container {
     flex-grow: 1;
+  }
+  .leaflet-control-container {
+    position: absolute;
+    bottom: 0px;
+    bottom: 100px;
   }
 </style>
 
@@ -234,7 +245,7 @@ export default {
     position: absolute;
     z-index: 1000;
     right: 15px;
-    top: 15px;
+    bottom: 20px;
     padding: 5px;
   }
 

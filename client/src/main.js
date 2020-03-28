@@ -5,7 +5,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import baseApi from './plugins/base-api.js';
-import 'buefy/dist/buefy.css';
+// import 'buefy/dist/buefy.css';
 import TheHome from './TheHome.vue'
 
 library.add(fas)

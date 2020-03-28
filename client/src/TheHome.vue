@@ -45,23 +45,46 @@
         <div class="column has-padding-large">
           <div class="columns is-desktop is-multiline">
             <!-- options -->
-            <div class="column  is-half">
+            <div
+              class="column chart-column"
+              v-bind:class="chartColumnClasses"
+            >
               <div class="box options">
                 <div class="information-section">
                   <div class="content">
                     <label class="label">
                       Instructions
                     </label>
-                    <p class="text">
-                      Select one or multiple zones (max. 5) and a time period between January 22, 2020 and today. Check the Multiple Selection box to select zones on the map.
-                    </p>
+                    <ul>
+                      <li>
+                        Select up to 5 zones, using the field below or the multiple selection mode on the map
+                      </li>
+                      <li>
+                        Choose a time period between January 22, 2020 and today
+                      </li>
+                    </ul>
                   </div>
-                  <div class="notification">
-                    <button class="delete"></button>
-                      The data is updated <strong>everyday at midnight</strong>. It may not be <i>perfectly</i> accurate at the time you visualize it.
-                  </div>
+
                 </div>
                 <div class="options-section">
+                  <div class="field">
+                    <label class="label">Change layout</label>
+                    <label class="label"></label>
+                      <button
+                        class="button is-info"
+                        v-on:click='toggleLayout'
+                        v-if='fullWidthMode'
+                      >
+                        Grid
+                      </button>
+                      <button
+                        class="button is-info"
+                        v-on:click='toggleLayout'
+                        v-else
+                      >
+                        Full-width
+                      </button>
+                  </div>
                   <div class='field'>
                     <label class="label">Zones</label>
                     <div class="field-body">
@@ -105,16 +128,22 @@
                   </div>
                   <div class="buttons">
                     <button
-                      class="button is-info is-light"
+                      class="button is-info"
                       v-on:click='updateDates(pastWeekDates)'
                     >
-                      Show past week
+                      Past week
                     </button>
                     <button
-                      class="button is-success is-light"
+                      class="button is-info"
+                      v-on:click='updateDates(pastMonthDates)'
+                    >
+                      Past month
+                    </button>
+                    <button
+                      class="button is-success"
                       v-on:click='updateDates([minDate, maxDate])'
                     >
-                      Default dates
+                      Full period
                     </button>
                   </div>
                 </div>
@@ -122,23 +151,29 @@
 
             </div>
              <!-- confirmed -->
-            <div class="column is-half">
+            <div
+              class="column chart-column"
+              v-bind:class="chartColumnClasses"
+            >
               <div class="chart-container">
                 <div
                   class='loading small'
                   v-if='confirmedChartData === null'>
                 </div>
-                <div v-else>
-                  <LineChart
-                    v-bind:selectedZonesNames='selectedZonesNames'
-                    v-bind:data='confirmedChartData'
-                    v-bind:options="chartOptions('Confirmed')"
-                  />
-                </div>
+                <LineChart
+                v-else
+                  v-bind:selectedZonesNames='selectedZonesNames'
+                  v-bind:data='confirmedChartData'
+                  v-bind:options="chartOptions('Confirmed')"
+                  v-bind:key='chartConfirmedKey'
+                />
               </div>
             </div>
             <!-- deaths -->
-            <div class="column is-half">
+            <div
+              class="column chart-column"
+              v-bind:class="chartColumnClasses"
+            >
               <div class="chart-container">
                 <div
                   class='loading small'
@@ -149,12 +184,16 @@
                     v-bind:selectedZonesNames='selectedZonesNames'
                     v-bind:data='deathChartData'
                     v-bind:options="chartOptions('Deaths')"
+                    v-bind:key='chartDeathKey'
                   />
                 </div>
               </div>
             </div>
             <!-- recovered -->
-            <div class="column is-half">
+            <div
+              class="column chart-column"
+              v-bind:class="chartColumnClasses"
+            >
               <div class="chart-container">
                 <div
                   class='loading small'
@@ -165,6 +204,7 @@
                     v-bind:selectedZonesNames='selectedZonesNames'
                     v-bind:data='recoveredChartData'
                     v-bind:options="chartOptions('Recovered')"
+                    v-bind:key='chartRecoveredKey'
                   />
                 </div>
               </div>
@@ -258,6 +298,10 @@ export default {
       deathChartData: null,
       confirmedChartData: null,
       recoveredChartData: null,
+      fullWidthMode: false,
+      chartConfirmedKey: 0,
+      chartDeathKey: 0,
+      chartRecoveredKey: 0,
     }
   },
 
@@ -300,6 +344,18 @@ export default {
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
       return [oneWeekAgo, new Date()];
     },
+    pastMonthDates: function () {
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+      return [oneMonthAgo, new Date()];
+    },
+    chartColumnClasses: function () {
+      if (this.fullWidthMode) {
+        return 'is-full';
+      } else {
+        return 'is-half';
+      }
+    }
   },
 
   watch: {
@@ -320,10 +376,6 @@ export default {
   },
 
   mounted () {
-    this.$nextTick(() => {
-      this.initNotification();
-    })
-
     this.$buefy.snackbar.open(`This data is sourced from <a>John Hopkins University</a>. Coviz19 also offers a public API for this data. <a>See docs</a>`);
   },
 
@@ -364,6 +416,7 @@ export default {
     chartOptions: function (title) {
       return {
         responsive: true,
+        maintainAspectRatio: false,
         scaleBeginAtZero: true,
         title: {
           display: true,
@@ -441,16 +494,11 @@ export default {
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
     },
-    initNotification: function () {
-      document.addEventListener('DOMContentLoaded', () => {
-        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-          this.$notification = $delete.parentNode;
-
-          $delete.addEventListener('click', () => {
-            this.$notification.parentNode.removeChild(this.$notification);
-          });
-        });
-      });
+    toggleLayout: function () {
+      this.fullWidthMode = !this.fullWidthMode;
+      this.chartConfirmedKey = this.chartConfirmedKey + 1;
+      this.chartDeathKey = this.chartDeathKey + 1;
+      this.chartRecoveredKey = this.chartRecoveredKey + 1;
     }
   },
 }
@@ -572,6 +620,12 @@ export default {
     animation: loading 1.2s linear infinite;
   }
 
+  .loading.white:after {
+    border: 2px solid white;
+    border-color: white transparent white transparent;
+    animation: loading 1.2s linear infinite;
+  }
+
   .loading.small{
     display: flex;
     width: 40px;
@@ -606,12 +660,20 @@ export default {
   }
 
   .chart-container {
+    min-height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
     width: 100%;
-    min-height: 400px;
+  }
+
+  .is-half .chart-container {
+    height: 100%;
+    width: 500px;
+  }
+
+  .is-full .chart-container {
+    display: block;
   }
 
   .categories-container {
@@ -627,4 +689,31 @@ export default {
   .categories-container .level {
     flex-grow: 1;
   }
+
+  .information-section {
+    margin-bottom: 0.75rem;
+  }
+
+  .information-section ul {
+    margin-top: 0;
+  }
+</style>
+
+<style lang="sass">
+  @import "~bulma/sass/utilities/_all";
+  $primary: #3273dc;
+  $primary-invert: findColorInvert($primary);
+  $info: #3273dc;
+  $info-invert: findColorInvert($info);
+  $success: hsl(141, 53%, 53%);
+  $success-invert: findColorInvert($success);
+  $danger: hsl(348, 100%, 61%);
+  $danger-invert: findColorInvert($danger);
+  $light: #EAEAEA;
+  $light-invert: findColorInvert($light);
+
+  $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert) )
+
+  @import "~bulma";
+  @import "~buefy/src/scss/buefy";
 </style>
