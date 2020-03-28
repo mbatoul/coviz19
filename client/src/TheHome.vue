@@ -466,16 +466,18 @@ export default {
     color: white;
   }
 
-  .multiple-selection .control-label {
+  .multiple-selection .control-label, span.check.is-white {
+    color: white;
+    border-color: white !important;
+  }
+
+  .multiple-selection.active .control-label, span.check.is-white {
+    color: white;
+    border-color: white !important;
+  }
+
+  .multiple-selection:not(.active) .control-label:hover, span.check.is-white {
     color: #7a7a7a;
-  }
-
-  .multiple-selection.active .control-label {
-    color: white;
-  }
-
-  .multiple-selection .control-label:hover {
-    color: white;
   }
 
   .box {
@@ -522,10 +524,6 @@ export default {
 
   .fa-newspaper{
     color: #24b37e;;
-  }
-
-  .selection-mode-checkbox-container .checkbox:hover {
-    color: white;
   }
 
   .datepicker {
