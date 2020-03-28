@@ -43,9 +43,6 @@ ActiveRecord::Schema.define(version: 2020_03_16_194520) do
     t.string "code"
     t.float "lat"
     t.float "lng"
-    t.integer "latest_death_count"
-    t.integer "latest_confirmed_count"
-    t.integer "latest_recovered_count"
     t.bigint "parent_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

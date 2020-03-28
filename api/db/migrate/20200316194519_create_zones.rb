@@ -8,9 +8,6 @@ class CreateZones < ActiveRecord::Migration[6.0]
       t.string :code
       t.float :lat
       t.float :lng
-      t.integer :latest_death_count
-      t.integer :latest_confirmed_count
-      t.integer :latest_recovered_count
       t.references :parent
 
       t.timestamps
