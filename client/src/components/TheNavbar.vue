@@ -33,8 +33,28 @@
         Contact
       </b-navbar-item>
     </template>
+
+    <template slot='end'>
+      <div
+        class='loading small'
+        v-if='lastUpdateDate === null'>
+      </div>
+      <div v-else>
+        Data updated on <strong>{{ lastUpdateDate }}</strong>
+      </div>
+    </template>
   </b-navbar>
 </template>
+
+<script>
+export default {
+  props: {
+    lastUpdateDate: {
+      type: String,
+    }
+  }
+}
+</script>
 
 <style>
   .navbar {

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <div class="container is-fluid is-marginless">
-      <TheNavbar />
+      <TheNavbar
+        v-bind:lastUpdateDate='lastUpdateDate'
+      />
       <div class="columns is-desktop is-marginless">
         <div
           class="column is-paddingless left-side"
@@ -314,7 +316,8 @@ export default {
       chartConfirmedKey: 0,
       chartDeathKey: 0,
       chartRecoveredKey: 0,
-      windowWidth: 0
+      windowWidth: 0,
+      lastUpdateDate: null,
     }
   },
 
@@ -419,6 +422,8 @@ export default {
       try {
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
+        this.lastUpdateDate = response.data.last_update_date;
+        console.log(this.lastUpdateDate)
         this.selectedZonesNames.push('world');
         this.updateTotals();
         this.ceilings = response.data.ceilings;

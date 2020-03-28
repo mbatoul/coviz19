@@ -6,6 +6,7 @@ class V1::ZonesController < ApplicationController
   def index
     @zones = Zone.where('lat IS NOT NULL AND lng IS NOT NULL')
     @most_recent_data_points_by_zone = DataPoint.most_recent_by_zone
+    @last_update_date = DataPoint.maximum(:date).strftime('%b %d, %Y')
   end
 
   # GET /zones

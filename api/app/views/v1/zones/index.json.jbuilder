@@ -34,3 +34,5 @@ json.ceilings do
   json.confirmed DataPoint.where(category: 'confirmed').most_recent_by_zone.sum(:value)
   json.recovered DataPoint.where(category: 'recovered').most_recent_by_zone.sum(:value)
 end
+
+json.last_update_date @last_update_date
