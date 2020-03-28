@@ -76,6 +76,10 @@ export default {
       type: Object,
       required: true
     },
+    selectedZonesNames: {
+      type: Array,
+      required: true
+    },
     zonesWithMarkers: {
       type: Object,
       required: true
@@ -128,16 +132,13 @@ export default {
         return Object.values(this.selectedZones);
       }
     },
-    selectedZonesNames: function () {
-      return Object.keys(this.selectedZones);
-    }
   },
 
   watch: {
     currentCategory: function () {
       this.updateGeoJsonStyle();
     },
-    selectedZones: function () {
+    selectedZonesNames: function () {
       this.updateGeoJsonStyle();
     }
   },
@@ -182,8 +183,9 @@ export default {
 
     onEachFeature: function (feature, layer) {
       const that = this;
-      
-      layer.setStyle(that.layerStyle(this.selectedZonesNames.includes(layer.feature.zone_data.kebab_name)));
+      const selectedZonesNames = this.selectedZonesNames;
+
+      layer.setStyle(that.layerStyle(selectedZonesNames.includes(layer.feature.zone_data.kebab_name)));
 
       layer.bindTooltip(
         `<div>
@@ -205,14 +207,22 @@ export default {
       });
 
       layer.on('mouseout', function () {
-        this.setStyle(that.layerStyle(this.selectedZonesNames.includes(this.feature.zone_data.kebab_name)));
+        this.setStyle({
+          fillOpacity: that.defaultOpacity
+        })
       });
-      
+
       layer.on('click', this.onLayerClicked);
     },
 
     onLayerClicked: function (event) {
-      this.$emit('zoneSelected', event.target.feature.zone_data.kebab_name);
+      const zone = event.target.feature.zone_data;
+
+      if (this.selectedZonesNames.includes(zone.kebab_name)) {
+        this.$emit('zoneRemoved', zone);
+      } else {
+        this.$emit('zoneSelected', zone);
+      }
     },
   }
 }
@@ -225,6 +235,7 @@ export default {
   }
   .map-container {
     flex-grow: 1;
+    height: 100%;
   }
   .leaflet-control-container {
     position: absolute;
@@ -237,8 +248,10 @@ export default {
   .leaflet-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
     flex-grow: 1;
+    height: -moz-calc(100vh - 84px);
+    height: -webkit-calc(100vh - 84px);
+    height: calc(100vh - 84px);
   }
   
   .list-of-zones {

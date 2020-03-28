@@ -20,10 +20,12 @@
               v-bind:currentCategory='currentCategory'
               v-bind:ceilings='ceilings'
               v-bind:selectedZones='selectedZones'
+              v-bind:selectedZonesNames='selectedZonesNames'
               v-bind:zonesWithMarkers='zonesWithMarkers'
               v-bind:isWorldSelected='isWorldSelected'
               v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
-              v-on:zoneSelected='updateSelectedZonesNames'
+              v-on:zoneSelected='onZoneSelectedFromMap'
+              v-on:zoneRemoved='onZoneRemoved'
             />
             <div
               class="multiple-selection"
@@ -94,7 +96,7 @@
                             placeholder="Select one or multiple zones..."
                             label='name'
                             track-by='kebab_name'
-                            v-on:select='onZoneSelected'
+                            v-on:select='onZoneSelectedFromField'
                             v-on:remove='onZoneRemoved'
                             v-bind:value='arrayOfSelectedZones'
                             v-bind:options='arrayOfAllZones'
@@ -162,7 +164,6 @@
                 </div>
                 <LineChart
                 v-else
-                  v-bind:selectedZonesNames='selectedZonesNames'
                   v-bind:data='confirmedChartData'
                   v-bind:options="chartOptions('Confirmed')"
                   v-bind:key='chartConfirmedKey'
@@ -181,7 +182,6 @@
                 </div>
                 <div v-else>
                   <LineChart
-                    v-bind:selectedZonesNames='selectedZonesNames'
                     v-bind:data='deathChartData'
                     v-bind:options="chartOptions('Deaths')"
                     v-bind:key='chartDeathKey'
@@ -201,7 +201,6 @@
                 </div>
                 <div v-else>
                   <LineChart
-                    v-bind:selectedZonesNames='selectedZonesNames'
                     v-bind:data='recoveredChartData'
                     v-bind:options="chartOptions('Recovered')"
                     v-bind:key='chartRecoveredKey'
@@ -449,20 +448,6 @@ export default {
         }
       }
     },
-    updateSelectedZonesNames: function (kebabName) {
-      const isCountryAlreadySelected = this.selectedZonesNames
-        .map(zone => zone.kebab_name)
-        .includes(kebabName);
-      
-      if (this.selectedZonesNames.length > 4) return;
-      
-      if (this.isMultipleSelectionActive && !isCountryAlreadySelected) {
-        this.selectedZonesNames.push(kebabName);
-      } else if (!isCountryAlreadySelected) {
-        this.selectedZonesNames = [];
-        this.selectedZonesNames.push(kebabName);
-      }
-    },
     updateTotals: function () {
       if (this.isWorldSelected) {
         this.totalDeath = this.zones.world.values.death;
@@ -472,11 +457,13 @@ export default {
         let totalDeath = 0;
         let totalConfirmed = 0;
         let totalRecovered = 0;
+
         Object.values(this.selectedZones).forEach((zone) => {
           totalDeath += zone.values.death
           totalConfirmed += zone.values.confirmed
           totalRecovered += zone.values.recovered
         })
+
         this.totalDeath = totalDeath;
         this.totalConfirmed = totalConfirmed;
         this.totalRecovered = totalRecovered;
@@ -488,8 +475,23 @@ export default {
     updateDates: function (dates) {
       this.dates = dates;
     },
-    onZoneSelected: function (zone) {
-      this.updateSelectedZonesNames(zone.kebab_name);
+    onZoneSelectedFromMap: function (zone) {
+      console.log(zone)
+      if (this.isMultipleSelectionActive) {
+        if (this.selectedZonesNames.length > 4) {
+          return;
+        } else {
+          this.selectedZonesNames.push(zone.kebab_name);
+        }
+      } else {
+        this.selectedZonesNames = [];
+        this.selectedZonesNames.push(zone.kebab_name);
+      }
+    },
+    onZoneSelectedFromField: function (zone) {
+      if (this.selectedZonesNames.length > 4) return;
+
+      this.selectedZonesNames.push(zone.kebab_name);
     },
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
@@ -701,6 +703,7 @@ export default {
 
 <style lang="sass">
   @import "~bulma/sass/utilities/_all";
+
   $primary: #3273dc;
   $primary-invert: findColorInvert($primary);
   $info: #3273dc;
