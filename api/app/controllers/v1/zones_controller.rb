@@ -11,9 +11,21 @@ class V1::ZonesController < ApplicationController
   # GET /zones
   # GET /zones.json
   def chart_data
-    @data = FormatChartDataService.call(
+    @death_chart_data = ChartDataService.call(
       params[:zones],
-      params[:categories],
+      'death',
+      params[:start_date],
+      params[:end_date]
+    )
+    @confirmed_chart_data = ChartDataService.call(
+      params[:zones],
+      'confirmed',
+      params[:start_date],
+      params[:end_date]
+    )
+    @recovered_chart_data = ChartDataService.call(
+      params[:zones],
+      'recovered',
       params[:start_date],
       params[:end_date]
     )

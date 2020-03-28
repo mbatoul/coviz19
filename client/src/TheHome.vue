@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-
     <div class="container is-fluid is-marginless">
       <TheNavbar />
       <div class="columns is-marginless">
@@ -113,7 +112,7 @@
                       class="button is-success is-light"
                       v-on:click='updateDates([minDate, maxDate])'
                     >
-                      Reset
+                      Default dates
                     </button>
                   </div>
                 </div>
@@ -125,7 +124,7 @@
               <div class="">
                 <LineChart
                   v-bind:selectedZonesNames='selectedZonesNames'
-                  v-bind:data='chartData'
+                  v-bind:data='confirmedChartData'
                   v-bind:options="chartOptions('Confirmed reported')"
                 />
               </div>
@@ -135,7 +134,7 @@
               <div class="">
                 <LineChart
                   v-bind:selectedZonesNames='selectedZonesNames'
-                  v-bind:data='chartData'
+                  v-bind:data='deathChartData'
                   v-bind:options="chartOptions('Deaths')"
                 />
               </div>
@@ -145,7 +144,7 @@
               <div class="">
                 <LineChart
                   v-bind:selectedZonesNames='selectedZonesNames'
-                  v-bind:data='chartData'
+                  v-bind:data='recoveredChartData'
                   v-bind:options="chartOptions('Recovered cases')"
                 />
               </div>
@@ -236,7 +235,9 @@ export default {
       selectedZonesNames: [],
       ceilings: {},
       isMultipleSelectionActive: false,
-      chartData: null,
+      deathChartData: null,
+      confirmedChartData: null,
+      recoveredChartData: null,
     }
   },
 
@@ -289,9 +290,6 @@ export default {
     dates: function () {
       this.getChartData();
     },
-    currentCategory: function () {
-      this.getChartData();
-    }
   },
 
   created () {
@@ -302,15 +300,9 @@ export default {
   },
 
   mounted () {
-    document.addEventListener('DOMContentLoaded', () => {
-      (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-        this.$notification = $delete.parentNode;
-
-        $delete.addEventListener('click', () => {
-          this.$notification.parentNode.removeChild(this.$notification);
-        });
-      });
-    });
+    this.$nextTick(() => {
+      this.initNotification();
+    })
 
     this.$buefy.snackbar.open(`This data is sourced from <a>John Hopkins University</a>. Coviz19 also offers a public API for this data. <a>See docs</a>`);
   },
@@ -334,13 +326,14 @@ export default {
           {
             params: {
               zones: this.selectedZonesNames,
-              categories: [this.currentCategory],
               start_date: this.dates[0],
               end_date: this.dates[1],
             }
           }
         )
-        this.chartData = response.data.data;
+        this.deathChartData = response.data.death_chart_data;
+        this.confirmedChartData = response.data.confirmed_chart_data;
+        this.recoveredChartData = response.data.recovered_chart_data;
       } catch (error) {
         console.error(error);
       }
@@ -425,6 +418,17 @@ export default {
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
     },
+    initNotification: function () {
+      document.addEventListener('DOMContentLoaded', () => {
+        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+          this.$notification = $delete.parentNode;
+
+          $delete.addEventListener('click', () => {
+            this.$notification.parentNode.removeChild(this.$notification);
+          });
+        });
+      });
+    }
   },
 }
 </script>

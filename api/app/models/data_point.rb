@@ -27,4 +27,8 @@ class DataPoint < ApplicationRecord
     :death,
     :recovered
   ]
+
+  def self.execute_sql(*sql_array)     
+    connection.execute(send(:sanitize_sql_array, sql_array))
+  end
 end

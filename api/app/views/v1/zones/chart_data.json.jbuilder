@@ -1,1 +1,3 @@
-json.data @data
+json.death_chart_data @death_chart_data
+json.confirmed_chart_data @confirmed_chart_data
+json.recovered_chart_data @recovered_chart_data
