@@ -25,7 +25,8 @@ export default {
 
   props: {
     zoneName: {
-      type: Array,
+      type: String,
+      default: () => 'world',
       required: true
     }
   },

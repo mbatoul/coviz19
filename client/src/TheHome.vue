@@ -3,9 +3,12 @@
     <div class="container is-fluid is-marginless">
       <TheNavbar />
       <div class="columns is-desktop is-marginless">
-        <div class="column is-two-fifths is-paddingless left-side">
+        <div
+          class="column is-paddingless left-side"
+          v-bind:class='leftSideColumnClass'
+        >
           <div class="column-inner">
-            <div class="categories-container">
+            <div class="categories-container desktop">
               <CategoriesBar
                 v-bind:currentCategory='currentCategory'
                 v-bind:totalDeath='totalDeath'
@@ -41,6 +44,17 @@
                 </b-checkbox>
               </div>
             </div>
+            <div class="categories-container mobile">
+              <CategoriesBar
+                v-bind:currentCategory='currentCategory'
+                v-bind:totalDeath='totalDeath'
+                v-bind:totalConfirmed='totalConfirmed'
+                v-bind:totalRecovered='totalRecovered'
+                v-bind:isLoading='isLoading'
+                v-on:categorySelected='updateCurrentCategory'
+              />
+            </div>
+          
           </div>
         </div>
 
@@ -48,8 +62,8 @@
           <div class="columns is-desktop is-multiline">
             <!-- options -->
             <div
-              class="column chart-column"
-              v-bind:class="chartColumnClasses"
+              class='column'
+              v-bind:class='chartColumnClasses'
             >
               <div class="box options">
                 <div class="information-section">
@@ -69,7 +83,7 @@
 
                 </div>
                 <div class="options-section">
-                  <div class="field">
+                  <div class="field" v-show='windowWidth > 1024'>
                     <label class="label">Change layout</label>
                     <label class="label"></label>
                       <button
@@ -159,33 +173,34 @@
             </div>
              <!-- confirmed -->
             <div
-              class="column chart-column"
-              v-bind:class="chartColumnClasses"
+              class='column'
+              v-bind:class='chartColumnClasses'
             >
               <div class="chart-container">
                 <div
                   class='loading small'
                   v-if='confirmedChartData === null'>
                 </div>
-                <LineChart
-                v-else
-                  v-bind:data='confirmedChartData'
-                  v-bind:options="chartOptions('Confirmed')"
-                  v-bind:key='chartConfirmedKey'
-                />
+                <div style='width: 100%;' v-else>
+                  <LineChart
+                    v-bind:data='confirmedChartData'
+                    v-bind:options="chartOptions('Confirmed')"
+                    v-bind:key='chartConfirmedKey'
+                  />
+                </div>
               </div>
             </div>
             <!-- deaths -->
             <div
-              class="column chart-column"
-              v-bind:class="chartColumnClasses"
+              class='column'
+              v-bind:class='chartColumnClasses'
             >
               <div class="chart-container">
                 <div
                   class='loading small'
                   v-if='deathChartData === null'>
                 </div>
-                <div v-else>
+                <div style='width: 100%;' v-else>
                   <LineChart
                     v-bind:data='deathChartData'
                     v-bind:options="chartOptions('Deaths')"
@@ -196,15 +211,15 @@
             </div>
             <!-- recovered -->
             <div
-              class="column chart-column"
-              v-bind:class="chartColumnClasses"
+              class='column'
+              v-bind:class='chartColumnClasses'
             >
               <div class="chart-container">
                 <div
                   class='loading small'
                   v-if='recoveredChartData === null'>
                 </div>
-                <div v-else>
+                <div style='width: 100%;' v-else>
                   <LineChart
                     v-bind:data='recoveredChartData'
                     v-bind:options="chartOptions('Recovered')"
@@ -300,6 +315,7 @@ export default {
       chartConfirmedKey: 0,
       chartDeathKey: 0,
       chartRecoveredKey: 0,
+      windowWidth: 0
     }
   },
 
@@ -347,16 +363,17 @@ export default {
       oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
       return [oneMonthAgo, new Date()];
     },
-    chartColumnClasses: function () {
-      if (this.fullWidthMode) {
-        return 'is-full';
-      } else {
-        return 'is-half';
-      }
-    },
     zoneForMedia: function () {
       return this.selectedZonesNames[this.selectedZonesNames.length - 1];
-    }
+    },
+    chartColumnClasses: function () {
+      if (this.fullWidthMode) {
+        return 'column is-full';
+      } else {
+        return 'column is-half';
+      }
+    },
+
   },
 
   watch: {
@@ -371,6 +388,16 @@ export default {
     dates: function () {
       this.getChartData();
     },
+    windowWidth: function () {
+      console.log(this.windowWidth)
+      if (this.windowWidth < 1024) {
+        this.fullWidthMode = true;
+      } else {
+        if (!this.fullWidthMode) {
+          this.fullWidthMode = false;
+        }
+      }
+    }
   },
 
   created () {
@@ -381,10 +408,15 @@ export default {
   },
 
   mounted () {
+    this.windowWidth = window.innerWidth;
+    window.addEventListener('resize', this.onResize);
     this.$buefy.snackbar.open(`This data is sourced from <a>John Hopkins University</a>. Coviz19 also offers a public API for this data. <a>See docs</a>`);
   },
 
   methods: {
+    onResize: function () {
+      this.windowWidth = window.innerWidth;
+    },
     getZones: async function () {
       try {
         const response = await this.$http.get('/zones.json');
@@ -449,6 +481,7 @@ export default {
           yAxes: [{
             ticks: {
               precision: 0,
+              beginAtZero: true,
             }
           }],
         }
@@ -507,7 +540,14 @@ export default {
       this.chartConfirmedKey = this.chartConfirmedKey + 1;
       this.chartDeathKey = this.chartDeathKey + 1;
       this.chartRecoveredKey = this.chartRecoveredKey + 1;
-    }
+    },
+    leftSideColumnClass: function () {
+      if (window.innerWidth < 1024){
+        return 'is-full'
+      } else {
+        return 'is-two-fifths'
+      }
+    },
   },
 }
 </script>
@@ -519,12 +559,6 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     color: #646464;
     background: #f1f4f6;
-  }
-
-  .left-side {
-    position: sticky;
-    height: calc(100vh - 84px);
-    top: 84px;
   }
 
   .column.has-padding-large {
@@ -668,23 +702,23 @@ export default {
   }
 
   .chart-container {
-    min-height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
+    overflow-y: scroll;
+    padding: 15px;
   }
 
   .is-half .chart-container {
     height: 100%;
-    width: 500px;
   }
 
   .is-full .chart-container {
     display: block;
   }
 
-  .categories-container {
+  .categories-container.desktop {
     height: 100px;
     display: flex;
     justify-content: center;
@@ -692,6 +726,22 @@ export default {
     position: absolute;
     z-index: 10000;
     width: 100%;
+  }
+
+  .categories-container.mobile {
+    padding-top: 25px;
+  }
+
+  @media(max-width: 1024px) {
+    .categories-container.desktop {
+      display: none;
+    }
+  }
+
+  @media(min-width: 1024px) {
+    .categories-container.mobile {
+      display: none;
+    }
   }
 
   .categories-container .level {
@@ -718,6 +768,14 @@ export default {
     font-size: 12px;
     position: absolute;
     bottom: 12px;
+  }
+
+  @media(min-width: 1024px) {
+    .left-side {
+      position: sticky;
+      height: calc(100vh - 84px);
+      top: 84px;
+    }
   }
 </style>
 

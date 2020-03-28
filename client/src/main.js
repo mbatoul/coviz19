@@ -10,6 +10,7 @@ import TheHome from './TheHome.vue'
 library.add(fas)
 library.add(fab)
 Vue.config.productionTip = false
+Vue.config.devtools = true;
 Vue.prototype.$http = baseApi;
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(Buefy);
