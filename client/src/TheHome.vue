@@ -87,7 +87,7 @@
                         Full-width
                       </button>
                   </div>
-                  <div class='field'>
+                  <div class='field zones'>
                     <label class="label">Zones</label>
                     <div class="field-body">
                       <div class="field multiselect-field">
@@ -108,6 +108,7 @@
                         </b-field>
                       </div>
                     </div>
+                    <span v-if='selectedZonesNames.length > 4' class='error has-text-danger'>You can not select more that 5 zones</span>
                   </div>
                   
                   <div class="field">
@@ -698,6 +699,17 @@ export default {
 
   .information-section ul {
     margin-top: 0;
+  }
+
+  .field.zones {
+    height: 120px;
+    position: relative;
+  }
+
+  .error {
+    position: absolute;
+    bottom: -10px;
+    font-size: 12px;
   }
 </style>
 
