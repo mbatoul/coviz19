@@ -2,9 +2,20 @@
   <div id="app">
     <div class="container is-fluid is-marginless">
       <TheNavbar />
-      <div class="columns is-marginless">
+      <div class="columns is-desktop is-marginless">
         <div class="column is-two-fifths is-paddingless left-side">
           <div class="column-inner">
+            <div class="categories-container">
+              <CategoriesBar
+                v-bind:currentCategory='currentCategory'
+                v-bind:totalDeath='totalDeath'
+                v-bind:totalConfirmed='totalConfirmed'
+                v-bind:totalRecovered='totalRecovered'
+                v-bind:isLoading='isLoading'
+                v-on:categorySelected='updateCurrentCategory'
+              />
+            </div>
+          
             <TheMap
               v-bind:currentCategory='currentCategory'
               v-bind:ceilings='ceilings'
@@ -32,16 +43,7 @@
         </div>
 
         <div class="column has-padding-large">
-          <CategoriesBar
-            v-bind:currentCategory='currentCategory'
-            v-bind:totalDeath='totalDeath'
-            v-bind:totalConfirmed='totalConfirmed'
-            v-bind:totalRecovered='totalRecovered'
-            v-bind:isLoading='isLoading'
-            v-on:categorySelected='updateCurrentCategory'
-          />
-
-          <div class="columns is-multiline">
+          <div class="columns is-desktop is-multiline">
             <!-- options -->
             <div class="column  is-half">
               <div class="box options">
@@ -121,32 +123,50 @@
             </div>
              <!-- confirmed -->
             <div class="column is-half">
-              <div class="">
-                <LineChart
-                  v-bind:selectedZonesNames='selectedZonesNames'
-                  v-bind:data='confirmedChartData'
-                  v-bind:options="chartOptions('Confirmed reported')"
-                />
+              <div class="chart-container">
+                <div
+                  class='loading small'
+                  v-if='confirmedChartData === null'>
+                </div>
+                <div v-else>
+                  <LineChart
+                    v-bind:selectedZonesNames='selectedZonesNames'
+                    v-bind:data='confirmedChartData'
+                    v-bind:options="chartOptions('Confirmed')"
+                  />
+                </div>
               </div>
             </div>
             <!-- deaths -->
             <div class="column is-half">
-              <div class="">
-                <LineChart
-                  v-bind:selectedZonesNames='selectedZonesNames'
-                  v-bind:data='deathChartData'
-                  v-bind:options="chartOptions('Deaths')"
-                />
+              <div class="chart-container">
+                <div
+                  class='loading small'
+                  v-if='deathChartData === null'>
+                </div>
+                <div v-else>
+                  <LineChart
+                    v-bind:selectedZonesNames='selectedZonesNames'
+                    v-bind:data='deathChartData'
+                    v-bind:options="chartOptions('Deaths')"
+                  />
+                </div>
               </div>
             </div>
             <!-- recovered -->
             <div class="column is-half">
-              <div class="">
-                <LineChart
-                  v-bind:selectedZonesNames='selectedZonesNames'
-                  v-bind:data='recoveredChartData'
-                  v-bind:options="chartOptions('Recovered cases')"
-                />
+              <div class="chart-container">
+                <div
+                  class='loading small'
+                  v-if='recoveredChartData === null'>
+                </div>
+                <div v-else>
+                  <LineChart
+                    v-bind:selectedZonesNames='selectedZonesNames'
+                    v-bind:data='recoveredChartData'
+                    v-bind:options="chartOptions('Recovered')"
+                  />
+                </div>
               </div>
             </div>
             <!-- news -->
@@ -320,6 +340,9 @@ export default {
       }
     },
     getChartData: async function () {
+      this.deathChartData = null;
+      this.confirmedChartData = null;
+      this.recoveredChartData = null;
       try {
         const response = await this.$http.get(
           '/zones/chart_data.json',
@@ -346,7 +369,7 @@ export default {
           display: true,
           text: title,
           fontSize: 18,
-
+          position: 'bottom'
         },
         tooltips: {
 					mode: 'index',
@@ -462,7 +485,7 @@ export default {
     position: absolute;
     z-index: 100000;
     bottom: 20px;
-    left: 30px;
+    left: 55px;
     color: white;
   }
 
@@ -580,5 +603,28 @@ export default {
 
   .multiselect-field {
     height: 50px;
+  }
+
+  .chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 400px;
+  }
+
+  .categories-container {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 10000;
+    width: 100%;
+  }
+
+  .categories-container .level {
+    flex-grow: 1;
   }
 </style>
