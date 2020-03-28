@@ -5,8 +5,8 @@
         <div class='content' v-html='title'>
         </div>
       </div>
-      <div class="flex-item">
-        <div class="img-container is-flex shadow">
+      <div class="flex-item" v-if='urlToImage'>
+        <div class="img-container">
           <img v-bind:src="urlToImage" alt="">
         </div>
       </div>
@@ -52,6 +52,7 @@ export default {
   color: #646464;
   padding: 1.25rem;
   border-bottom: 1px solid #EAEAEA;
+  width: 100%;
 }
 .news:hover{
   transform: translateY(-2px);
@@ -59,9 +60,12 @@ export default {
 }
 .img-container{
   width: 90px;
+  height: auto;
+  background-color: transparent;
 }
 .img-container img {
   width: 100%;
+  height: 100%;
   border-radius: 6px;
 }
 .content{
