@@ -11,27 +11,28 @@
           width='100'
         >
       </b-navbar-item>
-      </template>
-      <template slot="start">
-        <b-navbar-item href="#">
-          Home
-        </b-navbar-item>
-        <b-navbar-item href="#">
-          API
-        </b-navbar-item>
-        <b-navbar-item href="#">
-          Countries
-        </b-navbar-item>
-        <b-navbar-item href="#">
-          Regions
-        </b-navbar-item>
-        <b-navbar-item href="#">
-          About
-        </b-navbar-item>
-        <b-navbar-item href="#">
-          Contact
-        </b-navbar-item>
-      </template>
+    </template>
+    
+    <template slot="start">
+      <b-navbar-item href="#">
+        Home
+      </b-navbar-item>
+      <b-navbar-item href="#">
+        API
+      </b-navbar-item>
+      <b-navbar-item href="#">
+        Countries
+      </b-navbar-item>
+      <b-navbar-item href="#">
+        Regions
+      </b-navbar-item>
+      <b-navbar-item href="#">
+        About
+      </b-navbar-item>
+      <b-navbar-item href="#">
+        Contact
+      </b-navbar-item>
+    </template>
   </b-navbar>
 </template>
 
