@@ -388,7 +388,6 @@ export default {
       this.getChartData();
     },
     windowWidth: function () {
-      console.log(this.windowWidth)
       if (this.windowWidth < 1024) {
         this.fullWidthMode = true;
       } else {
@@ -514,7 +513,6 @@ export default {
       this.dates = dates;
     },
     onZoneSelectedFromMap: function (zone) {
-      console.log(zone)
       if (this.isMultipleSelectionActive) {
         if (this.selectedZonesNames.length > 4) {
           return;
