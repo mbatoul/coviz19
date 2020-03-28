@@ -24,7 +24,7 @@ export default {
   },
 
   props: {
-    selectedZonesNames: {
+    zoneName: {
       type: Array,
       required: true
     }
@@ -38,13 +38,13 @@ export default {
   },
 
   computed: {
-    currentSelectedZonesNames: function () {
-      return this.selectedZonesNames;
+    currentZoneName: function () {
+      return this.zoneName;
     }
   },
 
   watch: {
-    currentSelectedZonesNames: function () {
+    currentZoneName: function () {
       this.getTweets();
     }
   },
@@ -55,17 +55,9 @@ export default {
 
   methods: {
     getTweets: async function () {
-      let queryString;
-
-      if (this.selectedZonesNames.length) {
-        queryString = this.selectedZonesNames[this.selectedZonesNames.length - 1];
-      } else {
-        queryString = 'world';
-      }
-
       try {
         this.isLoading = true;
-        const response = await this.$http.get(`/tweets.json?zones=${queryString}`);
+        const response = await this.$http.get(`/tweets.json?zones=${this.zoneName}`);
         this.tweetsList = [];
         this.tweetsList.push(... response.data[0][1]);
         this.isLoading = false

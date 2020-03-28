@@ -25,7 +25,7 @@ export default {
   },
 
   props: {
-    country: {
+    zoneName: {
       type: String,
       required: true
     }
@@ -39,13 +39,13 @@ export default {
   },
 
   computed: {
-    currentCountry: function () {
-      return this.country;
+    currentZoneName: function () {
+      return this.zoneName;
     }
   },
 
   watch: {
-    currentCountry: function () {
+    currentZoneName: function () {
       this.getArticles();
     }
   },
@@ -58,7 +58,7 @@ export default {
     getArticles: async function () {
       try {
         this.isLoading = true;
-        const response = await newsApi.get(`?q=coronavirus,covid,${this.country}&pageSize=10`)
+        const response = await newsApi.get(`?q=coronavirus,covid,${this.zoneName}&pageSize=10`)
         this.articlesList = [];
         this.articlesList.push(... response.data.value);
         this.isLoading = false;

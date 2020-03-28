@@ -222,14 +222,11 @@
                 />
                 <p class="subtitle has-text-weight-bold is-5">News</p>
               </div>
-              <div class="box">
-                <div class="news-container scrollable">
-                  <NewsList
-                    v-bind:country="''"
-                  />
-                </div>
+              <div class="news-container scrollable">
+                <NewsList
+                  v-bind:zoneName='zoneForMedia'
+                />
               </div>
-
             </div>
             <!-- tweets -->
             <div class="column is-half">
@@ -240,14 +237,11 @@
                 />
                 <p class="subtitle has-text-weight-bold is-5">Tweets</p>
               </div>
-              <div class="box">
-                <div class="tweets-container scrollable">
-                  <TweetsList
-                    v-bind:selectedZonesNames='selectedZonesNames'
-                  />
-                </div>
+              <div class="tweets-container scrollable">
+                <TweetsList
+                  v-bind:zoneName='zoneForMedia'
+                />
               </div>
-
             </div>
           </div>
         </div>
@@ -359,11 +353,18 @@ export default {
       } else {
         return 'is-half';
       }
+    },
+    zoneForMedia: function () {
+      return this.selectedZonesNames[this.selectedZonesNames.length - 1];
     }
   },
 
   watch: {
     selectedZonesNames: function () {
+      if (this.selectedZonesNames.length === 0) {
+        this.selectedZonesNames.push('world');
+      }
+
       this.updateTotals();
       this.getChartData();
     },
@@ -737,7 +738,6 @@ export default {
   $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert) )
   
   .multiselect__tag { background: $success; };
-  .multiselect__tag-icon { background: $success; }
 
   @import "~bulma";
   @import "~buefy/src/scss/buefy";
