@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import App from './App.vue'
 import Home from './components/Home.vue'
 import Trajectories from './components/Trajectories.vue'
+import RawDataList from './components/RawDataList.vue'
 import baseApi from './plugins/base-api.js';
 
 
@@ -20,20 +21,12 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(Buefy);
 Vue.use(VueRouter);
 
-const HomeComponent = {
-  template: '<Home/>',
-  components: { Home }
-}
-
-const TrajectoriesComponent = {
-  template: '<Trajectories/>',
-  components: { Trajectories }
-}
-
 const routes = [
   { path: '*', redirect: '/home' },
-  { path: '/home', component: HomeComponent },
-  { path: '/trajectories', component: TrajectoriesComponent },
+  { path: '/home', component: Home },
+  { path: '/trajectories', component: Trajectories },
+  { path: '/raw-data/countries', component: RawDataList, props: { nature: 'countries'} },
+  { path: '/raw-data/regions', component: RawDataList, props: { nature: 'regions'} },
 ]
 
 const router = new VueRouter({

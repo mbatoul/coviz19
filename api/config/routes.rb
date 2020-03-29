@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       resources :tweets, only: [:index]
       get '/zones/chart_data', to: 'zones#chart_data'
       get '/zones/trajectories_data', to: 'zones#trajectories_data'
+      get '/zones/raw-data', to: 'zones#raw_data'
     end
   end
 end

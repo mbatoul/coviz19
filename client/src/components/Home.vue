@@ -173,12 +173,12 @@
             class='column'
             v-bind:class='chartColumnClasses'
           >
-            <div class="chart-container">
-              <div
-                class='loading small'
-                v-if='confirmedChartData === null'>
-              </div>
-              <div style='width: 100%;' v-else>
+            <div
+              class='loading small'
+              v-if='isLoading'>
+            </div>
+            <div class="chart-container" v-else>
+              <div style='width: 100%;'>
                 <LineChart
                   v-bind:data='confirmedChartData'
                   v-bind:options="chartOptions('Confirmed')"
@@ -195,7 +195,7 @@
             <div class="chart-container">
               <div
                 class='loading small'
-                v-if='deathChartData === null'>
+                v-if='isLoading'>
               </div>
               <div style='width: 100%;' v-else>
                 <LineChart
@@ -214,7 +214,7 @@
             <div class="chart-container">
               <div
                 class='loading small'
-                v-if='recoveredChartData === null'>
+                v-if='isLoading'>
               </div>
               <div style='width: 100%;' v-else>
                 <LineChart
@@ -413,7 +413,6 @@ export default {
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
         this.lastUpdateDate = response.data.last_update_date;
-        console.log(this.lastUpdateDate)
         this.selectedZonesNames.push(...['world', 'italy', 'france', 'china', 'us']);
         this.updateTotals();
         this.ceilings = response.data.ceilings;

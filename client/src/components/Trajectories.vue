@@ -1,17 +1,16 @@
 <template>
-
   <div class="section">
-    <div class="container-fluid">
+    <div class="container is-fluid">
       <div class="columns is-centered">
         <div class="column is-two-thirds">
           <div class="content">
-            <div class="title is-2">
+            <div class="title">
               COVID trajectories
-            <div
-              class="loading small"
-              v-show='isLoading'
-            >
-            </div>
+              <div
+                class="loading small"
+                v-show='isLoading'
+              >
+              </div>
             </div>
             <div class="subtitle">
               Cumulative number of cases, by number of days since 100th case
@@ -159,18 +158,21 @@ export default {
 </script>
 
 <style scoped>
-  .container-fluid{
+  .container.is-fluid{
     min-height: 100vh;
   }
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 1s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
-  }
+
   .loading.small {
     display: inline-block;
+    position: absolute;
+    right: -50px;
   }
+
+  .title {
+    display: inline-block;
+    position: relative;
+  }
+
   .chart-container {
     height: 80vh;
     width: 100%;

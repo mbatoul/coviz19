@@ -41,4 +41,12 @@ class V1::ZonesController < ApplicationController
     @death_data = TrajectoriesDataService.call(category: 'death')
     @recovered_data = TrajectoriesDataService.call(category: 'recovered')
   end
+
+  def raw_data
+    if params[:parent_only] == 'true'
+      @raw_data = RawDataService.call(parent_only: true)
+    else
+      @raw_data = RawDataService.call(parent_only: false)
+    end
+  end
 end

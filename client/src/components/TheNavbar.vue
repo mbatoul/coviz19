@@ -21,11 +21,11 @@
         API documentation
       </b-navbar-item>
       <b-navbar-dropdown label="Raw data">
-        <b-navbar-item href="#">
-            Countries
+        <b-navbar-item tag="router-link" v-bind:to="{ path: '/raw-data/countries' }">
+          Countries
         </b-navbar-item>
-        <b-navbar-item href="#">
-            Regions
+        <b-navbar-item tag="router-link" v-bind:to="{ path: '/raw-data/regions' }">
+          Regions
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-item href="#">
