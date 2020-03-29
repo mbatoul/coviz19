@@ -375,10 +375,15 @@ export default {
       }
 
       this.updateTotals();
-      this.getChartData();
+      if (this.selectedZonesNames.length) {
+        this.getChartData();
+      }
     },
     dates: function () {
-      this.getChartData();
+      if (this.selectedZonesNames.length) {
+        this.getChartData();
+
+      }
     },
     windowWidth: function () {
       if (this.windowWidth < 1024) {
@@ -395,7 +400,6 @@ export default {
     this.isLoading = true;
     this.updateDates(this.pastMonthDates);
     this.getZones();
-    this.getChartData();
     this.isLoading = false;
   },
 

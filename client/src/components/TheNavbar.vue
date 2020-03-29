@@ -28,7 +28,7 @@
           Regions
         </b-navbar-item>
       </b-navbar-dropdown>
-      <b-navbar-item href="#">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/about' }">
         About
       </b-navbar-item>
       <b-navbar-item href="#">

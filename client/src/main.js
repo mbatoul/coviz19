@@ -9,6 +9,7 @@ import App from './App.vue'
 import Home from './components/Home.vue'
 import Trajectories from './components/Trajectories.vue'
 import RawDataList from './components/RawDataList.vue'
+import About from './components/About.vue'
 import baseApi from './plugins/base-api.js';
 
 
@@ -24,6 +25,7 @@ Vue.use(VueRouter);
 const routes = [
   { path: '*', redirect: '/home' },
   { path: '/home', component: Home },
+  { path: '/about', component: About },
   { path: '/trajectories', component: Trajectories },
   { path: '/raw-data/countries', component: RawDataList, props: { nature: 'countries'} },
   { path: '/raw-data/regions', component: RawDataList, props: { nature: 'regions'} },
