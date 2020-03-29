@@ -12,15 +12,15 @@ class TrajectoriesDataService
   }.freeze
   
   def initialize
-    DataPoint.categories.keys.each do |category|
-      instance_variable_set("@#{category}", call(category))
-      self.class.send(:attr_accessor, category)
-    end
     @zones = Zone.countries.order(:id)
     colored_zones = @zones.sort_by { |zone| DataPoint.where(zone_id: [zone.all_children.map(&:id) << zone.id]).sum(:value) }.
       last(NUMBER_OF_COLORED_ZONES).
       map(&:kebab_name)
     @colors_per_zones = Hash[colored_zones.zip COLORS]
+    DataPoint.categories.keys.each do |category|
+      instance_variable_set("@#{category}", call(category))
+      self.class.send(:attr_accessor, category)
+    end
   end
 
   def call(category)
