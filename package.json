@@ -1,0 +1,13 @@
+{
+  "name": "coviz19",
+  "version": "1.0.0",
+  "repository": "git@github.com:mbatoul/coviz19.git",
+  "author": "mbatoul <mathis.batoul@hotmail.fr>",
+  "license": "MIT",
+  "scripts": {
+    "build": "cd client && yarn install && yarn build && cd ..",
+    "deploy": "rm -rf ./public/* && cp -a client/dist/. public/",
+    "postinstall": "yarn build && yarn deploy"
+  },
+  "dependencies": {}
+}

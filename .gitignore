@@ -3,72 +3,72 @@
 
 ### Rails ###
 
-api/*.rbc
-api/capybara-*.html
-api/.rspec
-api/db/*.sqlite3
-api/db/*.sqlite3-journal
-api/public/system
-api/coverage/
-api/spec/tmp
-api/*.orig
-api/rerun.txt
-api/pickle-email-*.html
+*.rbc
+capybara-*.html
+.rspec
+db/*.sqlite3
+db/*.sqlite3-journal
+public/system
+coverage/
+spec/tmp
+*.orig
+rerun.txt
+pickle-email-*.html
 
 # Ignore all logfiles and tempfiles.
-api/log/*
-api/tmp/*
-api/!/log/.keep
-api/!/tmp/.keep
+log/*
+tmp/*
+!/log/.keep
+!/tmp/.keep
 
 # TODO Comment out this rule if you are OK with secrets being uploaded to the repo
-api/config/initializers/secret_token.rb
-api/config/master.key
+config/initializers/secret_token.rb
+config/master.key
 
 # Only include if you have production secrets in this file, which is no longer a Rails default
 # config/secrets.yml
 
 # dotenv
 # TODO Comment out this rule if environment variables can be committed
-api/.env
+.env
 
 ## Environment normalization:
-api/.bundle
-api/vendor/bundle
+.bundle
+vendor/bundle
 
 # these should all be checked in to normalize the environment:
 # Gemfile.lock, .ruby-version, .ruby-gemset
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
-api/.rvmrc
+.rvmrc
 
 # if using bower-rails ignore default bower_components path bower.json files
-api/vendor/assets/bower_components
-api/*.bowerrc
-api/bower.json
+vendor/assets/bower_components
+*.bowerrc
+bower.json
 
 # Ignore pow environment settings
-api/.powenv
+.powenv
 
 # Ignore Byebug command history file.
-api/.byebug_history
+.byebug_history
 
 # Ignore node_modules
-api/node_modules/
+node_modules/
 
 # Ignore precompiled javascript packs
-api/public/packs
-api/public/packs-test
-api/public/assets
+public/packs
+public/packs-test
+public/assets
 
 # Ignore yarn files
-api/yarn-error.log
-api/yarn-debug.log*
-api/.yarn-integrity
+yarn-error.log
+yarn-debug.log*
+.yarn-integrity
 
 # Ignore uploaded files in development
-api/storage/*
-api/!/storage/.keep
+storage/*
+!/storage/.keep
 
 ### Vuejs ###
 
