@@ -150,6 +150,7 @@ export default {
     display: inline-block;
     position: absolute;
     right: -50px;
+    top: 0;
   }
 
   .title {
