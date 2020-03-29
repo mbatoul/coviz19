@@ -117,7 +117,7 @@ export default {
       zoom: 4,
       mapCenter: [48.8566, 2.3522],
       maxBoundsViscosity: 1.0,
-      scrollWheelZoom: false,
+      scrollWheelZoom: true,
       attributionControl: false,
       maxBounds: Leaflet.latLngBounds(Leaflet.latLng(-90, -200), Leaflet.latLng(90, 200)),
       options: {
