@@ -23,8 +23,8 @@ Vue.use(Buefy);
 Vue.use(VueRouter);
 
 const routes = [
-  { path: '*', redirect: '/home' },
-  { path: '/home', component: Home },
+  { path: '*', redirect: '/' },
+  { path: '/', component: Home },
   { path: '/about', component: About },
   { path: '/trajectories', component: Trajectories },
   { path: '/raw-data/countries', component: RawDataList, props: { nature: 'countries'} },

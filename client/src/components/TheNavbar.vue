@@ -4,7 +4,7 @@
     v-bind:fixed-top='true'
   >
     <template slot="brand">
-      <b-navbar-item tag="router-link" v-bind:to="{ path: '/home' }">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/' }">
         <img
           src="../assets/logo.png"
           alt="Data visualization dashboard of COVID-19 spread"
@@ -14,7 +14,7 @@
     </template>
     
     <template slot="start">
-      <b-navbar-item tag="router-link" v-bind:to="{ path: '/home' }">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/' }">
         Home
       </b-navbar-item>
       <b-navbar-dropdown label="Raw data">
