@@ -8,6 +8,7 @@
       v-else
       v-for='(article, id) in articlesList'
       v-bind:key='id'
+      v-bind:author='article.provider.name'
       v-bind:title='article.title'
       v-bind:url-to-image='article.image.url'
       v-bind:url='article.url'

@@ -2,6 +2,7 @@
   <a v-bind:href="url" target='_blank'>
     <div class="news is-flex">
       <div class="flex-item">
+        <p class='has-text-weight-bold has-text-grey'>{{ author.toUpperCase() }}</p>
         <div class='content' v-html='title'>
         </div>
       </div>
