@@ -59,8 +59,17 @@ class ImportCovidDataService
         data_points = hash.select { |key, value| key.to_s.match(/\d{1,}\/\d{1,}\/\d{1,}/) }
         
         data_points.each do |date, value|
-          DataPoint.find_or_create_by(date: Date.strptime(date, '%m/%d/%y'), zone: zone, value: value.to_i, category: category)
+          new_data_point = DataPoint.find_or_create_by(date: Date.strptime(date, '%m/%d/%y'), zone: zone, value: value.to_i, category: category)
         end
+
+        active_data_point = DataPoint.find_or_create_by(date: Date.strptime(date, '%m/%d/%y'), zone: zone, category: 'active')
+        case category
+        when 'confirmed'
+          active_value = active_data_point.value + new_data_point.value
+        else
+          active_value = active_data_point.value - new_data_point.value
+        end
+        active_data_point.update_columns(value: active_value)
       end
     end
   end

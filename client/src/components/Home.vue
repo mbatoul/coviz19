@@ -168,6 +168,26 @@
             </div>
 
           </div>
+          <!-- confirmed -->
+          <div
+            class='column'
+            v-bind:class='chartColumnClasses'
+            v-if='false'
+          >
+            <div
+              class='loading small'
+              v-if='isLoading'>
+            </div>
+            <div class="chart-container" v-else>
+              <div style='width: 100%;'>
+                <LineChart
+                  v-bind:data='activeChartData'
+                  v-bind:options="chartOptions('Active')"
+                  v-bind:key='chartActiveKey'
+                />
+              </div>
+            </div>
+          </div>
             <!-- confirmed -->
           <div
             class='column'
@@ -300,10 +320,12 @@ export default {
       ceilings: {},
       isMultipleSelectionActive: true,
       deathChartData: null,
+      activeChartData: null,
       confirmedChartData: null,
       recoveredChartData: null,
       fullWidthMode: true,
       chartConfirmedKey: 0,
+      chartActiveKey: 0,
       chartDeathKey: 0,
       chartRecoveredKey: 0,
       windowWidth: 0,
@@ -440,6 +462,7 @@ export default {
           }
         )
         this.deathChartData = response.data.death_chart_data;
+        this.activeChartData = response.data.active_chart_data;
         this.confirmedChartData = response.data.confirmed_chart_data;
         this.recoveredChartData = response.data.recovered_chart_data;
       } catch (error) {

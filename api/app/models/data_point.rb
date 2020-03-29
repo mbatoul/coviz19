@@ -25,7 +25,8 @@ class DataPoint < ApplicationRecord
   enum category: [
     :confirmed,
     :death,
-    :recovered
+    :recovered,
+    :active,
   ]
 
   def self.execute_sql(*sql_array)     

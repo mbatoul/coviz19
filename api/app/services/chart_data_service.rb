@@ -34,6 +34,7 @@ class ChartDataService
         pointRadius: 0
       }
     end
+    
     if @is_world_included
       data[:datasets] << {
         data: world_data,
