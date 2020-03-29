@@ -7,36 +7,38 @@
           <div class="content">
             <div class="title is-2">
               COVID trajectories
+            <div
+              class="loading small"
+              v-show='isLoading'
+            >
+            </div>
             </div>
             <div class="subtitle">
               Cumulative number of cases, by number of days since 100th case
             </div>
           </div>
-          <div
-            class="loading"
-            v-if='isLoading'
-          >
-          </div>
-          <div class="charts-container" v-else>
-            <div class='chart-container'>
-              <LineChart
-                v-bind:data='confirmedData'
-                v-bind:options="chartOptions('confirmed')"
-              />
+          <transition name='fade'>
+            <div class="charts-container" v-if='!isLoading'>
+              <div class='chart-container'>
+                <LineChart
+                  v-bind:data='confirmedData'
+                  v-bind:options="chartOptions('confirmed')"
+                />
+              </div>
+              <div class='chart-container'>
+                <LineChart
+                  v-bind:data='deathData'
+                  v-bind:options="chartOptions('death')"
+                />
+              </div>
+              <div class='chart-container'>
+                <LineChart
+                  v-bind:data='recoveredData'
+                  v-bind:options="chartOptions('recovered')"
+                />
+              </div>
             </div>
-            <div class='chart-container'>
-              <LineChart
-                v-bind:data='deathData'
-                v-bind:options="chartOptions('death')"
-              />
-            </div>
-            <div class='chart-container'>
-              <LineChart
-                v-bind:data='recoveredData'
-                v-bind:options="chartOptions('recovered')"
-              />
-            </div>
-          </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -157,6 +159,18 @@ export default {
 </script>
 
 <style scoped>
+  .container-fluid{
+    min-height: 100vh;
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 1s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+  .loading.small {
+    display: inline-block;
+  }
   .chart-container {
     height: 80vh;
     width: 100%;
