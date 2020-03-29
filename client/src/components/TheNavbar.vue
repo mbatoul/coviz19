@@ -14,18 +14,20 @@
     </template>
     
     <template slot="start">
-      <b-navbar-item href="#">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/home' }">
         Home
       </b-navbar-item>
       <b-navbar-item href="#">
-        API
+        API documentation
       </b-navbar-item>
-      <b-navbar-item href="#">
-        Countries
-      </b-navbar-item>
-      <b-navbar-item href="#">
-        Regions
-      </b-navbar-item>
+      <b-navbar-dropdown label="Raw data">
+        <b-navbar-item href="#">
+            Countries
+        </b-navbar-item>
+        <b-navbar-item href="#">
+            Regions
+        </b-navbar-item>
+      </b-navbar-dropdown>
       <b-navbar-item href="#">
         About
       </b-navbar-item>
@@ -35,13 +37,12 @@
     </template>
 
     <template slot='end'>
-      <div
-        class='loading small'
-        v-if='lastUpdateDate === null'>
-      </div>
-      <div v-else>
-        Data updated on <strong>{{ lastUpdateDate }}</strong>
-      </div>
+      <b-button
+        type="is-warning"
+        tag="router-link" v-bind:to="{ path: '/trajectories' }"
+      >
+        See countries' trajectories
+      </b-button>
     </template>
   </b-navbar>
 </template>

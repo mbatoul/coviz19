@@ -31,4 +31,14 @@ class V1::ZonesController < ApplicationController
       params[:end_date]
     )
   end
+
+  def trajectories_data
+    @confirmed_threshold = TrajectoriesDataService::THRESHOLDS[:confirmed]
+    @death_threshold = TrajectoriesDataService::THRESHOLDS[:death]
+    @recovered_threshold = TrajectoriesDataService::THRESHOLDS[:recovered]
+
+    @confirmed_data = TrajectoriesDataService.call('confirmed')
+    @death_data = TrajectoriesDataService.call('death')
+    @recovered_data = TrajectoriesDataService.call('recovered')
+  end
 end

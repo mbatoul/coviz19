@@ -1,294 +1,284 @@
 <template>
-  <div id="app">
-    <div class="container is-fluid is-marginless">
-      <TheNavbar
-        v-bind:lastUpdateDate='lastUpdateDate'
-      />
-      <div class="columns is-desktop is-marginless">
-        <div
-          class="column is-paddingless left-side"
-          v-bind:class='leftSideColumnClass'
-        >
-          <div class="column-inner">
-            <div class="categories-container desktop">
-              <CategoriesBar
-                v-bind:currentCategory='currentCategory'
-                v-bind:totalDeath='totalDeath'
-                v-bind:totalConfirmed='totalConfirmed'
-                v-bind:totalRecovered='totalRecovered'
-                v-bind:isLoading='isLoading'
-                v-on:categorySelected='updateCurrentCategory'
-              />
-            </div>
-          
-            <TheMap
+  <div class="container is-fluid is-marginless">
+    <div class="columns is-desktop is-marginless">
+      <div
+        class="column is-paddingless left-side"
+        v-bind:class='leftSideColumnClass'
+      >
+        <div class="column-inner">
+          <div class="categories-container desktop">
+            <CategoriesBar
               v-bind:currentCategory='currentCategory'
-              v-bind:ceilings='ceilings'
-              v-bind:selectedZones='selectedZones'
-              v-bind:selectedZonesNames='selectedZonesNames'
-              v-bind:zonesWithMarkers='zonesWithMarkers'
-              v-bind:isWorldSelected='isWorldSelected'
-              v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
-              v-on:zoneSelected='onZoneSelectedFromMap'
-              v-on:zoneRemoved='onZoneRemoved'
+              v-bind:totalDeath='totalDeath'
+              v-bind:totalConfirmed='totalConfirmed'
+              v-bind:totalRecovered='totalRecovered'
+              v-bind:isLoading='isLoading'
+              v-on:categorySelected='updateCurrentCategory'
             />
-            <div
-              class="multiple-selection"
-              v-bind:class="{ 'active': isMultipleSelectionActive}"
-            >
-              <div class="field">
-                <b-checkbox
-                  size="is-medium"
-                  type='is-white'
-                  v-model='isMultipleSelectionActive'
+          </div>
+        
+          <TheMap
+            v-bind:currentCategory='currentCategory'
+            v-bind:ceilings='ceilings'
+            v-bind:selectedZones='selectedZones'
+            v-bind:selectedZonesNames='selectedZonesNames'
+            v-bind:zonesWithMarkers='zonesWithMarkers'
+            v-bind:isWorldSelected='isWorldSelected'
+            v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
+            v-on:zoneSelected='onZoneSelectedFromMap'
+            v-on:zoneRemoved='onZoneRemoved'
+          />
+          <div
+            class="multiple-selection"
+            v-bind:class="{ 'active': isMultipleSelectionActive}"
+          >
+            <div class="field">
+              <b-checkbox
+                size="is-medium"
+                type='is-white'
+                v-model='isMultipleSelectionActive'
+              >
+                Multiple selection
+              </b-checkbox>
+            </div>
+          </div>
+          <div class="categories-container mobile">
+            <CategoriesBar
+              v-bind:currentCategory='currentCategory'
+              v-bind:totalDeath='totalDeath'
+              v-bind:totalConfirmed='totalConfirmed'
+              v-bind:totalRecovered='totalRecovered'
+              v-bind:isLoading='isLoading'
+              v-on:categorySelected='updateCurrentCategory'
+            />
+          </div>
+        
+        </div>
+      </div>
+
+      <div class="column has-padding-large">
+        <div class="columns is-desktop is-multiline">
+          <!-- options -->
+          <div
+            class='column'
+            v-bind:class='chartColumnClasses'
+          >
+            <div class="box options">
+              <div class="information-section">
+                <div class="content">
+                  <label class="label">
+                    Instructions
+                  </label>
+                  <ul>
+                    <li>
+                      Select up to 5 zones, using the field below or the multiple selection mode on the map
+                    </li>
+                    <li>
+                      Choose a time period between January 22, 2020 and today
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+              <div class="options-section">
+                <div class="field" v-show='windowWidth > 1024'>
+                  <label class="label">Change layout</label>
+                  <label class="label"></label>
+                    <button
+                      class="button is-info"
+                      v-on:click='toggleFullWidthMode'
+                      v-if='fullWidthMode'
+                    >
+                      Grid
+                    </button>
+                    <button
+                      class="button is-info"
+                      v-on:click='toggleFullWidthMode'
+                      v-else
+                    >
+                      Full-width
+                    </button>
+                </div>
+                <div class="field">
+                  <label class="label">Time period</label>
+                  
+                  <div class="field-body">
+                    <div class="field">
+                      <b-field class='field is-horizontal'>
+                        <b-datepicker
+                          placeholder="Click to select..."
+                          v-model="dates"
+                          v-bind:min-date='minDate'
+                          v-bind:max-date='maxDate'
+                          class='is-small'
+                          range>
+                        </b-datepicker>
+                      </b-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="buttons">
+                  <button
+                    class="button is-info"
+                    v-on:click='updateDates(pastWeekDates)'
+                  >
+                    Past week
+                  </button>
+                  <button
+                    class="button is-info"
+                    v-on:click='updateDates(pastMonthDates)'
+                  >
+                    Past month
+                  </button>
+                  <button
+                    class="button is-success"
+                    v-on:click='updateDates([minDate, maxDate])'
+                  >
+                    Full period
+                  </button>
+                </div>
+                <div
+                  class='field multiselect-zones'
+                  v-bind:class="{ 'high': !fullWidthMode }"
                 >
-                  Multiple selection
-                </b-checkbox>
+                  <label class="label">Zones</label>
+                  <div class="field-body">
+                    <div class="field multiselect-field">
+                      <b-field>
+                        <Multiselect
+                          placeholder="Select one or multiple zones..."
+                          label='name'
+                          track-by='kebab_name'
+                          v-on:select='onZoneSelectedFromField'
+                          v-on:remove='onZoneRemoved'
+                          v-bind:value='arrayOfSelectedZones'
+                          v-bind:options='arrayOfAllZones'
+                          v-bind:multiple='true'
+                          v-bind:taggable='true'
+                          v-bind:close-on-select='true'
+                          v-bind:loading='isLoading'
+                          class='is-danger'
+                        />
+                      </b-field>
+                    </div>
+                  </div>
+                </div>
+                
               </div>
             </div>
-            <div class="categories-container mobile">
-              <CategoriesBar
-                v-bind:currentCategory='currentCategory'
-                v-bind:totalDeath='totalDeath'
-                v-bind:totalConfirmed='totalConfirmed'
-                v-bind:totalRecovered='totalRecovered'
-                v-bind:isLoading='isLoading'
-                v-on:categorySelected='updateCurrentCategory'
+
+          </div>
+            <!-- confirmed -->
+          <div
+            class='column'
+            v-bind:class='chartColumnClasses'
+          >
+            <div class="chart-container">
+              <div
+                class='loading small'
+                v-if='confirmedChartData === null'>
+              </div>
+              <div style='width: 100%;' v-else>
+                <LineChart
+                  v-bind:data='confirmedChartData'
+                  v-bind:options="chartOptions('Confirmed')"
+                  v-bind:key='chartConfirmedKey'
+                />
+              </div>
+            </div>
+          </div>
+          <!-- deaths -->
+          <div
+            class='column'
+            v-bind:class='chartColumnClasses'
+          >
+            <div class="chart-container">
+              <div
+                class='loading small'
+                v-if='deathChartData === null'>
+              </div>
+              <div style='width: 100%;' v-else>
+                <LineChart
+                  v-bind:data='deathChartData'
+                  v-bind:options="chartOptions('Deaths')"
+                  v-bind:key='chartDeathKey'
+                />
+              </div>
+            </div>
+          </div>
+          <!-- recovered -->
+          <div
+            class='column'
+            v-bind:class='chartColumnClasses'
+          >
+            <div class="chart-container">
+              <div
+                class='loading small'
+                v-if='recoveredChartData === null'>
+              </div>
+              <div style='width: 100%;' v-else>
+                <LineChart
+                  v-bind:data='recoveredChartData'
+                  v-bind:options="chartOptions('Recovered')"
+                  v-bind:key='chartRecoveredKey'
+                />
+              </div>
+            </div>
+          </div>
+          <!-- news -->
+          <div class="column is-half">
+            <div class="media-header flexbox">
+              <font-awesome-icon
+                v-bind:icon="['fas', 'newspaper']"
+                size='2x'
+              />
+              <p class="subtitle has-text-weight-bold is-5">Latest news</p>
+            </div>
+            <div class="news-container scrollable">
+              <NewsList
+                v-bind:zoneName='zoneForMedia'
               />
             </div>
-          
           </div>
-        </div>
-
-        <div class="column has-padding-large">
-          <div class="columns is-desktop is-multiline">
-            <!-- options -->
-            <div
-              class='column'
-              v-bind:class='chartColumnClasses'
-            >
-              <div class="box options">
-                <div class="information-section">
-                  <div class="content">
-                    <label class="label">
-                      Instructions
-                    </label>
-                    <ul>
-                      <li>
-                        Select up to 5 zones, using the field below or the multiple selection mode on the map
-                      </li>
-                      <li>
-                        Choose a time period between January 22, 2020 and today
-                      </li>
-                    </ul>
-                  </div>
-
-                </div>
-                <div class="options-section">
-                  <div class="field" v-show='windowWidth > 1024'>
-                    <label class="label">Change layout</label>
-                    <label class="label"></label>
-                      <button
-                        class="button is-info"
-                        v-on:click='toggleFullWidthMode'
-                        v-if='fullWidthMode'
-                      >
-                        Grid
-                      </button>
-                      <button
-                        class="button is-info"
-                        v-on:click='toggleFullWidthMode'
-                        v-else
-                      >
-                        Full-width
-                      </button>
-                  </div>
-                  <div
-                    class='field multiselect-zones'
-                    v-bind:class="{ 'high': !fullWidthMode }"
-                  >
-                    <label class="label">Zones</label>
-                    <div class="field-body">
-                      <div class="field multiselect-field">
-                        <b-field>
-                          <Multiselect
-                            placeholder="Select one or multiple zones..."
-                            label='name'
-                            track-by='kebab_name'
-                            v-on:select='onZoneSelectedFromField'
-                            v-on:remove='onZoneRemoved'
-                            v-bind:value='arrayOfSelectedZones'
-                            v-bind:options='arrayOfAllZones'
-                            v-bind:multiple='true'
-                            v-bind:taggable='true'
-                            v-bind:close-on-select='true'
-                            v-bind:loading='isLoading'
-                            class='is-danger'
-                          />
-                        </b-field>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="field">
-                    <label class="label">Time period</label>
-                    
-                    <div class="field-body">
-                      <div class="field">
-                        <b-field class='field is-horizontal'>
-                          <b-datepicker
-                            placeholder="Click to select..."
-                            v-model="dates"
-                            v-bind:min-date='minDate'
-                            v-bind:max-date='maxDate'
-                            class='is-small'
-                            range>
-                          </b-datepicker>
-                        </b-field>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="buttons">
-                    <button
-                      class="button is-info"
-                      v-on:click='updateDates(pastWeekDates)'
-                    >
-                      Past week
-                    </button>
-                    <button
-                      class="button is-info"
-                      v-on:click='updateDates(pastMonthDates)'
-                    >
-                      Past month
-                    </button>
-                    <button
-                      class="button is-success"
-                      v-on:click='updateDates([minDate, maxDate])'
-                    >
-                      Full period
-                    </button>
-                  </div>
-                </div>
-              </div>
-
+          <!-- tweets -->
+          <div class="column is-half">
+            <div class="media-header flexbox">
+              <font-awesome-icon
+                v-bind:icon="['fab', 'twitter-square']"
+                size='2x'
+              />
+              <p class="subtitle has-text-weight-bold is-5">Tweets</p>
             </div>
-             <!-- confirmed -->
-            <div
-              class='column'
-              v-bind:class='chartColumnClasses'
-            >
-              <div class="chart-container">
-                <div
-                  class='loading small'
-                  v-if='confirmedChartData === null'>
-                </div>
-                <div style='width: 100%;' v-else>
-                  <LineChart
-                    v-bind:data='confirmedChartData'
-                    v-bind:options="chartOptions('Confirmed')"
-                    v-bind:key='chartConfirmedKey'
-                  />
-                </div>
-              </div>
-            </div>
-            <!-- deaths -->
-            <div
-              class='column'
-              v-bind:class='chartColumnClasses'
-            >
-              <div class="chart-container">
-                <div
-                  class='loading small'
-                  v-if='deathChartData === null'>
-                </div>
-                <div style='width: 100%;' v-else>
-                  <LineChart
-                    v-bind:data='deathChartData'
-                    v-bind:options="chartOptions('Deaths')"
-                    v-bind:key='chartDeathKey'
-                  />
-                </div>
-              </div>
-            </div>
-            <!-- recovered -->
-            <div
-              class='column'
-              v-bind:class='chartColumnClasses'
-            >
-              <div class="chart-container">
-                <div
-                  class='loading small'
-                  v-if='recoveredChartData === null'>
-                </div>
-                <div style='width: 100%;' v-else>
-                  <LineChart
-                    v-bind:data='recoveredChartData'
-                    v-bind:options="chartOptions('Recovered')"
-                    v-bind:key='chartRecoveredKey'
-                  />
-                </div>
-              </div>
-            </div>
-            <!-- news -->
-            <div class="column is-half">
-              <div class="media-header flexbox">
-                <font-awesome-icon
-                  v-bind:icon="['fas', 'newspaper']"
-                  size='2x'
-                />
-                <p class="subtitle has-text-weight-bold is-5">News</p>
-              </div>
-              <div class="news-container scrollable">
-                <NewsList
-                  v-bind:zoneName='zoneForMedia'
-                />
-              </div>
-            </div>
-            <!-- tweets -->
-            <div class="column is-half">
-              <div class="media-header flexbox">
-                <font-awesome-icon
-                  v-bind:icon="['fab', 'twitter-square']"
-                  size='2x'
-                />
-                <p class="subtitle has-text-weight-bold is-5">Tweets</p>
-              </div>
-              <div class="tweets-container scrollable">
-                <TweetsList
-                  v-bind:zoneName='zoneForMedia'
-                />
-              </div>
+            <div class="tweets-container scrollable">
+              <TweetsList
+                v-bind:zoneName='zoneForMedia'
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <TheFooter />
   </div>
 </template>
 
 <script>
-import TheNavbar from './components/TheNavbar.vue';
 import CategoriesBar from './components/CategoriesBar.vue';
 import Multiselect from 'vue-multiselect';
 import TheMap from './components/TheMap.vue';
 import NewsList from './components/NewsList.vue';
 import TweetsList from './components/TweetsList.vue';
 import LineChart from './components/LineChart.vue';
-import TheFooter from './components/TheFooter.vue';
 import StringFormatter from './mixins/string-formatter.js';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 export default {
   components: {
-    TheNavbar,
     CategoriesBar,
     Multiselect,
     TheMap,
     NewsList,
     TweetsList,
     LineChart,
-    TheFooter,
   },
 
   mixins: [
@@ -302,17 +292,17 @@ export default {
       totalConfirmed: null,
       totalRecovered: null,
       currentCategory: 'confirmed',
-      dates: [new Date(2020, 0, 22), new Date()],
+      dates: [],
       minDate: new Date(2020, 0, 22),
       maxDate: new Date(),
       zones: {},
       selectedZonesNames: [],
       ceilings: {},
-      isMultipleSelectionActive: false,
+      isMultipleSelectionActive: true,
       deathChartData: null,
       confirmedChartData: null,
       recoveredChartData: null,
-      fullWidthMode: false,
+      fullWidthMode: true,
       chartConfirmedKey: 0,
       chartDeathKey: 0,
       chartRecoveredKey: 0,
@@ -403,6 +393,7 @@ export default {
 
   created () {
     this.isLoading = true;
+    this.updateDates(this.pastMonthDates);
     this.getZones();
     this.getChartData();
     this.isLoading = false;
@@ -411,7 +402,6 @@ export default {
   mounted () {
     this.windowWidth = window.innerWidth;
     window.addEventListener('resize', this.onResize);
-    this.$buefy.snackbar.open(`This data is sourced from <a>John Hopkins University</a>. Coviz19 also offers a public API for this data. <a>See docs</a>`);
   },
 
   methods: {
@@ -424,7 +414,7 @@ export default {
         this.zones = response.data.zones;
         this.lastUpdateDate = response.data.last_update_date;
         console.log(this.lastUpdateDate)
-        this.selectedZonesNames.push('world');
+        this.selectedZonesNames.push(...['world', 'italy', 'france', 'china', 'us']);
         this.updateTotals();
         this.ceilings = response.data.ceilings;
       } catch (error) {
@@ -555,14 +545,6 @@ export default {
 </script>
 
 <style>
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #646464;
-    background: #f1f4f6;
-  }
-
   .column.has-padding-large {
     padding: 1.5em !important;
   }
@@ -763,7 +745,7 @@ export default {
   }
 
   .field.multiselect-zones.high {
-    height: 120px;
+    height: 105px;
   }
 
   .error {
@@ -786,6 +768,8 @@ export default {
 
   $primary: #3273dc;
   $primary-invert: findColorInvert($primary);
+  $warning: #ffdb4a;
+  $warning-invert: findColorInvert($warning);
   $info: #3273dc;
   $info-invert: findColorInvert($info);
   $success: hsl(141, 53%, 53%);
@@ -795,7 +779,7 @@ export default {
   $light: #EAEAEA;
   $light-invert: findColorInvert($light);
 
-  $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert) )
+  $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert), "warning": ($warning, $warning-invert) )
   
   .multiselect__tag { background: $success; };
 

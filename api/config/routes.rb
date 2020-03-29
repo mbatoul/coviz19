@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :geojson_features, only: [:index]
       resources :tweets, only: [:index]
       get '/zones/chart_data', to: 'zones#chart_data'
+      get '/zones/trajectories_data', to: 'zones#trajectories_data'
     end
   end
 end

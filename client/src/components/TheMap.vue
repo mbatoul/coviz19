@@ -112,7 +112,7 @@ export default {
       defaultOpacity: 0.2,
       minZoom: 2,
       maxZoom: 6,
-      zoom: 3,
+      zoom: 2,
       mapCenter: [51.505, -0.09],
       maxBoundsViscosity: 1.0,
       scrollWheelZoom: false,
