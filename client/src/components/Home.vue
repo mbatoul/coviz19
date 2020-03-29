@@ -262,13 +262,13 @@
 </template>
 
 <script>
-import CategoriesBar from './components/CategoriesBar.vue';
+import CategoriesBar from './CategoriesBar.vue';
+import TheMap from './TheMap.vue';
+import NewsList from './NewsList.vue';
+import TweetsList from './TweetsList.vue';
+import LineChart from './LineChart.vue';
 import Multiselect from 'vue-multiselect';
-import TheMap from './components/TheMap.vue';
-import NewsList from './components/NewsList.vue';
-import TweetsList from './components/TweetsList.vue';
-import LineChart from './components/LineChart.vue';
-import StringFormatter from './mixins/string-formatter.js';
+import StringFormatter from '../mixins/string-formatter.js';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 export default {

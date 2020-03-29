@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class TrajectoriesDataService
+  include Service
+  attr_accessor :category
+
   COLORS = %w[#d00000 #ffba08 #3f88c5 #032b43 #136f63]
   DEFAULT_COLOR = '#BCBCBC'
   NUMBER_OF_COLORED_COUNTRIES = 5
@@ -9,14 +12,6 @@ class TrajectoriesDataService
     death: 10,
     recovered: 50
   }.freeze
-
-  def initialize(category)
-    @category = category
-  end
-
-  def self.call(*args)
-    new(*args).call
-  end
 
   def call
     result_data = {
@@ -52,8 +47,6 @@ class TrajectoriesDataService
 
       next if results.first.nil?
 
-      counter = 0
-
       results.each do |result|
         diff = result['date'].to_date - results.first['date'].to_date
         data << {
@@ -74,7 +67,6 @@ class TrajectoriesDataService
       }
     end
 
-    p result_data
     result_data
   end
 end

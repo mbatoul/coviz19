@@ -31,7 +31,6 @@ class Zone < ApplicationRecord
       sum(:value)
   end
 
-
   def total(category, opts = {})
     DataPoint.includes(:zone).
       where(zone_id: [id, all_children.map(&:id)].flatten).

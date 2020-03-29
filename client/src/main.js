@@ -1,14 +1,14 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import Buefy from 'buefy';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import baseApi from './plugins/base-api.js';
 import App from './App.vue'
-import Home from './Home.vue'
+import Home from './components/Home.vue'
 import Trajectories from './components/Trajectories.vue'
-import VueRouter from 'vue-router'
+import baseApi from './plugins/base-api.js';
 
 
 library.add(fas)

@@ -37,8 +37,8 @@ class V1::ZonesController < ApplicationController
     @death_threshold = TrajectoriesDataService::THRESHOLDS[:death]
     @recovered_threshold = TrajectoriesDataService::THRESHOLDS[:recovered]
 
-    @confirmed_data = TrajectoriesDataService.call('confirmed')
-    @death_data = TrajectoriesDataService.call('death')
-    @recovered_data = TrajectoriesDataService.call('recovered')
+    @confirmed_data = TrajectoriesDataService.call(category: 'confirmed')
+    @death_data = TrajectoriesDataService.call(category: 'death')
+    @recovered_data = TrajectoriesDataService.call(category: 'recovered')
   end
 end
