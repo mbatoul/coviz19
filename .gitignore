@@ -73,8 +73,6 @@ storage/*
 ### Vuejs ###
 
 client/.DS_Store
-client/node_modules
-client//dist
 client/node_modules/
 client/dist/
 client/npm-debug.log
