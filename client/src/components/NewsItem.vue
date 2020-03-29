@@ -49,7 +49,7 @@ export default {
   .news{
     align-items: center;
     justify-content: space-between;
-    color: #646464;
+    color: #1c2022;
     padding: 1.25rem;
     border-bottom: 1px solid #EAEAEA;
     width: 100%;
