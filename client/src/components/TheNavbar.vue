@@ -4,7 +4,7 @@
     v-bind:fixed-top='true'
   >
     <template slot="brand">
-      <b-navbar-item>
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/home' }">
         <img
           src="../assets/logo.png"
           alt="Data visualization dashboard of COVID-19 spread"
@@ -17,9 +17,6 @@
       <b-navbar-item tag="router-link" v-bind:to="{ path: '/home' }">
         Home
       </b-navbar-item>
-      <b-navbar-item href="#">
-        API documentation
-      </b-navbar-item>
       <b-navbar-dropdown label="Raw data">
         <b-navbar-item tag="router-link" v-bind:to="{ path: '/raw-data/countries' }">
           Countries
@@ -31,7 +28,10 @@
       <b-navbar-item tag="router-link" v-bind:to="{ path: '/about' }">
         About
       </b-navbar-item>
-      <b-navbar-item href="#">
+      <b-navbar-item href="https://github.com/mbatoul/coviz19" target='_blank'>
+        Source code
+      </b-navbar-item>
+      <b-navbar-item href='https://www.linkedin.com/in/mathisbatoul/' target='_blank'>
         Contact
       </b-navbar-item>
     </template>
