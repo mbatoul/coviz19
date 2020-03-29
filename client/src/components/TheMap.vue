@@ -240,6 +240,7 @@ export default {
   .map-container {
     flex-grow: 1;
     height: 100%;
+    position: relative;
   }
   .leaflet-control-container {
     position: absolute;
@@ -256,6 +257,12 @@ export default {
     height: -moz-calc(100vh - 84px);
     height: -webkit-calc(100vh - 84px);
     height: calc(100vh - 84px);
+  }
+
+  @media(max-width: 1024px) {
+    .leaflet-container {
+      height: calc(100vh - 200px);
+    }
   }
   
   .list-of-zones {
