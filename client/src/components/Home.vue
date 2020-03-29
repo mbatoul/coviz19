@@ -29,18 +29,14 @@
             v-on:zoneSelected='onZoneSelected'
             v-on:zoneRemoved='onZoneRemoved'
           />
-          <div class="categories-container mobile">
-            <CategoriesBar
-              v-bind:currentCategory='currentCategory'
-              v-bind:totalDeath='totalDeath'
-              v-bind:totalActive='totalActive'
-              v-bind:totalConfirmed='totalConfirmed'
-              v-bind:totalRecovered='totalRecovered'
-              v-bind:isLoading='isLoading'
-              v-on:categorySelected='updateCurrentCategory'
-            />
-          </div>
-        
+        </div>
+        <div class="trajectories-button-container mobile">
+          <b-button
+            type="is-warning"
+            tag="router-link" v-bind:to="{ path: '/trajectories' }"
+          >
+            See countries' trajectories
+          </b-button>
         </div>
       </div>
 
@@ -670,7 +666,7 @@ export default {
 
   .scrollable{
     overflow-y: scroll;
-    text-align: center;
+    /* text-align: center; */
     height: 500px;
   }
 
@@ -781,8 +777,12 @@ export default {
     width: 100%;
   }
 
-  .categories-container.mobile {
+  .trajectories-button-container.mobile {
     padding-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
   }
 
   @media(max-width: 1024px) {
@@ -792,7 +792,7 @@ export default {
   }
 
   @media(min-width: 1024px) {
-    .categories-container.mobile {
+    .trajectories-button-container.mobile {
       display: none;
     }
   }
@@ -809,8 +809,13 @@ export default {
     margin-top: 0;
   }
 
+  .field {
+    display: inline-block;
+  }
+
   .field.multiselect-zones {
     position: relative;
+    display: inline-block;
   }
 
   .news-container {
