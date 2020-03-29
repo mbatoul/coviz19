@@ -217,11 +217,6 @@ export default {
     onLayerClicked: function (event) {
       const zone = event.target.feature.zone_data;
 
-      if (!this.isMultipleSelectionActive) {
-        this.$emit('zoneSelected', zone);
-        return;
-      }
-
       if (this.selectedZonesNames.includes(zone.kebab_name)) {
         this.$emit('zoneRemoved', zone);
       } else {
