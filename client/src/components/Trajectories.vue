@@ -20,6 +20,12 @@
             <div class="charts-container" v-if='!isLoading'>
               <div class='chart-container'>
                 <LineChart
+                  v-bind:data='activeData'
+                  v-bind:options="chartOptions('active')"
+                />
+              </div>
+              <div class='chart-container'>
+                <LineChart
                   v-bind:data='confirmedData'
                   v-bind:options="chartOptions('confirmed')"
                 />
@@ -55,6 +61,7 @@ export default {
   data () {
     return {
       deathData: {},
+      activeData: {},
       confirmedData: {},
       recoveredData: {},
       deathThreshold: null,
@@ -77,10 +84,12 @@ export default {
       try {
         const response = await this.$http.get('/zones/trajectories_data.json')
         this.deathData = response.data.death_data;
+        this.activeData = response.data.active_data;
         this.confirmedData = response.data.confirmed_data;
         this.recoveredData = response.data.recovered_data;
 
         this.deathThreshold = response.data.death_threshold;
+        this.activeThreshold = response.data.active_threshold;
         this.confirmedThreshold = response.data.confirmed_threshold;
         this.recoveredThreshold = response.data.recovered_threshold;
         this.isLoading = false;
@@ -91,6 +100,7 @@ export default {
     chartTitle: function (category) {
       switch (category) {
         case 'confirmed': return `Cumulative number of confirmed cases, by number of days since ${this.confirmedThreshold}th confirmed case`;
+        case 'active': return `Cumulative number of active cases, by number of days since ${this.activeThreshold}th active case`;
         case 'death': return `Cumulative number of deaths cases, by number of days since ${this.deathThreshold}th death`;
         case 'recovered': return `Cumulative number of recovered cases, by number of days since ${this.recoveredThreshold}th recovery`;
       }
@@ -98,6 +108,7 @@ export default {
     xAxesTitle: function (category) {
       switch (category) {
         case 'confirmed': return `Number of days since the ${this.confirmedThreshold}th confirmed case`;
+        case 'active': return `Number of days since the ${this.activeThreshold}th active case`;
         case 'death': return `Number of days since the ${this.deathThreshold}th death`;
         case 'recovered': return `Number of days since the ${this.recoveredThreshold}th recovery`;
       }

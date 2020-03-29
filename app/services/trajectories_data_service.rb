@@ -1,32 +1,36 @@
 # frozen_string_literal: true
 
 class TrajectoriesDataService
-  include Service
-  attr_accessor :category
-
   COLORS = %w[#d00000 #ffba08 #3f88c5 #032b43 #136f63]
   DEFAULT_COLOR = '#BCBCBC'
-  NUMBER_OF_COLORED_COUNTRIES = 5
+  NUMBER_OF_COLORED_ZONES = 5
   THRESHOLDS = {
     confirmed: 100,
+    active: 100,
     death: 10,
     recovered: 50
   }.freeze
+  
+  def initialize
+    DataPoint.categories.keys.each do |category|
+      instance_variable_set("@#{category}", call(category))
+      self.class.send(:attr_accessor, category)
+    end
+    @zones = Zone.countries.order(:id)
+    colored_zones = @zones.sort_by { |zone| DataPoint.where(zone_id: [zone.all_children.map(&:id) << zone.id]).sum(:value) }.
+      last(NUMBER_OF_COLORED_ZONES).
+      map(&:kebab_name)
+    @colors_per_zones = Hash[colored_zones.zip COLORS]
+  end
 
-  def call
+  def call(category)
     result_data = {
       datasets: []
     }
 
-    countries = Zone.countries
-
-    countries_with_colors = countries.sort_by { |country| country.total(@category) }.last(NUMBER_OF_COLORED_COUNTRIES).map(&:kebab_name)
-
-    colors_per_countries = Hash[countries_with_colors.zip COLORS]
-    
-    countries.each do |country|
+    @zones.each do |zone|
       data = []
-      zone_ids = country.all_children.map(&:id) << country.id
+      zone_ids = zone.all_children.map(&:id) << zone.id
       
       query = '
         SELECT date, sum(value) as total
@@ -40,9 +44,9 @@ class TrajectoriesDataService
       
       results = DataPoint.execute_sql(
         query,
-        DataPoint.categories[@category],
+        DataPoint.categories[category],
         zone_ids,
-        THRESHOLDS[@category.to_sym]
+        THRESHOLDS[category.to_sym]
       )
 
       next if results.first.nil?
@@ -55,12 +59,12 @@ class TrajectoriesDataService
         }
       end
 
-      coloured = colors_per_countries[country.kebab_name].present?
+      coloured = @colors_per_zones[zone.kebab_name].present?
 
       result_data[:datasets] << {
         data: data,
-        label: country.name,
-        borderColor: colors_per_countries[country.kebab_name] || DEFAULT_COLOR,
+        label: zone.name,
+        borderColor: @colors_per_zones[zone.kebab_name] || DEFAULT_COLOR,
         fill: false,
         borderWidth: coloured ? 3 : 2,
         pointRadius: coloured ? 3 : 0
