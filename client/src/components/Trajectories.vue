@@ -186,6 +186,7 @@ export default {
     flex-grow: 1;
     min-height: 0;
     overflow-y: scroll;
+    display: block;
   }
 
   .chart-container > div {
