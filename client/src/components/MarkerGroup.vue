@@ -44,6 +44,7 @@ export default {
         death: '#AC3131',
         confirmed: '#3388ff',
         recovered: '#27a89d',
+        active: '#ffdb4a',
       }
     }
   },

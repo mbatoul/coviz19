@@ -21,9 +21,6 @@
             <div class="control is-flex">
               <b-switch v-model="isPaginated">Paginated</b-switch>
             </div>
-            <div class="control is-flex">
-              <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Simple pagination</b-switch>
-            </div>
           </b-field>
           
           <transition name='fade'>
@@ -33,7 +30,6 @@
               :paginated="isPaginated"
               :per-page="perPage"
               :current-page.sync="currentPage"
-              :pagination-simple="isPaginationSimple"
               :pagination-position="paginationPosition"
               :default-sort-direction="defaultSortDirection"
               :sort-icon="sortIcon"
@@ -51,6 +47,10 @@
 
                 <b-table-column field="parent_name" label="Country" sortable searchable>
                   {{ props.row.parent_name }}
+                </b-table-column>
+
+                <b-table-column field="active" label="Active cases" sortable numeric>
+                  {{ props.row.active }}
                 </b-table-column>
 
                 <b-table-column field="confirmed" label="Confirmed cases" sortable numeric>
@@ -94,10 +94,8 @@ export default {
       rawData: [],
       isLoading: false,
       isPaginated: true,
-      isPaginationSimple: false,
       paginationPosition: 'bottom',
-      defaultSortDirection: 'asc',
-      sortIcon: 'arrow-up',
+      defaultSortDirection: 'desc',
       sortIconSize: 'is-small',
       currentPage: 1,
       perPage: 20,
@@ -145,7 +143,7 @@ export default {
 
 <style scoped>
   .container.is-fluid {
-    min-height: 500vh;
+    min-height: 100vh;
   }
 
   .loading.small {

@@ -30,6 +30,12 @@ class V1::ZonesController < ApplicationController
       params[:start_date],
       params[:end_date]
     )
+    @active_chart_data = ChartDataService.call(
+      params[:zones],
+      'active',
+      params[:start_date],
+      params[:end_date]
+    )
   end
 
   def trajectories_data

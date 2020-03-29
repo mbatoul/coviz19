@@ -139,6 +139,9 @@ export default {
               fontSize: 20
             },
             type: "linear",
+            gridLines: {
+              drawOnChartArea:false
+            }
           }],
           yAxes: [
             {
@@ -146,6 +149,9 @@ export default {
                 precision: 0,
                 beginAtZero: true,
                 position: 'left'
+              },
+              gridLines: {
+                drawOnChartArea:false
               }
             },
           ],

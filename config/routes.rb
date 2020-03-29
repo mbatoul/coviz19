@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  get '*path', to: 'application#fallback', constraints: ->(request) do
+    !request.xhr? && request.format.html?
+  end
+
   scope '/api', defaults: { format: :json } do
     namespace :v1 do
       resources :zones, only: [:index]

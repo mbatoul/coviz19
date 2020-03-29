@@ -2,21 +2,21 @@
   <nav class="level">
     <div class="level-item has-text-centered">
       <div
-        class='has-text-danger box-category shadow'
-        v-on:click="onCategorySelected('death')"
-        v-bind:class=" { 'selected': currentCategory === 'death' }"
+        class='has-text-warning box-category shadow'
+        v-on:click="onCategorySelected('active')"
+        v-bind:class=" { 'selected': currentCategory === 'active' }"
       >
-        <p class="heading is-size-8 has-text-weight-bold">Deaths</p>
+        <p class="heading is-size-8 has-text-weight-bold">Active</p>
         <div class="box-category-figure">
           <div
             class='loading white small'
-            v-if='totalDeath === null'>
+            v-if='totalActive === null'>
           </div>
           <p
             class="title is-size-4 has-text-light"
             v-else
           >
-            {{ numberWithCommas(totalDeath) }}
+            {{ numberWithCommas(totalActive) }}
           </p>
         </div>
       </div>
@@ -39,6 +39,28 @@
         >
           {{ numberWithCommas(totalConfirmed) }}
         </p>
+      </div>
+    </div>
+
+    <div class="level-item has-text-centered">
+      <div
+        class='has-text-danger box-category shadow'
+        v-on:click="onCategorySelected('death')"
+        v-bind:class=" { 'selected': currentCategory === 'death' }"
+      >
+        <p class="heading is-size-8 has-text-weight-bold">Deaths</p>
+        <div class="box-category-figure">
+          <div
+            class='loading white small'
+            v-if='totalDeath === null'>
+          </div>
+          <p
+            class="title is-size-4 has-text-light"
+            v-else
+          >
+            {{ numberWithCommas(totalDeath) }}
+          </p>
+        </div>
       </div>
     </div>
 
@@ -70,6 +92,10 @@ export default {
     currentCategory: {
       type: String,
       required: true,
+    },
+    totalActive: {
+      required: true,
+      validator: prop => typeof prop === 'number' || prop === null
     },
     totalDeath: {
       required: true,

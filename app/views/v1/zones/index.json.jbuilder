@@ -12,6 +12,7 @@ json.cache! expires_in: 12.hours do
           json.death zone.total('death')
           json.confirmed zone.total('confirmed')
           json.recovered zone.total('recovered')
+          json.active zone.total('active')
         end
       end
     end
@@ -26,6 +27,7 @@ json.cache! expires_in: 12.hours do
         json.death Zone.total('death')
         json.confirmed Zone.total('confirmed')
         json.recovered Zone.total('recovered')
+        json.active Zone.total('active')
       end
     end
   end
@@ -34,6 +36,7 @@ json.cache! expires_in: 12.hours do
     json.death DataPoint.where(category: 'death').most_recent_by_zone.sum(:value)
     json.confirmed DataPoint.where(category: 'confirmed').most_recent_by_zone.sum(:value)
     json.recovered DataPoint.where(category: 'recovered').most_recent_by_zone.sum(:value)
+    json.active DataPoint.where(category: 'active').most_recent_by_zone.sum(:value)
   end
 
 end

@@ -9,6 +9,7 @@
           <div class="categories-container desktop">
             <CategoriesBar
               v-bind:currentCategory='currentCategory'
+              v-bind:totalActive='totalActive'
               v-bind:totalDeath='totalDeath'
               v-bind:totalConfirmed='totalConfirmed'
               v-bind:totalRecovered='totalRecovered'
@@ -25,27 +26,14 @@
             v-bind:zonesWithMarkers='zonesWithMarkers'
             v-bind:isWorldSelected='isWorldSelected'
             v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
-            v-on:zoneSelected='onZoneSelectedFromMap'
+            v-on:zoneSelected='onZoneSelected'
             v-on:zoneRemoved='onZoneRemoved'
           />
-          <div
-            class="multiple-selection"
-            v-bind:class="{ 'active': isMultipleSelectionActive}"
-          >
-            <div class="field">
-              <b-checkbox
-                size="is-medium"
-                type='is-white'
-                v-model='isMultipleSelectionActive'
-              >
-                Multiple selection
-              </b-checkbox>
-            </div>
-          </div>
           <div class="categories-container mobile">
             <CategoriesBar
               v-bind:currentCategory='currentCategory'
               v-bind:totalDeath='totalDeath'
+              v-bind:totalActive='totalActive'
               v-bind:totalConfirmed='totalConfirmed'
               v-bind:totalRecovered='totalRecovered'
               v-bind:isLoading='isLoading'
@@ -60,8 +48,7 @@
         <div class="columns is-desktop is-multiline">
           <!-- options -->
           <div
-            class='column'
-            v-bind:class='chartColumnClasses'
+            class='column is-full'
           >
             <div class="box options">
               <div class="information-section">
@@ -81,24 +68,48 @@
 
               </div>
               <div class="options-section">
-                <div class="field" v-show='windowWidth > 1024'>
-                  <label class="label">Change layout</label>
-                  <label class="label"></label>
+                <div class="field layout" v-show='windowWidth > 1024'>
                     <button
                       class="button is-info"
                       v-on:click='toggleFullWidthMode'
                       v-if='fullWidthMode'
                     >
-                      Grid
+                      Display grid
                     </button>
                     <button
                       class="button is-info"
                       v-on:click='toggleFullWidthMode'
                       v-else
                     >
-                      Full-width
+                      Display full-width
                     </button>
                 </div>
+                <label class="label">Category</label>
+                <b-field style='flex-wrap: wrap;'>
+                  <b-radio-button v-model="currentCategory"
+                    native-value="active"
+                    type="is-warning">
+                    <span>Active</span>
+                  </b-radio-button>
+
+                  <b-radio-button v-model="currentCategory"
+                    native-value="confirmed"
+                    type="is-primary">
+                    <span>Confirmed</span>
+                  </b-radio-button>
+
+                  <b-radio-button v-model="currentCategory"
+                    native-value="death"
+                    type="is-danger">
+                    <span>Deaths</span>
+                  </b-radio-button>
+
+                  <b-radio-button v-model="currentCategory"
+                    native-value="recovered"
+                    type="is-success">
+                    <span>Recovered</span>
+                  </b-radio-button>
+                </b-field>
                 <div class="field">
                   <label class="label">Time period</label>
                   
@@ -142,6 +153,26 @@
                   v-bind:class="{ 'high': !fullWidthMode }"
                 >
                   <label class="label">Zones</label>
+                  <div style='display: flex; flex-wrap: wrap;'>
+                    <b-field>
+                      <b-checkbox
+                        v-model='isMultipleSelectionActive'
+                        type="is-primary"
+                        style='margin-right: 20px;'
+                      >
+                        <span>Select multiple zones on the map</span>
+                      </b-checkbox>
+                    </b-field>
+                    <b-field>
+                      <b-checkbox
+                        v-model='isWorldSelected'
+                        type="is-primary"
+                      >
+                        <span>Compare to world</span>
+                      </b-checkbox>
+                    </b-field>
+
+                  </div>
                   <div class="field-body">
                     <div class="field multiselect-field">
                       <b-field>
@@ -149,7 +180,7 @@
                           placeholder="Select one or multiple zones..."
                           label='name'
                           track-by='kebab_name'
-                          v-on:select='onZoneSelectedFromField'
+                          v-on:select='onZoneSelected'
                           v-on:remove='onZoneRemoved'
                           v-bind:value='arrayOfSelectedZones'
                           v-bind:options='arrayOfAllZones'
@@ -168,11 +199,10 @@
             </div>
 
           </div>
-          <!-- confirmed -->
+          <!-- active -->
           <div
             class='column'
             v-bind:class='chartColumnClasses'
-            v-if='false'
           >
             <div
               class='loading small'
@@ -309,9 +339,10 @@ export default {
     return {
       isLoading: false,
       totalDeath: null,
+      totalActive: null,
       totalConfirmed: null,
       totalRecovered: null,
-      currentCategory: 'confirmed',
+      currentCategory: 'active',
       dates: [],
       minDate: new Date(2020, 0, 22),
       maxDate: new Date(),
@@ -348,8 +379,17 @@ export default {
     arrayOfSelectedZones: function () {
       return Object.values(this.selectedZones);
     },
-    isWorldSelected: function () {
-      return this.selectedZonesNames.includes('world');
+    isWorldSelected: {
+      get: function () {
+        return this.selectedZonesNames.includes('world');
+      },
+      set: function (value) {
+        if (value) {
+          this.selectedZonesNames.push('world');
+        } else {
+          this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf('world'));
+        }
+      }
     },
     zonesWithMarkers: function () {
       let zones;
@@ -496,11 +536,17 @@ export default {
               tooltipFormat: 'll',
               unit: 'day'
             },
+            gridLines: {
+              drawOnChartArea:false
+            }
           }],
           yAxes: [{
             ticks: {
               precision: 0,
               beginAtZero: true,
+            },
+            gridLines: {
+              drawOnChartArea:false
             }
           }],
         }
@@ -508,6 +554,7 @@ export default {
     },
     updateTotals: function () {
       if (this.isWorldSelected) {
+        this.totalActive = this.zones.world.values.active;
         this.totalDeath = this.zones.world.values.death;
         this.totalConfirmed = this.zones.world.values.confirmed;
         this.totalRecovered = this.zones.world.values.recovered;
@@ -533,7 +580,7 @@ export default {
     updateDates: function (dates) {
       this.dates = dates;
     },
-    onZoneSelectedFromMap: function (zone) {
+    onZoneSelected: function (zone) {
       if (this.isMultipleSelectionActive) {
         if (this.selectedZonesNames.length > 5) {
           return;
@@ -544,11 +591,6 @@ export default {
         this.selectedZonesNames = [];
         this.selectedZonesNames.push(zone.kebab_name);
       }
-    },
-    onZoneSelectedFromField: function (zone) {
-      if (this.selectedZonesNames.length > 5) return;
-
-      this.selectedZonesNames.push(zone.kebab_name);
     },
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
@@ -705,6 +747,7 @@ export default {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+    position: relative;
   }
 
   .multiselect-field {
@@ -770,10 +813,6 @@ export default {
     position: relative;
   }
 
-  .field.multiselect-zones.high {
-    height: 105px;
-  }
-
   .news-container {
     padding-top: 12px;
   }
@@ -784,6 +823,12 @@ export default {
       height: calc(100vh - 84px);
       top: 84px;
     }
+  }
+
+  .field.layout {
+    position: absolute;
+    top: 15px;
+    right: 15px;
   }
 </style>
 
@@ -796,9 +841,9 @@ export default {
   $warning-invert: findColorInvert($warning);
   $info: #3273dc;
   $info-invert: findColorInvert($info);
-  $success: hsl(141, 53%, 53%);
+  $success: #35AC5E;
   $success-invert: findColorInvert($success);
-  $danger: hsl(348, 100%, 61%);
+  $danger: #FF3860;
   $danger-invert: findColorInvert($danger);
   $light: #EAEAEA;
   $light-invert: findColorInvert($light);

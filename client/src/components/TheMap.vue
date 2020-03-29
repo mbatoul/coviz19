@@ -27,6 +27,7 @@
         v-bind:maxBoundsViscosity='maxBoundsViscosity'
         v-bind:maxBounds='maxBounds'
         v-bind:options="{ scrollWheelZoom: scrollWheelZoom, attributionControl: attributionControl }"
+        ref='leafletMap'
       >
         <LTileLayer
           v-bind:url='basemapUrl'
@@ -107,6 +108,7 @@ export default {
         death: '#e84545',
         confirmed: '#3f72af',
         recovered: '#00b8a9',
+        active: '#ffdb4a',
       },
       defaultWeight: 1,
       defaultOpacity: 0.2,
@@ -126,11 +128,7 @@ export default {
 
   computed: {
     displayedListOfZones: function () {
-      if (this.isWorldSelected) {
-        return [this.selectedZones.world];
-      } else {
-        return Object.values(this.selectedZones);
-      }
+      return Object.values(this.selectedZones);
     },
   },
 
@@ -171,7 +169,7 @@ export default {
     },
 
     layerStyle: function(isSelected) {
-      const weight = isSelected ? this.defaultWeight + 2 : this.defaultWeight;
+      const weight = isSelected ? this.defaultWeight + 2.5 : this.defaultWeight;
 
       return {
         fill: true,
@@ -218,6 +216,11 @@ export default {
 
     onLayerClicked: function (event) {
       const zone = event.target.feature.zone_data;
+
+      if (!this.isMultipleSelectionActive) {
+        this.$emit('zoneSelected', zone);
+        return;
+      }
 
       if (this.selectedZonesNames.includes(zone.kebab_name)) {
         this.$emit('zoneRemoved', zone);

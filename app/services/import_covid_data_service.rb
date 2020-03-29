@@ -7,9 +7,9 @@ class ImportCovidDataService
   require 'json'
 
   SOURCES = {
-    death: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv',
     confirmed: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',
-    recovered: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
+    death: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv',
+    recovered: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv',
   }
 
   COUNTRY_CODE_URL = 'https://restcountries.eu/rest/v2/name/{}?fullText=true'
@@ -60,16 +60,16 @@ class ImportCovidDataService
         
         data_points.each do |date, value|
           new_data_point = DataPoint.find_or_create_by(date: Date.strptime(date, '%m/%d/%y'), zone: zone, value: value.to_i, category: category)
-        end
 
-        active_data_point = DataPoint.find_or_create_by(date: Date.strptime(date, '%m/%d/%y'), zone: zone, category: 'active')
-        case category
-        when 'confirmed'
-          active_value = active_data_point.value + new_data_point.value
-        else
-          active_value = active_data_point.value - new_data_point.value
+          active_data_point = DataPoint.find_or_create_by(date: Date.strptime(date, '%m/%d/%y'), zone: zone, category: 'active')
+          case category.to_s
+          when 'confirmed'
+            active_value = active_data_point.value.to_i + new_data_point.value
+          else
+            active_value = active_data_point.value.to_i - new_data_point.value
+          end
+          active_data_point.update_columns(value: active_value)
         end
-        active_data_point.update_columns(value: active_value)
       end
     end
   end

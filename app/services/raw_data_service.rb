@@ -16,6 +16,7 @@ class RawDataService
         confirmed: zone.total('confirmed'),
         death: zone.total('death'),
         recovered: zone.total('recovered'),
+        active: zone.total('active'),
       }
     end
   end
