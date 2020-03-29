@@ -71,7 +71,7 @@
                   </label>
                   <ul>
                     <li>
-                      Select up to 5 zones, using the field below or the multiple selection mode on the map
+                      Select up to 6 zones, using the field below or the multiple selection mode on the map
                     </li>
                     <li>
                       Choose a time period between January 22, 2020 and today
@@ -508,7 +508,7 @@ export default {
     },
     onZoneSelectedFromMap: function (zone) {
       if (this.isMultipleSelectionActive) {
-        if (this.selectedZonesNames.length > 4) {
+        if (this.selectedZonesNames.length > 5) {
           return;
         } else {
           this.selectedZonesNames.push(zone.kebab_name);
@@ -519,7 +519,7 @@ export default {
       }
     },
     onZoneSelectedFromField: function (zone) {
-      if (this.selectedZonesNames.length > 4) return;
+      if (this.selectedZonesNames.length > 5) return;
 
       this.selectedZonesNames.push(zone.kebab_name);
     },
@@ -747,10 +747,8 @@ export default {
     height: 105px;
   }
 
-  .error {
-    font-size: 12px;
-    position: absolute;
-    bottom: 12px;
+  .news-container {
+    padding-top: 12px;
   }
 
   @media(min-width: 1024px) {

@@ -112,8 +112,8 @@ export default {
       defaultOpacity: 0.2,
       minZoom: 2,
       maxZoom: 6,
-      zoom: 2,
-      mapCenter: [51.505, -0.09],
+      zoom: 4,
+      mapCenter: [48.8566, 2.3522],
       maxBoundsViscosity: 1.0,
       scrollWheelZoom: false,
       attributionControl: false,
@@ -145,6 +145,7 @@ export default {
 
   created () {
     this.getGeojsons();
+    setTimeout(() => this.zoom = this.zoom -2, 4000);
   },
 
   methods: {
