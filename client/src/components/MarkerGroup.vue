@@ -5,7 +5,7 @@
     v-bind:radius='radius'
     v-bind:fill-color='fillColor'
     v-bind:color='fillColor'
-    v-bind:fill-opacity='0.5'
+    v-bind:fill-opacity='0.2'
     v-bind:pane="'mapPane'"
   />
 </template>
