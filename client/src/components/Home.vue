@@ -2,7 +2,7 @@
   <div class="container is-fluid is-marginless">
     <div class="columns is-desktop is-marginless">
       <div
-        class="column is-paddingless left-side is-two-thirds"
+        class="column is-paddingless left-side"
         v-bind:class='leftSideColumnClass'
       > 
         <div class="column-inner">
@@ -90,6 +90,7 @@
                     <span>Recovered</span>
                   </b-radio-button>
                 </b-field>
+                <p class='has-text-grey-light category-explanation'>{{ categoryExplanationMessage }}</p>
                 <div class="field time-period">
                   <label class="label">Time period</label>
                   
@@ -102,6 +103,7 @@
                           v-bind:min-date='minDate'
                           v-bind:max-date='maxDate'
                           class='is-small'
+                          v-bind:mobile-native='true'
                           range>
                         </b-datepicker>
                       </b-field>
@@ -337,6 +339,13 @@ export default {
       windowWidth: 0,
       lastUpdateDate: null,
       maximumZonesSelected: 10,
+      leftSideColumnClass: 'is-two-thirds-desktop',
+      categoryExplanationMessages: {
+        'active': 'Current number of active cases',
+        'confirmed': 'Total number of cases since the beginning of the pandemic',
+        'death': 'Total number of deaths since the beginning of the pandemic',
+        'recovered': 'Total number of recoveries since the beginning of the pandemic',
+      }
     }
   },
 
@@ -396,6 +405,9 @@ export default {
     zoneForMedia: function () {
       return this.selectedZonesNames[this.selectedZonesNames.length - 1];
     },
+    categoryExplanationMessage: function () {
+      return this.categoryExplanationMessages[this.currentCategory];
+    }
   },
 
   watch: {
@@ -557,13 +569,6 @@ export default {
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
     },
-    leftSideColumnClass: function () {
-      if (window.innerWidth < 1024){
-        return 'is-full'
-      } else {
-        return 'is-two-fifths'
-      }
-    },
   },
 }
 </script>
@@ -626,7 +631,6 @@ export default {
 
   .scrollable{
     overflow-y: scroll;
-    /* text-align: center; */
     height: 500px;
   }
 
@@ -799,8 +803,12 @@ export default {
     width: 100%;
   }
 
-  .field.multiselect-zones > .field {
+  .field.multiselect-zones, .multiselect-field > .field {
     width: 100%;
+  }
+
+  .category-explanation {
+    margin-bottom: 0.75em;
   }
 </style>
 
