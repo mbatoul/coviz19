@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Buefy from 'buefy';
+import VueAnalytics from 'vue-analytics';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { fas } from '@fortawesome/free-solid-svg-icons'
@@ -22,6 +23,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(Buefy);
 Vue.use(VueRouter);
 
+
 const routes = [
   { path: '*', redirect: '/' },
   { path: '/', component: Home },
@@ -40,3 +42,8 @@ new Vue({
   render: h => h(App),
   router
 }).$mount('#app')
+
+Vue.use(VueAnalytics, {
+  id: 'UA-162208244-1',
+  router
+});

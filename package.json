@@ -13,5 +13,7 @@
     "deploy": "rm -rf ./public/* && cp -a client/dist/. public/",
     "postinstall": "yarn build && yarn deploy"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vue-analytics": "^5.22.1"
+  }
 }
