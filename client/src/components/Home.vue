@@ -54,7 +54,7 @@
                   </label>
                   <ul>
                     <li>
-                      Select up to 6 zones, using the field below or the multiple selection mode on the map
+                      Select up to {{ maximumZonesSelected }} zones, using the field below or the multiple selection mode on the map
                     </li>
                     <li>
                       Choose a time period between January 22, 2020 and today
@@ -126,19 +126,19 @@
                 </div>
                 <div class="buttons">
                   <button
-                    class="button is-info"
+                    class="button is-outlined"
                     v-on:click='updateDates(pastWeekDates)'
                   >
                     Past week
                   </button>
                   <button
-                    class="button is-info"
+                    class="button is-outlined"
                     v-on:click='updateDates(pastMonthDates)'
                   >
                     Past month
                   </button>
                   <button
-                    class="button is-success"
+                    class="button is-outlined"
                     v-on:click='updateDates([minDate, maxDate])'
                   >
                     Full period
@@ -357,6 +357,7 @@ export default {
       chartRecoveredKey: 0,
       windowWidth: 0,
       lastUpdateDate: null,
+      maximumZonesSelected: 10
     }
   },
 
@@ -381,9 +382,9 @@ export default {
       },
       set: function (value) {
         if (value) {
-          this.selectedZonesNames.push('world');
+          this.onZoneSelected('world');
         } else {
-          this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf('world'));
+          this.onZoneRemoved('world');
         }
       }
     },
@@ -558,14 +559,17 @@ export default {
         let totalDeath = 0;
         let totalConfirmed = 0;
         let totalRecovered = 0;
+        let totalActive = 0;
 
         Object.values(this.selectedZones).forEach((zone) => {
           totalDeath += zone.values.death
           totalConfirmed += zone.values.confirmed
           totalRecovered += zone.values.recovered
+          totalActive += zone.values.active
         })
 
         this.totalDeath = totalDeath;
+        this.totalActive = totalActive;
         this.totalConfirmed = totalConfirmed;
         this.totalRecovered = totalRecovered;
       }
@@ -578,7 +582,7 @@ export default {
     },
     onZoneSelected: function (zone) {
       if (this.isMultipleSelectionActive) {
-        if (this.selectedZonesNames.length > 5) {
+        if (this.selectedZonesNames.length > this.maximumZonesSelected) {
           return;
         } else {
           this.selectedZonesNames.push(zone.kebab_name);
