@@ -1,4 +1,4 @@
-json.cache! expires_in: 12.hours do
+json.cache! expires_in: 2.hours do
   json.set! :zones do
     @zones.each do |zone|
       json.set! zone.kebab_name do
