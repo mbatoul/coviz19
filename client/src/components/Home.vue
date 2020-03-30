@@ -33,7 +33,7 @@
         <div class="trajectories-button-container mobile">
           <b-button
             type="is-warning"
-            tag="router-link" v-bind:to="{ path: '/trajectories' }"
+            tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
           >
             See countries' trajectories
           </b-button>
@@ -515,7 +515,7 @@ export default {
           display: true,
           text: title,
           fontSize: 18,
-          position: 'bottom'
+          position: 'top'
         },
         tooltips: {
 					mode: 'index',

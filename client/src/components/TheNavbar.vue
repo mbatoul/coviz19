@@ -4,7 +4,7 @@
     v-bind:fixed-top='true'
   >
     <template slot="brand">
-      <b-navbar-item tag="router-link" v-bind:to="{ path: '/' }">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-map' }">
         <img
           src="../assets/logo.png"
           alt="Data visualization dashboard of COVID-19 spread"
@@ -14,14 +14,14 @@
     </template>
     
     <template slot="start">
-      <b-navbar-item tag="router-link" v-bind:to="{ path: '/' }">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-map' }">
         Home
       </b-navbar-item>
       <b-navbar-dropdown label="Raw data">
-        <b-navbar-item tag="router-link" v-bind:to="{ path: '/raw-data/countries' }">
+        <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-data/countries' }">
           Countries
         </b-navbar-item>
-        <b-navbar-item tag="router-link" v-bind:to="{ path: '/raw-data/regions' }">
+        <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-data/regions' }">
           Regions
         </b-navbar-item>
       </b-navbar-dropdown>
@@ -31,15 +31,12 @@
       <b-navbar-item href="https://github.com/mbatoul/coviz19" target='_blank'>
         Source code
       </b-navbar-item>
-      <b-navbar-item href='https://www.linkedin.com/in/mathisbatoul/' target='_blank'>
-        Contact
-      </b-navbar-item>
     </template>
 
     <template slot='end'>
       <b-button
         type="is-warning"
-        tag="router-link" v-bind:to="{ path: '/trajectories' }"
+        tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
       >
         See countries' trajectories
       </b-button>

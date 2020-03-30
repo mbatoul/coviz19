@@ -189,9 +189,9 @@ export default {
       layer.bindTooltip(
         `<div>
           <p><strong>${feature.zone_data.name}</strong></p>
-          <p>${that.maybePluralize(feature.zone_data.death, 'death')}</p>
-          <p>${feature.zone_data.confirmed} confirmed</p>
-          <p>${feature.zone_data.recovered} recovered</p>
+          <p>${that.maybePluralize(feature.zone_data.death.toLocaleString(), 'death')}</p>
+          <p>${(feature.zone_data.confirmed.toLocaleString())} confirmed</p>
+          <p>${feature.zone_data.recovered.toLocaleString()} recovered</p>
         </div>`,
         {
           permanent: false,
