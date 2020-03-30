@@ -450,7 +450,7 @@ export default {
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
         this.lastUpdateDate = response.data.last_update_date;
-        this.selectedZonesNames.push(...['italy', 'france', 'china', 'us']);
+        this.selectedZonesNames.push(...['italy', 'france', 'china', 'us', 'world']);
         this.updateTotals();
         this.ceilings = response.data.ceilings;
       } catch (error) {
