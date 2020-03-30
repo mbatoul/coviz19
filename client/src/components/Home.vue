@@ -163,6 +163,7 @@
                       <b-checkbox
                         v-model='isWorldSelected'
                         type="is-primary"
+                        v-if='this.selectedZonesNames.length < this.maximumZonesSelected'
                       >
                         <span>Compare to world</span>
                       </b-checkbox>
@@ -382,9 +383,9 @@ export default {
       },
       set: function (value) {
         if (value) {
-          this.onZoneSelected('world');
+          this.onZoneSelected(this.zones.world);
         } else {
-          this.onZoneRemoved('world');
+          this.onZoneRemoved(this.zones.world);
         }
       }
     },

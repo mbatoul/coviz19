@@ -111,7 +111,7 @@ export default {
         active: '#ffdb4a',
       },
       defaultWeight: 1,
-      defaultOpacity: 0.2,
+      defaultOpacity: 0.1,
       minZoom: 2,
       maxZoom: 6,
       zoom: 4,
@@ -169,14 +169,15 @@ export default {
     },
 
     layerStyle: function(isSelected) {
-      const weight = isSelected ? this.defaultWeight + 2.5 : this.defaultWeight;
+      const weight = isSelected ? this.defaultWeight + 1 : this.defaultWeight;
+      const opacity = isSelected ? this.defaultOpacity + 0.5 : this.defaultOpacity;
 
       return {
         fill: true,
         color: this.defaultColors[this.currentCategory],
         weight: weight,
         fillColor: this.defaultColors[this.currentCategory],
-        fillOpacity: this.defaultOpacity
+        fillOpacity: opacity
       }
     },
 
@@ -201,13 +202,13 @@ export default {
 
       layer.on('mouseover', function () {
         this.setStyle({
-          fillOpacity: that.defaultOpacity + 0.2
+          fillOpacity: this.options.fillOpacity + 0.2
         })
       });
 
       layer.on('mouseout', function () {
         this.setStyle({
-          fillOpacity: that.defaultOpacity
+          fillOpacity: this.options.fillOpacity - 0.2
         })
       });
 
