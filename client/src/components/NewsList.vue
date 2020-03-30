@@ -60,7 +60,7 @@ export default {
     getArticles: async function () {
       try {
         this.isLoading = true;
-        const response = await newsApi.get(`?q=coronavirus,covid,${this.zoneName}&pageSize=10`)
+        const response = await newsApi.get(`?q=coronavirus,covid,${this.zoneName === 'world' ? '' : this.zoneName}&pageSize=10`)
         this.articlesList = [];
         this.articlesList.push(... response.data.value);
         this.isLoading = false;
