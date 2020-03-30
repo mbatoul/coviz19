@@ -2,9 +2,9 @@
   <div class="container is-fluid is-marginless">
     <div class="columns is-desktop is-marginless">
       <div
-        class="column is-paddingless left-side"
+        class="column is-paddingless left-side is-two-thirds"
         v-bind:class='leftSideColumnClass'
-      >
+      > 
         <div class="column-inner">
           <div class="categories-container desktop">
             <CategoriesBar
@@ -64,22 +64,6 @@
 
               </div>
               <div class="options-section">
-                <div class="field layout" v-show='windowWidth > 1024'>
-                    <button
-                      class="button is-info"
-                      v-on:click='toggleFullWidthMode'
-                      v-if='fullWidthMode'
-                    >
-                      Display grid
-                    </button>
-                    <button
-                      class="button is-info"
-                      v-on:click='toggleFullWidthMode'
-                      v-else
-                    >
-                      Display full-width
-                    </button>
-                </div>
                 <label class="label">Category</label>
                 <b-field style='flex-wrap: wrap;'>
                   <b-radio-button v-model="currentCategory"
@@ -106,7 +90,7 @@
                     <span>Recovered</span>
                   </b-radio-button>
                 </b-field>
-                <div class="field">
+                <div class="field time-period">
                   <label class="label">Time period</label>
                   
                   <div class="field-body">
@@ -146,7 +130,6 @@
                 </div>
                 <div
                   class='field multiselect-zones'
-                  v-bind:class="{ 'high': !fullWidthMode }"
                 >
                   <label class="label">Zones</label>
                   <div style='display: flex; flex-wrap: wrap;'>
@@ -163,7 +146,7 @@
                       <b-checkbox
                         v-model='isWorldSelected'
                         type="is-primary"
-                        v-if='this.selectedZonesNames.length < this.maximumZonesSelected'
+                        v-if="this.selectedZonesNames.length < this.maximumZonesSelected"
                       >
                         <span>Compare to world</span>
                       </b-checkbox>
@@ -199,7 +182,6 @@
           <!-- active -->
           <div
             class='column'
-            v-bind:class='chartColumnClasses'
           >
             <div
               class='loading small'
@@ -218,7 +200,6 @@
             <!-- confirmed -->
           <div
             class='column'
-            v-bind:class='chartColumnClasses'
           >
             <div
               class='loading small'
@@ -237,7 +218,6 @@
           <!-- deaths -->
           <div
             class='column'
-            v-bind:class='chartColumnClasses'
           >
             <div class="chart-container">
               <div
@@ -256,7 +236,6 @@
           <!-- recovered -->
           <div
             class='column'
-            v-bind:class='chartColumnClasses'
           >
             <div class="chart-container">
               <div
@@ -273,7 +252,7 @@
             </div>
           </div>
           <!-- news -->
-          <div class="column is-half">
+          <div class="column is-full">
             <div class="media-header flexbox">
               <font-awesome-icon
                 v-bind:icon="['fas', 'newspaper']"
@@ -288,7 +267,7 @@
             </div>
           </div>
           <!-- tweets -->
-          <div class="column is-half">
+          <div class="column is-full">
             <div class="media-header flexbox">
               <font-awesome-icon
                 v-bind:icon="['fab', 'twitter-square']"
@@ -351,14 +330,13 @@ export default {
       activeChartData: null,
       confirmedChartData: null,
       recoveredChartData: null,
-      fullWidthMode: true,
       chartConfirmedKey: 0,
       chartActiveKey: 0,
       chartDeathKey: 0,
       chartRecoveredKey: 0,
       windowWidth: 0,
       lastUpdateDate: null,
-      maximumZonesSelected: 10
+      maximumZonesSelected: 10,
     }
   },
 
@@ -418,14 +396,6 @@ export default {
     zoneForMedia: function () {
       return this.selectedZonesNames[this.selectedZonesNames.length - 1];
     },
-    chartColumnClasses: function () {
-      if (this.fullWidthMode) {
-        return 'column is-full';
-      } else {
-        return 'column is-half';
-      }
-    },
-
   },
 
   watch: {
@@ -445,15 +415,6 @@ export default {
 
       }
     },
-    windowWidth: function () {
-      if (this.windowWidth < 1024) {
-        this.fullWidthMode = true;
-      } else {
-        if (!this.fullWidthMode) {
-          this.fullWidthMode = false;
-        }
-      }
-    }
   },
 
   created () {
@@ -477,7 +438,7 @@ export default {
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
         this.lastUpdateDate = response.data.last_update_date;
-        this.selectedZonesNames.push(...['world', 'italy', 'france', 'china', 'us']);
+        this.selectedZonesNames.push(...['italy', 'france', 'china', 'us']);
         this.updateTotals();
         this.ceilings = response.data.ceilings;
       } catch (error) {
@@ -595,12 +556,6 @@ export default {
     },
     onZoneRemoved: function (zone) {
       this.$delete(this.selectedZonesNames, this.selectedZonesNames.indexOf(zone.kebab_name));
-    },
-    toggleFullWidthMode: function () {
-      this.fullWidthMode = !this.fullWidthMode;
-      this.chartConfirmedKey = this.chartConfirmedKey + 1;
-      this.chartDeathKey = this.chartDeathKey + 1;
-      this.chartRecoveredKey = this.chartRecoveredKey + 1;
     },
     leftSideColumnClass: function () {
       if (window.innerWidth < 1024){
@@ -751,10 +706,6 @@ export default {
     position: relative;
   }
 
-  .multiselect-field {
-    height: 50px;
-  }
-
   .chart-container {
     display: flex;
     justify-content: center;
@@ -821,6 +772,7 @@ export default {
   .field.multiselect-zones {
     position: relative;
     display: inline-block;
+    width: 100%;
   }
 
   .news-container {
@@ -835,10 +787,20 @@ export default {
     }
   }
 
-  .field.layout {
-    position: absolute;
-    top: 15px;
-    right: 15px;
+  .field.time-period {
+    width: 100%;
+  }
+
+  .field.time-period .field {
+    width: 100%;
+  }
+
+  .field.multiselect-zones {
+    width: 100%;
+  }
+
+  .field.multiselect-zones > .field {
+    width: 100%;
   }
 </style>
 
