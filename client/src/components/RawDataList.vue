@@ -142,10 +142,6 @@ export default {
 </script>
 
 <style scoped>
-  .container.is-fluid {
-    min-height: 100vh;
-  }
-
   .loading.small {
     display: inline-block;
     position: absolute;
