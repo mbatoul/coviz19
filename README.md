@@ -2,15 +2,26 @@
 
 > Visualization dashboard for coronavirus pandemic built with Ruby-On-Rails and VueJS
 
-## :books: Table of Contents
+## Table of Contents
 
-- [Setup](#package-setup)
-- [Database design](#floppy_disk-database-design)
-- [Import COVID data](#chart_with_upwards_trend-import-covid-data)
-- [Import geographic data](#earth_americas-import-geographic-data)
-- [Usage](#rocket-usage)
+- [Introduction](#introduction)
+- [Setup](#setup)
+- [Database design](#database-design)
+- [Import COVID data](#import-covid-data)
+- [Import geographic data](#import-geographic-data)
+- [Usage](#usage)
 
-## :package: Setup
+## Introduction
+
+[Coviz19](https://www.coviz19.com/coronavirus-map) is a visualization dashboard for coronavirus spread.
+
+It is built as a Ruby-On-Rails 6 API and VueJS front-end.
+
+It currently provides an interactive map and several sets of charts. The data used is sourced from [John Hopkins University](https://github.com/CSSEGISandData/COVID-19). A script downloads the data from the CSV files on this [repository](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series) and stores it in the database.
+
+In your development environment, the scripts must be executed as explained below.
+
+## Setup
 
 ### Requirements
 
@@ -50,9 +61,11 @@ createdb coviz_dev
 ```sh
 rails db:migrate
 ```
-## :floppy_disk: Database design
+## Database design
 
 The database has three tables:
+
+![Image of database design](https://coviz-19-bucket.s3.eu-west-3.amazonaws.com/erd-1.jpg)
 
 ### `zones`
 
@@ -81,7 +94,7 @@ It stores the geographic data displayed on the map. It `belongs_to` to a `zone` 
 
 [Learn more about GeoJSON](https://fr.wikipedia.org/wiki/GeoJSON)
 
-## :chart_with_upwards_trend: Import COVID data
+## Import COVID data
 
 The COVID data used by Coviz19 is sourced from this [repo](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series).
 
@@ -107,7 +120,7 @@ Finds or creates the corresponding `zone` record  for each line and creates a `d
 
 It also creates a `data_point` of category `active` for each date. Its value is calculated as `confirmed - death - recovered` of each zone at a precise date.
 
-## :earth_americas: Import geographic data
+## Import geographic data
 
 Use the `import_geojson_features` rake task
 
@@ -118,9 +131,9 @@ rake import_geojson_features
 It downloads 232 GeoJSON features from a remote AWS S3 bucket, find the corresponding `zone` record and stores the GeoJSON in the `geojson_features` table.
 
 
-## :rocket: Usage
+## Usage
 
-The rake task `start` executes our `Procfile.dev` file that runs our API and client server.
+The rake task `start` executes our `Procfile.dev` file that runs our API and client servers.
 
 ```sh
 rake start
