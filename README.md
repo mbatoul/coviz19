@@ -2,7 +2,7 @@
 
 > Visualization dashboard for coronavirus pandemic built with Ruby-On-Rails and VueJS
 
-## :books: Table of Contents
+## Table of Contents
 
 - [Setup](#setup)
 - [Database design](#database-design)
