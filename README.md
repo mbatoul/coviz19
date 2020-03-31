@@ -120,7 +120,7 @@ It downloads 232 GeoJSON features from a remote AWS S3 bucket, find the correspo
 
 ## Usage
 
-The rake task `start` executes our `Procfile.dev` file that runs our API and client server.
+The rake task `start` executes our `Procfile.dev` file that runs our API and client servers.
 
 ```sh
 rake start
