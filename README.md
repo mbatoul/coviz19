@@ -4,7 +4,7 @@
 
 ## :books: Table of Contents
 
-- [Installation](#package-setup)
+- [Setup](#package-setup)
 - [Database design](#floppy_disk-database-design)
 - [Import COVID data](#chart_with_upwards_trend-import-covid-data)
 - [Import geographic data](earth_americas-import-geographic-data)
