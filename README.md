@@ -4,6 +4,7 @@
 
 ## Table of Contents
 
+- [Introduction](#introduction)
 - [Setup](#setup)
 - [Database design](#database-design)
 - [Import COVID data](#import-covid-data)
@@ -53,6 +54,8 @@ rails db:migrate
 ## Database design
 
 The database has three tables:
+
+![Image of database design](https://coviz-19-bucket.s3.eu-west-3.amazonaws.com/erd-1.jpg)
 
 ### `zones`
 
