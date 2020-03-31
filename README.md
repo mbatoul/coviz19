@@ -7,7 +7,7 @@
 - [Setup](#package-setup)
 - [Database design](#floppy_disk-database-design)
 - [Import COVID data](#chart_with_upwards_trend-import-covid-data)
-- [Import geographic data](earth_americas-import-geographic-data)
+- [Import geographic data](#earth_americas-import-geographic-data)
 - [Usage](#rocket-usage)
 
 ## :package: Setup
@@ -83,7 +83,7 @@ It stores the geographic data displayed on the map. It `belongs_to` to a `zone` 
 
 ## :chart_with_upwards_trend: Import COVID data
 
-The COVID data used by Coviz19 is sourced from this repo: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series.
+The COVID data used by Coviz19 is sourced from this [repo](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series).
 
 To download the data, use the `import_covid_data` rake task.
 
@@ -93,15 +93,15 @@ rake import_covid_data
 
 It currently successively downloads the following CSV files and format the data in order to fit the database schema.
 
-1. https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
+1. [Confirmed cases data](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv)
 
 Finds or creates the corresponding `zone` record  for each line and creates a `data_point` of category `confirmed` for each column.
 
-2. https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv
+2. [Deaths data](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv)
 
 Finds or creates the corresponding `zone` record  for each line and creates a `data_point` of category `death` for each column.
 
-3. https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv
+3. [Recovered cases data](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv)
 
 Finds or creates the corresponding `zone` record  for each line and creates a `data_point` of category `recovered` for each column.
 
