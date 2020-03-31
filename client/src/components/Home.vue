@@ -31,7 +31,7 @@
         </div>
 
         <div class="column is-one-third-desktop">
-          <div class="trajectories-button-container mobile">
+          <div class="trajectories-button-container">
             <b-button
               type="is-warning"
               tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
@@ -597,11 +597,17 @@ export default {
     }
   }
 
-  .trajectories-button-container.mobile {
+  .trajectories-button-container {
     padding: 0px 0px 25px 0px;
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  @media(min-width: 1024px) {
+    .trajectories-button-container {
+      display: none;
+    }
   }
 
   .information-section {
