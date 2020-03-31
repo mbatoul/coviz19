@@ -1,58 +1,37 @@
 <template>
   <div class="map-container">
-    <div
-      class="list-of-zones"
+    <LMap class="leaflet-map"
+      v-bind:minZoom="minZoom"
+      v-bind:maxZoom="maxZoom"
+      v-bind:zoom="zoom"
+      v-bind:center="mapCenter"
+      v-bind:maxBoundsViscosity='maxBoundsViscosity'
+      v-bind:maxBounds='maxBounds'
+      v-bind:options="{ scrollWheelZoom: scrollWheelZoom, attributionControl: attributionControl }"
+      ref='leafletMap'
     >
-      <div
-        class='country-container flexbox end'
-        v-for='(zone, id) in displayedListOfZones'
+      <LTileLayer
+        v-bind:url='basemapUrl'
+      />
+      <LGeoJson
+        v-bind:geojson="geojsons"
+        v-bind:options='options'
+        ref='geoJson'
+      />
+      <MarkerGroup
+        v-for='(zone, id) in zonesWithMarkers'
         v-bind:key='id'
-      >
-        <h5 class="subtitle title">
-          {{ zone.name }}
-        </h5>
-        <SvgItem
-          v-bind:folder="'flags'"
-          v-bind:name='zone.svg_flag_name'
-        />
-      </div>
-    </div>
-
-    <div class="leaflet-container">
-      <LMap class="leaflet-map"
-        v-bind:minZoom="minZoom"
-        v-bind:maxZoom="maxZoom"
-        v-bind:zoom="zoom"
-        v-bind:center="mapCenter"
-        v-bind:maxBoundsViscosity='maxBoundsViscosity'
-        v-bind:maxBounds='maxBounds'
-        v-bind:options="{ scrollWheelZoom: scrollWheelZoom, attributionControl: attributionControl }"
-        ref='leafletMap'
-      >
-        <LTileLayer
-          v-bind:url='basemapUrl'
-        />
-        <LGeoJson
-          v-bind:geojson="geojsons"
-          v-bind:options='options'
-          ref='geoJson'
-        />
-        <MarkerGroup
-          v-for='(zone, id) in zonesWithMarkers'
-          v-bind:key='id'
-          v-bind:category='currentCategory'
-          v-bind:coordinates='[zone.lat, zone.lng]'
-          v-bind:values='zone.values'
-          v-bind:ceilings='ceilings'
-        />
-      </LMap>
-    </div>
+        v-bind:category='currentCategory'
+        v-bind:coordinates='[zone.lat, zone.lng]'
+        v-bind:values='zone.values'
+        v-bind:ceilings='ceilings'
+      />
+    </LMap>
   </div>
 </template>
 
 <script>
 import Leaflet from 'leaflet';
-import SvgItem from './SvgItem.vue';
 import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
 import ColorGradient from '../mixins/color-gradient.js';
 import StringFormatter from '../mixins/string-formatter.js';
@@ -65,7 +44,6 @@ export default {
     LTileLayer,
     LGeoJson,
     MarkerGroup,
-    SvgItem
   },
 
   props: {
@@ -110,7 +88,7 @@ export default {
         recovered: '#00b8a9',
         active: '#ffdb4a',
       },
-      defaultWeight: 1,
+      defaultWeight: 0.25,
       defaultOpacity: 0.1,
       minZoom: 2,
       maxZoom: 6,
@@ -169,7 +147,7 @@ export default {
     },
 
     layerStyle: function(isSelected) {
-      const weight = isSelected ? this.defaultWeight + 1 : this.defaultWeight;
+      const weight = isSelected ? this.defaultWeight + 0.25 : this.defaultWeight;
       const opacity = isSelected ? this.defaultOpacity + 0.5 : this.defaultOpacity;
 
       return {
@@ -229,53 +207,22 @@ export default {
 </script>
 
 <style>
-  .leaflet-map {
+  .map-container {
+    position: relative;
+    display: flex;
     height: 100%;
     width: 100%;
   }
-  .map-container {
-    flex-grow: 1;
+
+  .leaflet-map {
     height: 100%;
-    position: relative;
+    width: 100%;
+    flex-grow: 1;
   }
+
   .leaflet-control-container {
     position: absolute;
     bottom: 0px;
     bottom: 100px;
-  }
-</style>
-
-<style scoped>
-  .leaflet-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    height: -moz-calc(100vh - 84px);
-    height: -webkit-calc(100vh - 84px);
-    height: calc(100vh - 84px);
-  }
-
-  @media(max-width: 1024px) {
-    .leaflet-container {
-      height: calc(100vh - 200px);
-    }
-  }
-  
-  .list-of-zones {
-    position: absolute;
-    z-index: 1000;
-    right: 15px;
-    bottom: 20px;
-    padding: 5px;
-  }
-
-  .country-container {
-    margin-bottom: 10px;
-  }
-
-  .country-container h5 {
-    margin: 0 !important;
-    margin-left: 15px !important;
-    color: white;
   }
 </style>

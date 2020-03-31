@@ -67,7 +67,7 @@ class TrajectoriesDataService
         borderColor: @colors_per_zones[zone.kebab_name] || DEFAULT_COLOR,
         fill: false,
         borderWidth: coloured ? 3 : 2,
-        pointRadius: coloured ? 3 : 0
+        pointRadius: coloured ? 1 : 0
       }
     end
 

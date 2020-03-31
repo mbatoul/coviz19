@@ -13,7 +13,7 @@
             v-if='totalActive === null'>
           </div>
           <p
-            class="title is-size-4 has-text-light"
+            class="title is-size-5 has-text-light"
             v-else
           >
             {{ numberWithCommas(totalActive) }}
@@ -34,7 +34,7 @@
           v-if='totalConfirmed === null'>
         </div>
         <p
-          class="title is-size-4 has-text-light"
+          class="title is-size-5 has-text-light"
           v-else 
         >
           {{ numberWithCommas(totalConfirmed) }}
@@ -55,7 +55,7 @@
             v-if='totalDeath === null'>
           </div>
           <p
-            class="title is-size-4 has-text-light"
+            class="title is-size-5 has-text-light"
             v-else
           >
             {{ numberWithCommas(totalDeath) }}
@@ -76,7 +76,7 @@
           v-if='totalRecovered === null'>
         </div>
         <p
-          class="title is-size-4 has-text-light"
+          class="title is-size-5 has-text-light"
           v-else 
         >
           {{ numberWithCommas(totalRecovered) }}
@@ -127,13 +127,18 @@ export default {
 </script>
 
 <style scoped>
+  .level-item {
+    flex-basis: 15% !important;
+    flex-grow: 1 !important;
+  }
+
   .box-category {
-    padding: 20px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     border: 1px solid #646464;
-    width: 160px;
-    height: 65px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -148,13 +153,5 @@ export default {
 
   .box-category.selected {
     border: 2px solid white;
-  }
-
-  .box-category .box-category-figure{
-    height: 30px;
-  }
-
-  .categories {
-    margin-bottom: 25px;
   }
 </style>

@@ -1,283 +1,192 @@
 <template>
-  <div class="container is-fluid is-marginless">
-    <div class="columns is-desktop is-marginless">
-      <div
-        class="column is-paddingless left-side"
-        v-bind:class='leftSideColumnClass'
-      > 
-        <div class="column-inner">
-          <div class="categories-container desktop">
-            <CategoriesBar
+  <div class="section">
+    <div class="container is-fluid is-marginless">
+      <div class="columns is-desktop">
+        <div class="column is-two-thirds-desktop left-side">
+          <div class="map-wrapper">
+            <div class="categories-wrapper">
+              <CategoriesBar
+                v-bind:currentCategory='currentCategory'
+                v-bind:totalActive='totalActive'
+                v-bind:totalDeath='totalDeath'
+                v-bind:totalConfirmed='totalConfirmed'
+                v-bind:totalRecovered='totalRecovered'
+                v-bind:isLoading='isLoading'
+                v-on:categorySelected='updateCurrentCategory'
+              />
+            </div>
+            <TheMap
               v-bind:currentCategory='currentCategory'
-              v-bind:totalActive='totalActive'
-              v-bind:totalDeath='totalDeath'
-              v-bind:totalConfirmed='totalConfirmed'
-              v-bind:totalRecovered='totalRecovered'
-              v-bind:isLoading='isLoading'
-              v-on:categorySelected='updateCurrentCategory'
+              v-bind:ceilings='ceilings'
+              v-bind:selectedZones='selectedZones'
+              v-bind:selectedZonesNames='selectedZonesNames'
+              v-bind:zonesWithMarkers='zonesWithMarkers'
+              v-bind:isWorldSelected='isWorldSelected'
+              v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
+              v-on:zoneSelected='onZoneSelected'
+              v-on:zoneRemoved='onZoneRemoved'
             />
           </div>
-        
-          <TheMap
-            v-bind:currentCategory='currentCategory'
-            v-bind:ceilings='ceilings'
-            v-bind:selectedZones='selectedZones'
-            v-bind:selectedZonesNames='selectedZonesNames'
-            v-bind:zonesWithMarkers='zonesWithMarkers'
-            v-bind:isWorldSelected='isWorldSelected'
-            v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
-            v-on:zoneSelected='onZoneSelected'
-            v-on:zoneRemoved='onZoneRemoved'
-          />
+
         </div>
-        <div class="trajectories-button-container mobile">
-          <b-button
-            type="is-warning"
-            tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
-          >
-            See countries' trajectories
-          </b-button>
-        </div>
-      </div>
 
-      <div class="column has-padding-large">
-        <div class="columns is-desktop is-multiline">
-          <!-- options -->
-          <div
-            class='column is-full'
-          >
-            <div class="box options">
-              <div class="information-section">
-                <div class="content">
-                  <label class="label">
-                    Instructions
-                  </label>
-                  <ul>
-                    <li>
-                      Select up to {{ maximumZonesSelected }} zones, using the field below or the multiple selection mode on the map
-                    </li>
-                    <li>
-                      Choose a time period between January 22, 2020 and today
-                    </li>
-                  </ul>
-                </div>
+        <div class="column is-one-third-desktop">
+          <div class="trajectories-button-container mobile">
+            <b-button
+              type="is-warning"
+              tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
+            >
+              See countries' trajectories
+            </b-button>
+          </div>
+          <div class="box">
+            <label class="label">Category</label>
+            <b-field style='flex-wrap: wrap;'>
+              <b-radio-button v-model="currentCategory"
+                native-value="active"
+                type="is-warning"
+                style='flex-basis: 25%;'>
+                <span>Active</span>
+              </b-radio-button>
 
-              </div>
-              <div class="options-section">
-                <label class="label">Category</label>
-                <b-field style='flex-wrap: wrap;'>
-                  <b-radio-button v-model="currentCategory"
-                    native-value="active"
-                    type="is-warning">
-                    <span>Active</span>
-                  </b-radio-button>
+              <b-radio-button v-model="currentCategory"
+                native-value="confirmed"
+                type="is-primary"
+                style='flex-basis: 25%;'>
+                <span>Confirmed</span>
+              </b-radio-button>
 
-                  <b-radio-button v-model="currentCategory"
-                    native-value="confirmed"
-                    type="is-primary">
-                    <span>Confirmed</span>
-                  </b-radio-button>
+              <b-radio-button v-model="currentCategory"
+                native-value="death"
+                type="is-danger"
+                style='flex-basis: 25%;'>
+                <span>Deaths</span>
+              </b-radio-button>
 
-                  <b-radio-button v-model="currentCategory"
-                    native-value="death"
-                    type="is-danger">
-                    <span>Deaths</span>
-                  </b-radio-button>
-
-                  <b-radio-button v-model="currentCategory"
-                    native-value="recovered"
-                    type="is-success">
-                    <span>Recovered</span>
-                  </b-radio-button>
+              <b-radio-button v-model="currentCategory"
+                native-value="recovered"
+                type="is-success"
+                style='flex-basis: 25%;'>
+                <span>Recovered</span>
+              </b-radio-button>
+            </b-field>
+            <p class='has-text-grey-light category-explanation'>{{ categoryExplanationMessage }}</p>
+            <div class="field time-period">
+              <label class="label">Time period</label>
+              <DatePicker
+                v-bind:mode="'range'"
+                v-bind:columns='datePickerColumnsNumber()'
+                v-bind:min-date='minDate'
+                v-bind:max-date='maxDate'
+                v-model='dates'
+                v-bind:transition="'fade'"
+              />
+            </div>
+            <div class="buttons">
+              <button
+                class="button is-outlined"
+                v-on:click='updateDates(pastWeekDates)'
+              >
+                Past week
+              </button>
+              <button
+                class="button is-outlined"
+                v-on:click='updateDates(pastMonthDates)'
+              >
+                Past month
+              </button>
+              <button
+                class="button is-outlined"
+                v-on:click='updateDates({ start: minDate, end: maxDate })'
+              >
+                Full period
+              </button>
+            </div>
+            <div class="options-section">
+              <div class='field multiselect-zones'>
+                <label class="label">Zones</label>
+                <b-field>
+                  <b-checkbox
+                    v-model='isMultipleSelectionActive'
+                    type="is-primary"
+                    style='margin-right: 20px;'
+                  >
+                    <span>Select multiple zones on the map</span>
+                  </b-checkbox>
                 </b-field>
-                <p class='has-text-grey-light category-explanation'>{{ categoryExplanationMessage }}</p>
-                <div class="field time-period">
-                  <label class="label">Time period</label>
-                  
-                  <div class="field-body">
-                    <div class="field">
-                      <b-field class='field is-horizontal'>
-                        <b-datepicker
-                          placeholder="Click to select..."
-                          v-model="dates"
-                          v-bind:min-date='minDate'
-                          v-bind:max-date='maxDate'
-                          class='is-small'
-                          v-bind:mobile-native='true'
-                          range>
-                        </b-datepicker>
-                      </b-field>
-                    </div>
-                  </div>
-                </div>
-                <div class="buttons">
-                  <button
-                    class="button is-outlined"
-                    v-on:click='updateDates(pastWeekDates)'
+                <b-field>
+                  <b-checkbox
+                    v-model='isWorldSelected'
+                    type="is-primary"
+                    v-if="this.selectedZonesNames.length < this.maximumZonesSelected"
                   >
-                    Past week
-                  </button>
-                  <button
-                    class="button is-outlined"
-                    v-on:click='updateDates(pastMonthDates)'
-                  >
-                    Past month
-                  </button>
-                  <button
-                    class="button is-outlined"
-                    v-on:click='updateDates([minDate, maxDate])'
-                  >
-                    Full period
-                  </button>
-                </div>
-                <div
-                  class='field multiselect-zones'
-                >
-                  <label class="label">Zones</label>
-                  <div style='display: flex; flex-wrap: wrap;'>
-                    <b-field>
-                      <b-checkbox
-                        v-model='isMultipleSelectionActive'
-                        type="is-primary"
-                        style='margin-right: 20px;'
-                      >
-                        <span>Select multiple zones on the map</span>
-                      </b-checkbox>
-                    </b-field>
-                    <b-field>
-                      <b-checkbox
-                        v-model='isWorldSelected'
-                        type="is-primary"
-                        v-if="this.selectedZonesNames.length < this.maximumZonesSelected"
-                      >
-                        <span>Compare to world</span>
-                      </b-checkbox>
-                    </b-field>
-
-                  </div>
-                  <div class="field-body">
-                    <div class="field multiselect-field">
-                      <b-field>
-                        <Multiselect
-                          placeholder="Select one or multiple zones..."
-                          label='name'
-                          track-by='kebab_name'
-                          v-on:select='onZoneSelected'
-                          v-on:remove='onZoneRemoved'
-                          v-bind:value='arrayOfSelectedZones'
-                          v-bind:options='arrayOfAllZones'
-                          v-bind:multiple='true'
-                          v-bind:taggable='true'
-                          v-bind:close-on-select='true'
-                          v-bind:loading='isLoading'
-                          class='is-danger'
-                        />
-                      </b-field>
-                    </div>
-                  </div>
-                </div>
-                
+                    <span>Compare to world</span>
+                  </b-checkbox>
+                </b-field>
+                <b-field style='width: 100%;'>
+                  <Multiselect
+                    placeholder="Select one or multiple zones..."
+                    label='name'
+                    track-by='kebab_name'
+                    v-on:select='onZoneSelected'
+                    v-on:remove='onZoneRemoved'
+                    v-bind:value='arrayOfSelectedZones'
+                    v-bind:options='arrayOfAllZones'
+                    v-bind:multiple='true'
+                    v-bind:taggable='true'
+                    v-bind:close-on-select='true'
+                    v-bind:loading='isLoading'
+                    class='is-danger'
+                  />
+                </b-field>
               </div>
-            </div>
-
-          </div>
-          <!-- active -->
-          <div
-            class='column'
-          >
-            <div
-              class='loading small'
-              v-if='isLoading'>
-            </div>
-            <div class="chart-container" v-else>
-              <div style='width: 100%;'>
-                <LineChart
-                  v-bind:data='activeChartData'
-                  v-bind:options="chartOptions('Active')"
-                  v-bind:key='chartActiveKey'
-                />
-              </div>
+              
             </div>
           </div>
-            <!-- confirmed -->
-          <div
-            class='column'
-          >
-            <div
-              class='loading small'
-              v-if='isLoading'>
-            </div>
-            <div class="chart-container" v-else>
-              <div style='width: 100%;'>
-                <LineChart
-                  v-bind:data='confirmedChartData'
-                  v-bind:options="chartOptions('Confirmed')"
-                  v-bind:key='chartConfirmedKey'
-                />
-              </div>
-            </div>
-          </div>
-          <!-- deaths -->
-          <div
-            class='column'
-          >
-            <div class="chart-container">
-              <div
-                class='loading small'
-                v-if='isLoading'>
-              </div>
-              <div style='width: 100%;' v-else>
-                <LineChart
-                  v-bind:data='deathChartData'
-                  v-bind:options="chartOptions('Deaths')"
-                  v-bind:key='chartDeathKey'
-                />
-              </div>
-            </div>
-          </div>
-          <!-- recovered -->
-          <div
-            class='column'
-          >
-            <div class="chart-container">
-              <div
-                class='loading small'
-                v-if='isLoading'>
-              </div>
-              <div style='width: 100%;' v-else>
-                <LineChart
-                  v-bind:data='recoveredChartData'
-                  v-bind:options="chartOptions('Recovered')"
-                  v-bind:key='chartRecoveredKey'
-                />
-              </div>
-            </div>
-          </div>
-          <!-- news -->
-          <div class="column is-full">
-            <div class="media-header flexbox">
+          
+          <LineChart
+            v-bind:data='activeChartData'
+            v-bind:options="chartOptions('Active')"
+            v-bind:key='chartActiveKey'
+          />
+          <LineChart
+            v-bind:data='confirmedChartData'
+            v-bind:options="chartOptions('Confirmed')"
+            v-bind:key='chartConfirmedKey'
+          />
+          <LineChart
+            v-bind:data='deathChartData'
+            v-bind:options="chartOptions('Deaths')"
+            v-bind:key='chartDeathKey'
+          />
+          <LineChart
+            v-bind:data='recoveredChartData'
+            v-bind:options="chartOptions('Recovered')"
+            v-bind:key='chartRecoveredKey'
+          />
+          <div class="media-container" style='padding: 10px;'>
+            <div class="media-header" style='display: flex; align-items: center; padding: 10px;'>
               <font-awesome-icon
                 v-bind:icon="['fas', 'newspaper']"
                 size='2x'
               />
               <p class="subtitle has-text-weight-bold is-5">Latest news</p>
             </div>
-            <div class="news-container scrollable">
+            <div class='scrollable'>
               <NewsList
                 v-bind:zoneName='zoneForMedia'
               />
             </div>
           </div>
-          <!-- tweets -->
-          <div class="column is-full">
-            <div class="media-header flexbox">
+          <div class="media-container" style='padding: 10px;'>
+            <div class="media-header" style='display: flex; align-items: center; padding: 10px;'>
               <font-awesome-icon
                 v-bind:icon="['fab', 'twitter-square']"
                 size='2x'
               />
-              <p class="subtitle has-text-weight-bold is-5">Tweets</p>
+              <p class="subtitle has-text-weight-bold is-5">Latest tweets</p>
             </div>
-            <div class="tweets-container scrollable">
+            <div class='scrollable'>
               <TweetsList
                 v-bind:zoneName='zoneForMedia'
               />
@@ -291,11 +200,12 @@
 
 <script>
 import CategoriesBar from './CategoriesBar.vue';
+import Multiselect from 'vue-multiselect';
+import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 import TheMap from './TheMap.vue';
 import NewsList from './NewsList.vue';
 import TweetsList from './TweetsList.vue';
 import LineChart from './LineChart.vue';
-import Multiselect from 'vue-multiselect';
 import StringFormatter from '../mixins/string-formatter.js';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 
@@ -307,6 +217,7 @@ export default {
     NewsList,
     TweetsList,
     LineChart,
+    DatePicker,
   },
 
   mixins: [
@@ -321,7 +232,7 @@ export default {
       totalConfirmed: null,
       totalRecovered: null,
       currentCategory: 'active',
-      dates: [],
+      dates: {},
       minDate: new Date(2020, 0, 22),
       maxDate: new Date(),
       zones: {},
@@ -333,13 +244,12 @@ export default {
       confirmedChartData: null,
       recoveredChartData: null,
       chartConfirmedKey: 0,
-      chartActiveKey: 0,
-      chartDeathKey: 0,
-      chartRecoveredKey: 0,
+      chartActiveKey: 1,
+      chartDeathKey: 2,
+      chartRecoveredKey: 3,
       windowWidth: 0,
       lastUpdateDate: null,
       maximumZonesSelected: 10,
-      leftSideColumnClass: 'is-two-thirds-desktop',
       categoryExplanationMessages: {
         'active': 'Current number of active cases',
         'confirmed': 'Total number of cases since the beginning of the pandemic',
@@ -395,12 +305,18 @@ export default {
     pastWeekDates: function () {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      return [oneWeekAgo, new Date()];
+      return {
+        start: oneWeekAgo,
+        end: new Date()
+      };
     },
     pastMonthDates: function () {
       const oneMonthAgo = new Date();
       oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
-      return [oneMonthAgo, new Date()];
+      return {
+        start: oneMonthAgo,
+        end: new Date()
+      };
     },
     zoneForMedia: function () {
       return this.selectedZonesNames[this.selectedZonesNames.length - 1];
@@ -424,7 +340,6 @@ export default {
     dates: function () {
       if (this.selectedZonesNames.length) {
         this.getChartData();
-
       }
     },
   },
@@ -436,14 +351,9 @@ export default {
     this.isLoading = false;
   },
 
-  mounted () {
-    this.windowWidth = window.innerWidth;
-    window.addEventListener('resize', this.onResize);
-  },
-
   methods: {
-    onResize: function () {
-      this.windowWidth = window.innerWidth;
+    datePickerColumnsNumber: function () {
+      return window.innerWidth > 1024 ? 2 : 1;
     },
     getZones: async function () {
       try {
@@ -467,8 +377,8 @@ export default {
           {
             params: {
               zones: this.selectedZonesNames,
-              start_date: this.dates[0],
-              end_date: this.dates[1],
+              start_date: this.dates.start,
+              end_date: this.dates.end,
             }
           }
         )
@@ -574,14 +484,14 @@ export default {
 </script>
 
 <style>
-  .column.has-padding-large {
-    padding: 1.5em !important;
-  }
+  
+</style>
 
-  .column-inner {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+<style>
+  .scrollable {
+    height: 500px;
+    overflow-y: scroll;
+    padding: 10px;
   }
 
   .multiple-selection {
@@ -599,34 +509,6 @@ export default {
 
   .multiple-selection:not(.active) .control-label:hover {
     opacity: 0.5;
-  }
-
-  .box {
-    box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02) !important;
-  }
-
-  .shadow {
-    box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
-    -moz-box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
-    -webkit-box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
-    -o-box-shadow: 0px 10px 20px 0px rgba(0,108,86,0.15);
-  }
-
-  .media-header {
-    padding: 20px 0px;
-  }
-
-  .flexbox  {
-    display: flex;
-    align-items: center;
-  }
-
-  .flexbox.end {
-    justify-content: flex-end;
-  }
-
-  .flexbox.col {
-    flex-direction: column;
   }
 
   .scrollable{
@@ -648,12 +530,6 @@ export default {
 
   .datepicker {
     width: 100%;
-  }
-
-  .options {
-    height: 75px;
-    background-color: white;
-    border: 1px solid #EAEAEA;
   }
 
   .loading {
@@ -702,63 +578,30 @@ export default {
     }
   }
 
-  .box.options {
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+  .map-wrapper {
     position: relative;
-  }
-
-  .chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    overflow-y: scroll;
-    padding: 15px;
-  }
-
-  .is-half .chart-container {
     height: 100%;
   }
 
-  .is-full .chart-container {
-    display: block;
-  }
-
-  .categories-container.desktop {
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .categories-wrapper {
     position: absolute;
-    z-index: 10000;
+    top: 10px;
+    z-index: 1000;
     width: 100%;
-  }
-
-  .trajectories-button-container.mobile {
-    padding-top: 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 20px;
+    padding: 6px;
   }
 
   @media(max-width: 1024px) {
-    .categories-container.desktop {
+    .categories-wrapper {
       display: none;
     }
   }
 
-  @media(min-width: 1024px) {
-    .trajectories-button-container.mobile {
-      display: none;
-    }
-  }
-
-  .categories-container .level {
-    flex-grow: 1;
+  .trajectories-button-container.mobile {
+    padding: 0px 0px 25px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .information-section {
@@ -783,11 +626,18 @@ export default {
     padding-top: 12px;
   }
 
+
+  .left-side {
+    height: calc(80vh - 100px);
+    top: 55px;
+    padding-top: 0 !important;
+  }
+
   @media(min-width: 1024px) {
     .left-side {
       position: sticky;
-      height: calc(100vh - 84px);
-      top: 84px;
+      height: calc(100vh - 100px);
+      top: 100px;
     }
   }
 
@@ -809,6 +659,22 @@ export default {
 
   .category-explanation {
     margin-bottom: 0.75em;
+  }
+
+  .columns {
+    margin: 0;
+  }
+
+  @media screen and (min-width: 768px) {
+    .columns {
+      margin-left: -2rem;
+      margin-right: -2rem;
+      margin-top: -2rem;
+    }
+  }
+
+  .section {
+    padding: 1em !important;
   }
 </style>
 

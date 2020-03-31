@@ -175,10 +175,6 @@ export default {
 </script>
 
 <style scoped>
-  .container.is-fluid{
-    min-height: 100vh;
-  }
-
   .loading.small {
     display: inline-block;
     position: absolute;
@@ -201,7 +197,7 @@ export default {
   }
 
   .chart-container > div {
-    min-width: 800px;
+    min-width: 425px;
     position: relative;
     height: 100%;
     width: 100%;
