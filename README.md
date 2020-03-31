@@ -13,7 +13,7 @@
 
 ## Introduction
 
-Coviz19 is a visualization dashboard for coronavirus spread.
+[Coviz19](https://www.coviz19.com/coronavirus-map) is a visualization dashboard for coronavirus spread.
 
 It is built as a Ruby-On-Rails 6 API and VueJS front-end.
 
