@@ -17,7 +17,7 @@ Coviz19 is a visualization dashboard for coronavirus spread.
 
 It is built as a Ruby-On-Rails 6 API and VueJS front-end.
 
-It currently provides an interactive map and several sets of charts. The data used is sourced from [John Hopkins University](https://github.com/CSSEGISandData/COVID-19). A script downloads the CSV files provided by on this [repository](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series) and stores the data in the database.
+It currently provides an interactive map and several sets of charts. The data used is sourced from [John Hopkins University](https://github.com/CSSEGISandData/COVID-19). A script downloads the data from the CSV files on this [repository](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series) and stores it in the database.
 
 In your development environment, the scripts must be executed as explained below.
 
