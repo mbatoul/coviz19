@@ -2,7 +2,7 @@
   <div class="section">
     <div class="container is-fluid is-marginless">
       <div class="columns is-desktop">
-        <div class="column is-two-thirds-desktop left-side">
+        <div class="column left-side" v-bind:class='leftColumnClass()'>
           <div class="map-wrapper">
             <div class="categories-wrapper">
               <CategoriesBar
@@ -25,12 +25,18 @@
               v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
               v-on:zoneSelected='onZoneSelected'
               v-on:zoneRemoved='onZoneRemoved'
+              ref='theMap'
             />
           </div>
-
+          <div class="chevron-wrapper" v-bind:class='chevronClass()' v-on:click='toggleMapExpanded'>
+            <font-awesome-icon
+              v-bind:icon="['fas', 'chevron-right']"
+              size='3x'
+            />
+          </div>
         </div>
 
-        <div class="column is-one-third-desktop">
+        <div class="column" v-bind:class='rightColumnClass()'>
           <div class="trajectories-button-container">
             <b-button
               type="is-warning"
@@ -147,22 +153,22 @@
           <LineChart
             v-bind:data='activeChartData'
             v-bind:options="chartOptions('Active')"
-            v-bind:key='chartActiveKey'
+            v-bind:key='activeChartKey'
           />
           <LineChart
             v-bind:data='confirmedChartData'
             v-bind:options="chartOptions('Confirmed')"
-            v-bind:key='chartConfirmedKey'
+            v-bind:key='confirmedChartKey'
           />
           <LineChart
             v-bind:data='deathChartData'
             v-bind:options="chartOptions('Deaths')"
-            v-bind:key='chartDeathKey'
+            v-bind:key='deathChartKey'
           />
           <LineChart
             v-bind:data='recoveredChartData'
             v-bind:options="chartOptions('Recovered')"
-            v-bind:key='chartRecoveredKey'
+            v-bind:key='recoveredChartKey'
           />
           <div class="media-container" style='padding: 10px;'>
             <div class="media-header" style='display: flex; align-items: center; padding: 10px;'>
@@ -239,14 +245,14 @@ export default {
       selectedZonesNames: [],
       ceilings: {},
       isMultipleSelectionActive: true,
-      deathChartData: null,
-      activeChartData: null,
-      confirmedChartData: null,
-      recoveredChartData: null,
-      chartConfirmedKey: 0,
-      chartActiveKey: 1,
-      chartDeathKey: 2,
-      chartRecoveredKey: 3,
+      deathChartData: {},
+      activeChartData: {},
+      confirmedChartData: {},
+      recoveredChartData: {},
+      confirmedChartKey: 0,
+      activeChartKey: 1,
+      deathChartKey: 2,
+      recoveredChartKey: 3,
       windowWidth: 0,
       lastUpdateDate: null,
       maximumZonesSelected: 10,
@@ -255,7 +261,8 @@ export default {
         'confirmed': 'Total number of cases since the beginning of the pandemic',
         'death': 'Total number of deaths since the beginning of the pandemic',
         'recovered': 'Total number of recoveries since the beginning of the pandemic',
-      }
+      },
+      isMapExpanded: false,
     }
   },
 
@@ -352,6 +359,38 @@ export default {
   },
 
   methods: {
+    toggleMapExpanded: function () {
+      this.isMapExpanded = !this.isMapExpanded;
+      this.deathChartKey += this.deathChartKey + 1;
+      this.activeChartKey += this.activeChartKey + 1;
+      this.confirmedChartKey += this.confirmedChartKey + 1;
+      this.recoveredChartKey += this.recoveredChartKey + 1;
+      console.log(this.$refs.theMap.$refs.leafletMap.mapObject)
+      this.$nextTick(() => {
+        this.$refs.theMap.$refs.leafletMap.mapObject.invalidateSize();
+      })
+    },
+    chevronClass: function () {
+      if (this.isMapExpanded) {
+        return 'towards-left';
+      } else {
+        return '';
+      }
+    },
+    leftColumnClass: function () {
+      if (this.isMapExpanded) {
+      return 'is-two-thirds-desktop';
+      } else {
+      return 'is-half-desktop';
+      }
+    },
+    rightColumnClass: function () {
+      if (this.isMapExpanded) {
+      return 'is-one-third-desktop';
+      } else {
+      return 'is-half-desktop';
+      }
+    },
     datePickerColumnsNumber: function () {
       return window.innerWidth > 1024 ? 2 : 1;
     },
@@ -681,6 +720,20 @@ export default {
 
   .section {
     padding: 1em !important;
+  }
+
+  .chevron-wrapper {
+    position: absolute;
+    top: 50%;
+    z-index: 1000;
+    color: white;
+    right: 20px;
+    cursor: pointer;
+  }
+
+  .chevron-wrapper.towards-left {
+    transform: rotateY(180deg);
+    
   }
 </style>
 
