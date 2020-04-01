@@ -4,12 +4,13 @@ class ChartDataService
   COLORS = %w[#3273dc #ffdb4a #35AC5E #FF3860 #8c3193 #173f7f #ff863d #2A7E47 #ac1433 #899058]
   WORLD_COLOR = '#BCBCBC'
 
-  def initialize(zones_names, category, start_date, end_date)
+  def initialize(zones_names, category, start_date, end_date, scale)
     @zones = Zone.where(kebab_name: zones_names)
     @is_world_included = zones_names.include?('world')
     @category = category
     @start_date = Date.parse(start_date)
     @end_date = Date.parse(end_date)
+    @scale = scale
   end
 
   def self.call(*args)
@@ -52,10 +53,23 @@ class ChartDataService
     data = []
 
     zone_ids = zone.all_children.map(&:id) << zone.id
-
-    query = '
-      SELECT date, sum(value) AS total
-      FROM data_points
+    
+    if @scale == 'logarithmic'
+      query = '
+        SELECT date,
+        CASE 
+          WHEN SUM(value) > 0 THEN LOG(SUM(value))
+          ELSE 0
+        END as total
+        FROM data_points
+      '
+    else
+      query = '
+        SELECT date, sum(value) AS total
+        FROM data_points 
+      '
+    end
+    query += '
       WHERE date >= (?)
       AND date <= (?)
       AND category = (?)

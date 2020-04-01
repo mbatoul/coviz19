@@ -108,46 +108,59 @@
                 Full period
               </button>
             </div>
-            <div class="options-section">
-              <div class='field multiselect-zones'>
-                <label class="label">Zones</label>
-                <b-field>
-                  <b-checkbox
-                    v-model='isMultipleSelectionActive'
-                    type="is-primary"
-                    style='margin-right: 20px;'
-                  >
-                    <span>Select multiple zones on the map</span>
-                  </b-checkbox>
-                </b-field>
-                <b-field>
-                  <b-checkbox
-                    v-model='isWorldSelected'
-                    type="is-primary"
-                    v-if="this.selectedZonesNames.length < this.maximumZonesSelected"
-                  >
-                    <span>Compare to world</span>
-                  </b-checkbox>
-                </b-field>
-                <b-field style='width: 100%;'>
-                  <Multiselect
-                    placeholder="Select one or multiple zones..."
-                    label='name'
-                    track-by='kebab_name'
-                    v-on:select='onZoneSelected'
-                    v-on:remove='onZoneRemoved'
-                    v-bind:value='arrayOfSelectedZones'
-                    v-bind:options='arrayOfAllZones'
-                    v-bind:multiple='true'
-                    v-bind:taggable='true'
-                    v-bind:close-on-select='true'
-                    v-bind:loading='isLoading'
-                    class='is-danger'
-                  />
-                </b-field>
-              </div>
-              
+            <div class='field multiselect-zones'>
+              <label class="label">Zones</label>
+              <b-field>
+                <b-checkbox
+                  v-model='isMultipleSelectionActive'
+                  type="is-primary"
+                  style='margin-right: 20px;'
+                >
+                  <span>Select multiple zones on the map</span>
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <b-checkbox
+                  v-model='isWorldSelected'
+                  type="is-primary"
+                  v-if="this.selectedZonesNames.length < this.maximumZonesSelected"
+                >
+                  <span>Compare to world</span>
+                </b-checkbox>
+              </b-field>
+              <b-field style='width: 100%;'>
+                <Multiselect
+                  placeholder="Select one or multiple zones..."
+                  label='name'
+                  track-by='kebab_name'
+                  v-on:select='onZoneSelected'
+                  v-on:remove='onZoneRemoved'
+                  v-bind:value='arrayOfSelectedZones'
+                  v-bind:options='arrayOfAllZones'
+                  v-bind:multiple='true'
+                  v-bind:taggable='true'
+                  v-bind:close-on-select='true'
+                  v-bind:loading='isLoading'
+                  class='is-danger'
+                />
+              </b-field>
             </div>
+            <label class="label">Scale</label>
+            <b-field style='flex-wrap: wrap;'>
+              <b-radio-button v-model="scale"
+                native-value="linear"
+                
+                style='flex-basis: 50%;'>
+                <span>Linear</span>
+              </b-radio-button>
+
+              <b-radio-button v-model="scale"
+                native-value="logarithmic"
+                type="is-primary"
+                style='flex-basis: 50%;'>
+                <span>Logarithmic</span>
+              </b-radio-button>
+            </b-field>
           </div>
           
           <LineChart
@@ -263,6 +276,7 @@ export default {
         'recovered': 'Total number of recoveries since the beginning of the pandemic',
       },
       isMapExpanded: false,
+      scale: 'logarithmic'
     }
   },
 
@@ -349,6 +363,11 @@ export default {
         this.getChartData();
       }
     },
+    scale: function () {
+      if (this.selectedZonesNames.length) {
+        this.getChartData();
+      }
+    },
   },
 
   created () {
@@ -418,6 +437,7 @@ export default {
               zones: this.selectedZonesNames,
               start_date: this.dates.start,
               end_date: this.dates.end,
+              scale: this.scale,
             }
           }
         )

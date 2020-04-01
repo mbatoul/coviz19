@@ -16,25 +16,29 @@ class V1::ZonesController < ApplicationController
       params[:zones],
       'death',
       params[:start_date],
-      params[:end_date]
+      params[:end_date],
+      params[:scale],
     )
     @confirmed_chart_data = ChartDataService.call(
       params[:zones],
       'confirmed',
       params[:start_date],
-      params[:end_date]
+      params[:end_date],
+      params[:scale],
     )
     @recovered_chart_data = ChartDataService.call(
       params[:zones],
       'recovered',
       params[:start_date],
-      params[:end_date]
+      params[:end_date],
+      params[:scale],
     )
     @active_chart_data = ChartDataService.call(
       params[:zones],
       'active',
       params[:start_date],
-      params[:end_date]
+      params[:end_date],
+      params[:scale],
     )
   end
 
