@@ -41,7 +41,7 @@
               aria-current-label="Current page"
             >
               <template slot-scope="props">
-                <b-table-column v-if="nature !== 'country'" field="child_name" label="Region" sortable searchable>
+                <b-table-column v-if="nature !== 'countries'" field="child_name" label="Region" sortable searchable>
                   {{ props.row.child_name }}
                 </b-table-column>
 
