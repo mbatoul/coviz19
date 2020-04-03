@@ -47,10 +47,6 @@ export default {
   },
 
   props: {
-    isWorldSelected: {
-      type: Boolean,
-      required: true
-    },
     selectedZones: {
       type: Object,
       required: true
