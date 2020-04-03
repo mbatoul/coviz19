@@ -53,7 +53,7 @@ export default {
     radius: function () {
       var x = d3.scaleLinear()
         .domain([0, this.ceilings[this.category]])
-        .range([2, 200]);
+        .range([0, 200]);
         
       return x(this.values[this.category]);
     },
