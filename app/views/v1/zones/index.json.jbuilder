@@ -16,7 +16,7 @@ json.cache! expires_in: 2.hours do
         end
       end
     end
-
+  
     json.world do
       json.name 'World'
       json.kebab_name 'world'
@@ -31,13 +31,11 @@ json.cache! expires_in: 2.hours do
       end
     end
   end
-
+  
   json.ceilings do
     json.death DataPoint.where(category: 'death').most_recent_by_zone.sum(:value)
     json.confirmed DataPoint.where(category: 'confirmed').most_recent_by_zone.sum(:value)
     json.recovered DataPoint.where(category: 'recovered').most_recent_by_zone.sum(:value)
     json.active DataPoint.where(category: 'active').most_recent_by_zone.sum(:value)
   end
-
 end
-json.last_update_date @last_update_date

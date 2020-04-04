@@ -10,9 +10,10 @@ Rails.application.routes.draw do
       resources :zones, only: [:index]
       resources :geojson_features, only: [:index]
       resources :tweets, only: [:index]
-      get '/zones/chart_data', to: 'zones#chart_data'
-      get '/zones/trajectories_data', to: 'zones#trajectories_data'
+      get '/zones/charts_data', to: 'zones#charts_data'
       get '/zones/raw-data', to: 'zones#raw_data'
+      post '/contact', to: 'contacts#contact'
     end
   end
+
 end

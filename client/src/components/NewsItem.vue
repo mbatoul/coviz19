@@ -74,6 +74,12 @@ export default {
     border-radius: 2px;
   }
 
+  @media(max-width: 1024px) {
+    .img-container {
+      display: none;
+    }
+  }
+
   .content{
     text-align: left;
     padding-right: 15px;

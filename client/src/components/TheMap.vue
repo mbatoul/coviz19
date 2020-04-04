@@ -181,9 +181,7 @@ export default {
       });
 
       layer.on('mouseout', function () {
-        this.setStyle({
-          fillOpacity: this.options.fillOpacity - 0.2
-        })
+        this.setStyle(that.layerStyle(selectedZonesNames.includes(this.feature.zone_data.kebab_name)))
       });
 
       layer.on('click', this.onLayerClicked);

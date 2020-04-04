@@ -1,0 +1,1 @@
+json.charts_data @charts_data

@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_194520) do
   create_table "data_points", force: :cascade do |t|
     t.bigint "zone_id"
     t.integer "value"
+    t.integer "diff_with_previous_date"
     t.integer "category"
     t.date "date"
     t.datetime "created_at", precision: 6, null: false
@@ -43,6 +44,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_194520) do
     t.string "code"
     t.float "lat"
     t.float "lng"
+    t.integer "total_population"
     t.bigint "parent_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

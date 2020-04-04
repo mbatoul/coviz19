@@ -1,5 +1,25 @@
 <template>
   <nav class="level">
+      <div class="level-item has-text-centered">
+        <div
+          class='has-text-info box-category shadow'
+          v-on:click="onCategorySelected('confirmed')"
+          v-bind:class=" { 'selected': currentCategory === 'confirmed' }"
+        >
+          <p class="heading is-size-8 has-text-weight-bold">Confirmed</p>
+          <div
+            class='loading white small'
+            v-if='totalConfirmed === null'>
+          </div>
+          <p
+            class="title is-size-5 has-text-light"
+            v-else 
+          >
+            {{ numberWithCommas(totalConfirmed) }}
+          </p>
+        </div>
+      </div>
+
     <div class="level-item has-text-centered">
       <div
         class='has-text-warning box-category shadow'
@@ -19,26 +39,6 @@
             {{ numberWithCommas(totalActive) }}
           </p>
         </div>
-      </div>
-    </div>
-
-    <div class="level-item has-text-centered">
-      <div
-        class='has-text-info box-category shadow'
-        v-on:click="onCategorySelected('confirmed')"
-        v-bind:class=" { 'selected': currentCategory === 'confirmed' }"
-      >
-        <p class="heading is-size-8 has-text-weight-bold">Confirmed</p>
-        <div
-          class='loading white small'
-          v-if='totalConfirmed === null'>
-        </div>
-        <p
-          class="title is-size-5 has-text-light"
-          v-else 
-        >
-          {{ numberWithCommas(totalConfirmed) }}
-        </p>
       </div>
     </div>
 

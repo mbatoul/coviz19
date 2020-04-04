@@ -21,8 +21,6 @@
               v-bind:selectedZones='selectedZones'
               v-bind:selectedZonesNames='selectedZonesNames'
               v-bind:zonesWithMarkers='zonesWithMarkers'
-              v-bind:isWorldSelected='isWorldSelected'
-              v-bind:isMultipleSelectionActive.sync='isMultipleSelectionActive'
               v-on:zoneSelected='onZoneSelected'
               v-on:zoneRemoved='onZoneRemoved'
               ref='theMap'
@@ -37,100 +35,42 @@
         </div>
 
         <div class="column" v-bind:class='rightColumnClass()'>
-          <div class="trajectories-button-container">
-            <b-button
-              type="is-warning"
-              tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
-            >
-              See countries' trajectories
-            </b-button>
-          </div>
           <div class="box">
             <label class="label">Category</label>
-            <b-field style='flex-wrap: wrap;'>
-              <b-radio-button v-model="currentCategory"
-                native-value="active"
-                type="is-warning"
-                style='flex-basis: 25%;'>
-                <span>Active</span>
-              </b-radio-button>
+            <b-radio v-model="currentCategory"
+              native-value="confirmed">
+              Confirmed
+            </b-radio>
+            <b-radio v-model="currentCategory"
+              native-value="active">
+              Active
+            </b-radio>
+            <b-radio v-model="currentCategory"
+              native-value="death">
+              Deaths
+            </b-radio>
+            <b-radio v-model="currentCategory"
+              native-value="recovered">
+              Recovered
+            </b-radio>
+            <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpCategory }}</p>
 
-              <b-radio-button v-model="currentCategory"
-                native-value="confirmed"
-                type="is-primary"
-                style='flex-basis: 25%;'>
-                <span>Confirmed</span>
-              </b-radio-button>
-
-              <b-radio-button v-model="currentCategory"
-                native-value="death"
-                type="is-danger"
-                style='flex-basis: 25%;'>
-                <span>Deaths</span>
-              </b-radio-button>
-
-              <b-radio-button v-model="currentCategory"
-                native-value="recovered"
-                type="is-success"
-                style='flex-basis: 25%;'>
-                <span>Recovered</span>
-              </b-radio-button>
-            </b-field>
-            <p class='has-text-grey-light category-explanation'>{{ categoryExplanationMessage }}</p>
-            <div class="field time-period">
-              <label class="label">Time period</label>
-              <DatePicker
-                v-bind:mode="'range'"
-                v-bind:columns='datePickerColumnsNumber()'
-                v-bind:min-date='minDate'
-                v-bind:max-date='maxDate'
-                v-model='dates'
-                v-bind:transition="'fade'"
-              />
-            </div>
-            <div class="buttons">
-              <button
-                class="button is-outlined"
-                v-on:click='updateDates(pastWeekDates)'
-              >
-                Past week
-              </button>
-              <button
-                class="button is-outlined"
-                v-on:click='updateDates(pastMonthDates)'
-              >
-                Past month
-              </button>
-              <button
-                class="button is-outlined"
-                v-on:click='updateDates({ start: minDate, end: maxDate })'
-              >
-                Full period
-              </button>
-            </div>
             <div class='field multiselect-zones'>
-              <label class="label">Zones</label>
-              <b-field>
-                <b-checkbox
-                  v-model='isMultipleSelectionActive'
-                  type="is-primary"
-                  style='margin-right: 20px;'
-                >
-                  <span>Select multiple zones on the map</span>
-                </b-checkbox>
-              </b-field>
-              <b-field>
-                <b-checkbox
-                  v-model='isWorldSelected'
-                  type="is-primary"
-                  v-if="this.selectedZonesNames.length < this.maximumZonesSelected"
-                >
-                  <span>Compare to world</span>
-                </b-checkbox>
-              </b-field>
-              <b-field style='width: 100%;'>
+              <label class="label">Countries and regions</label>
+              <b-radio v-model="showWorld"
+                v-bind:native-value='false'
+              >
+                Compare
+              </b-radio>
+              <b-radio v-model="showWorld"
+                v-bind:native-value='true'
+              >
+                Show world only
+              </b-radio>
+
+              <b-field style='width: 100%;' v-show='!showWorld'>
                 <Multiselect
-                  placeholder="Select one or multiple zones..."
+                  placeholder="Select one or multiple countries/regions..."
                   label='name'
                   track-by='kebab_name'
                   v-on:select='onZoneSelected'
@@ -140,76 +80,123 @@
                   v-bind:multiple='true'
                   v-bind:taggable='true'
                   v-bind:close-on-select='true'
-                  v-bind:loading='isLoading'
                   class='is-danger'
                 />
               </b-field>
             </div>
-            <label class="label">Scale</label>
-            <b-field style='flex-wrap: wrap;'>
-              <b-radio-button v-model="scale"
-                native-value="linear"
-                
-                style='flex-basis: 50%;'>
-                <span>Linear</span>
-              </b-radio-button>
 
-              <b-radio-button v-model="scale"
-                native-value="logarithmic"
-                type="is-primary"
-                style='flex-basis: 50%;'>
-                <span>Logarithmic</span>
-              </b-radio-button>
-            </b-field>
+            <label class="label">Visualization mode</label>
+            <b-radio v-model="visualizationMode"
+              native-value="trajectories">
+              Trajectories
+            </b-radio>
+            <b-radio v-model="visualizationMode"
+              native-value="cumulative">
+              Cumulative
+            </b-radio>
+            <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpVisualizationMode }}</p>
+
+            <div class="field time-period-wrapper" v-if="visualizationMode !== 'trajectories'">
+              <div class="field time-period">
+                <label class="label">Time period</label>
+                <DatePicker
+                  v-bind:mode="'range'"
+                  v-bind:columns='datePickerColumnsNumber()'
+                  v-bind:min-date='minDate'
+                  v-bind:max-date='maxDate'
+                  v-model='dates'
+                  v-bind:transition="'fade'"
+                  color='blue'
+                />
+              </div>
+              <div class="buttons">
+                <button
+                  class="button is-outlined is-small"
+                  v-on:click='updateDates(pastWeekDates)'
+                >
+                  Past week
+                </button>
+                <button
+                  class="button is-outlined is-small"
+                  v-on:click='updateDates(pastMonthDates)'
+                >
+                  Past month
+                </button>
+                <button
+                  class="button is-outlined is-small"
+                  v-on:click='updateDates({ start: minDate, end: maxDate })'
+                >
+                  Full period
+                </button>
+              </div>
+            </div>
+            <div class="field scale-field">
+              <label class="label">Scale</label>
+              <b-switch
+                v-bind:rounded="false"
+                v-bind:outlined="false"
+                v-bind:size="'large'"
+                v-bind:type="'is-primary'"
+                v-model='isLogScale'
+              >
+                Logarithmic
+              </b-switch>
+            </div>
+          </div>
+
+          <div class="box">
+            <div
+              class="chart-container"
+              v-for='(chartData, id) in chartsData'
+              v-bind:key='id'
+              v-show='chartData.chart_data.datasets.length > 0'
+            >
+              <LineChart
+                v-bind:data='chartData.chart_data'
+                v-bind:options="chartData.chart_options"
+                v-bind:key="`${chartsKey}-${id}`"
+              />
+            </div>
           </div>
           
-          <LineChart
-            v-bind:data='activeChartData'
-            v-bind:options="chartOptions('Active')"
-            v-bind:key='activeChartKey'
-          />
-          <LineChart
-            v-bind:data='confirmedChartData'
-            v-bind:options="chartOptions('Confirmed')"
-            v-bind:key='confirmedChartKey'
-          />
-          <LineChart
-            v-bind:data='deathChartData'
-            v-bind:options="chartOptions('Deaths')"
-            v-bind:key='deathChartKey'
-          />
-          <LineChart
-            v-bind:data='recoveredChartData'
-            v-bind:options="chartOptions('Recovered')"
-            v-bind:key='recoveredChartKey'
-          />
-          <div class="media-container" style='padding: 10px;'>
-            <div class="media-header" style='display: flex; align-items: center; padding: 10px;'>
-              <font-awesome-icon
-                v-bind:icon="['fas', 'newspaper']"
-                size='2x'
-              />
-              <p class="subtitle has-text-weight-bold is-5">Latest news</p>
-            </div>
-            <div class='scrollable'>
-              <NewsList
-                v-bind:zoneName='zoneForMedia'
-              />
-            </div>
-          </div>
-          <div class="media-container" style='padding: 10px;'>
-            <div class="media-header" style='display: flex; align-items: center; padding: 10px;'>
-              <font-awesome-icon
-                v-bind:icon="['fab', 'twitter-square']"
-                size='2x'
-              />
-              <p class="subtitle has-text-weight-bold is-5">Latest tweets</p>
-            </div>
-            <div class='scrollable'>
-              <TweetsList
-                v-bind:zoneName='zoneForMedia'
-              />
-            </div>
+          <div class="box is-paddingless">
+            <b-tabs style='height: 550px;'>
+              <b-tab-item label="Tweets">
+                <template slot="header">
+                  <font-awesome-icon
+                    v-bind:icon="['fab', 'twitter-square']"
+                    size='2x'
+                    style='margin-right: 15px;'
+                  />
+                  <span> Tweets</span>
+                </template>
+                <div class="media-container">
+                  <div class='scrollable'>
+                    <TweetsList
+                      v-bind:zoneName='zoneForMedia'
+                    />
+                  </div>
+                </div>
+              </b-tab-item>
+              <b-tab-item label="Tweets">
+                <template slot="header">
+                  <font-awesome-icon
+                    v-bind:icon="['fas', 'newspaper']"
+                    size='2x'
+                    style='margin-right: 15px;'
+                  />
+                  <span> Articles</span>
+                </template>
+                <div class="media-container" style='padding: 10px;'>
+                  <div class='scrollable'>
+                    <NewsList
+                      v-bind:zoneName='zoneForMedia'
+                    />
+                  </div>
+                </div>
+              </b-tab-item>
+            </b-tabs>
+
           </div>
         </div>
       </div>
@@ -250,33 +237,30 @@ export default {
       totalActive: null,
       totalConfirmed: null,
       totalRecovered: null,
-      currentCategory: 'active',
+      currentCategory: 'confirmed',
+      visualizationMode: 'trajectories',
       dates: {},
       minDate: new Date(2020, 0, 22),
       maxDate: new Date(),
       zones: {},
       selectedZonesNames: [],
       ceilings: {},
-      isMultipleSelectionActive: true,
-      deathChartData: {},
-      activeChartData: {},
-      confirmedChartData: {},
-      recoveredChartData: {},
-      confirmedChartKey: 0,
-      activeChartKey: 1,
-      deathChartKey: 2,
-      recoveredChartKey: 3,
-      windowWidth: 0,
-      lastUpdateDate: null,
+      chartsData: [],
       maximumZonesSelected: 10,
-      categoryExplanationMessages: {
+      helpCategories: {
         'active': 'Current number of active cases',
         'confirmed': 'Total number of cases since the beginning of the pandemic',
         'death': 'Total number of deaths since the beginning of the pandemic',
         'recovered': 'Total number of recoveries since the beginning of the pandemic',
       },
+      helpVisualizationModes: {
+        'cumulative': 'Total day-by-day',
+        'trajectories': 'Cumulative number of cases, by number of days since 100th case',
+      },
       isMapExpanded: false,
-      scale: 'logarithmic'
+      isLogScale: false,
+      showWorld: false,
+      chartsKey: 0
     }
   },
 
@@ -295,22 +279,10 @@ export default {
     arrayOfSelectedZones: function () {
       return Object.values(this.selectedZones);
     },
-    isWorldSelected: {
-      get: function () {
-        return this.selectedZonesNames.includes('world');
-      },
-      set: function (value) {
-        if (value) {
-          this.onZoneSelected(this.zones.world);
-        } else {
-          this.onZoneRemoved(this.zones.world);
-        }
-      }
-    },
     zonesWithMarkers: function () {
       let zones;
 
-      if (this.isWorldSelected) {
+      if (this.showWorld) {
         zones = this.zones;
       } else {
         zones = this.selectedZones;
@@ -342,32 +314,43 @@ export default {
     zoneForMedia: function () {
       return this.selectedZonesNames[this.selectedZonesNames.length - 1];
     },
-    categoryExplanationMessage: function () {
-      return this.categoryExplanationMessages[this.currentCategory];
-    }
+    helpCategory: function () {
+      return this.helpCategories[this.currentCategory];
+    },
+    helpVisualizationMode: function () {
+      return this.helpVisualizationModes[this.visualizationMode];
+    },
   },
 
   watch: {
     selectedZonesNames: function () {
-      if (this.selectedZonesNames.length === 0) {
-        this.selectedZonesNames.push('world');
-      }
+      this.showWorld = this.selectedZonesNames.length === 0;
 
       this.updateTotals();
+
       if (this.selectedZonesNames.length) {
-        this.getChartData();
+        this.getChartsData();
       }
     },
     dates: function () {
       if (this.selectedZonesNames.length) {
-        this.getChartData();
+        this.getChartsData();
       }
     },
-    scale: function () {
+    isLogScale: function () {
       if (this.selectedZonesNames.length) {
-        this.getChartData();
+        this.getChartsData();
       }
     },
+    visualizationMode: function () {
+      if (this.selectedZonesNames.length) {
+        this.getChartsData();
+      }
+    },
+    showWorld: function () {
+      this.getChartsData();
+      this.updateTotals();
+    }
   },
 
   created () {
@@ -378,18 +361,21 @@ export default {
   },
 
   methods: {
+    toggleLogScale: function () {
+      this.isLogScale = !this.isLogScale;
+    },
     toggleMapExpanded: function () {
       this.isMapExpanded = !this.isMapExpanded;
-      this.deathChartKey += this.deathChartKey + 1;
-      this.activeChartKey += this.activeChartKey + 1;
-      this.confirmedChartKey += this.confirmedChartKey + 1;
-      this.recoveredChartKey += this.recoveredChartKey + 1;
-      console.log(this.$refs.theMap.$refs.leafletMap.mapObject)
+      this.chartsKey += 1;
       this.$nextTick(() => {
         this.$refs.theMap.$refs.leafletMap.mapObject.invalidateSize();
       })
     },
     chevronClass: function () {
+      if (window.innerWidth < 1024) {
+        return 'hidden';
+      }
+
       if (this.isMapExpanded) {
         return 'towards-left';
       } else {
@@ -411,89 +397,49 @@ export default {
       }
     },
     datePickerColumnsNumber: function () {
-      return window.innerWidth > 1024 ? 2 : 1;
+      if (this.isMapExpanded) {
+        return 1;
+      } else {
+        return window.innerWidth > 1024 ? 2 : 1;
+      }
     },
     getZones: async function () {
       try {
         const response = await this.$http.get('/zones.json');
         this.zones = response.data.zones;
-        this.lastUpdateDate = response.data.last_update_date;
-        this.selectedZonesNames.push(...['italy', 'france', 'china', 'us', 'world']);
         this.updateTotals();
+        this.selectedZonesNames.push(... ['france', 'italy', 'germany', 'china', 'us']);
         this.ceilings = response.data.ceilings;
       } catch (error) {
         console.error(error);
       }
     },
-    getChartData: async function () {
+    getChartsData: async function () {
       this.deathChartData = {};
       this.confirmedChartData = {};
       this.recoveredChartData = {};
       try {
         const response = await this.$http.get(
-          '/zones/chart_data.json',
+          '/zones/charts_data.json',
           {
             params: {
-              zones: this.selectedZonesNames,
+              zones_names: this.selectedZonesNames,
               start_date: this.dates.start,
               end_date: this.dates.end,
-              scale: this.scale,
+              is_log_scale: this.isLogScale,
+              visualization_mode: this.visualizationMode,
+              world_only: this.showWorld,
             }
           }
         )
-        this.deathChartData = response.data.death_chart_data;
-        this.activeChartData = response.data.active_chart_data;
-        this.confirmedChartData = response.data.confirmed_chart_data;
-        this.recoveredChartData = response.data.recovered_chart_data;
+        this.chartsData = [];
+        this.chartsData.push(... response.data.charts_data);
       } catch (error) {
         console.error(error);
       }
     },
-    chartOptions: function (title) {
-      return {
-        responsive: true,
-        maintainAspectRatio: false,
-        scaleBeginAtZero: true,
-        title: {
-          display: true,
-          text: title,
-          fontSize: 18,
-          position: 'top'
-        },
-        tooltips: {
-					mode: 'index',
-					intersect: false,
-				},
-				hover: {
-					mode: 'nearest',
-					intersect: true
-				},
-        scales: {
-          xAxes: [{
-            type: "time",
-            time: {
-              format: 'DD/MM/YYYY',
-              tooltipFormat: 'll',
-              unit: 'day'
-            },
-            gridLines: {
-              drawOnChartArea:false
-            }
-          }],
-          yAxes: [{
-            ticks: {
-              precision: 0,
-              beginAtZero: true,
-            },
-            gridLines: {
-              drawOnChartArea:false
-            }
-          }],
-        }
-      }
-    },
     updateTotals: function () {
-      if (this.isWorldSelected) {
+      if (this.showWorld) {
         this.totalActive = this.zones.world.values.active;
         this.totalDeath = this.zones.world.values.death;
         this.totalConfirmed = this.zones.world.values.confirmed;
@@ -524,14 +470,9 @@ export default {
       this.dates = dates;
     },
     onZoneSelected: function (zone) {
-      if (this.isMultipleSelectionActive) {
-        if (this.selectedZonesNames.length > this.maximumZonesSelected) {
-          return;
-        } else {
-          this.selectedZonesNames.push(zone.kebab_name);
-        }
+      if (this.selectedZonesNames.length > this.maximumZonesSelected) {
+        return;
       } else {
-        this.selectedZonesNames = [];
         this.selectedZonesNames.push(zone.kebab_name);
       }
     },
@@ -543,16 +484,6 @@ export default {
 </script>
 
 <style>
-  
-</style>
-
-<style>
-  .scrollable {
-    height: 500px;
-    overflow-y: scroll;
-    padding: 10px;
-  }
-
   .multiple-selection {
     position: absolute;
     z-index: 100000;
@@ -572,11 +503,7 @@ export default {
 
   .scrollable{
     overflow-y: scroll;
-    height: 500px;
-  }
-
-  .svg-inline--fa {
-    margin-right: 15px;
+    height: 450px;
   }
 
   .fa-twitter-square{
@@ -656,19 +583,6 @@ export default {
     }
   }
 
-  .trajectories-button-container {
-    padding: 0px 0px 25px 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  @media(min-width: 1024px) {
-    .trajectories-button-container {
-      display: none;
-    }
-  }
-
   .information-section {
     margin-bottom: 0.75rem;
   }
@@ -693,8 +607,7 @@ export default {
 
 
   .left-side {
-    height: calc(80vh - 100px);
-    top: 55px;
+    height: calc(100vh - 52px);
     padding-top: 0 !important;
   }
 
@@ -751,9 +664,47 @@ export default {
     cursor: pointer;
   }
 
+  .chevron-wrapper.hidden {
+    display: none;
+  }
+
+  .chevron-wrapper .svg-inline--fa {
+    margin: 0;
+  }
+
   .chevron-wrapper.towards-left {
     transform: rotateY(180deg);
-    
+  }
+
+  .switch-scale {
+    position: absolute;
+    right: 0;
+  }
+
+  .chart-container {
+    padding: 20px 0px;
+  }
+
+  .chart-container:not(:last-child) {
+    border-bottom: 1px solid #EAEAEA;
+  }
+
+  .multiselect__tag-icon:focus, .multiselect__tag-icon:hover{
+    background: #8A8A8A;
+    color: #646464
+  }
+
+  .multiselect__tag-icon::after {
+    color: #646464;
+  }
+
+  .media-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .scale-field, .field.time-period-wrapper {
+    display: block;
   }
 </style>
 
@@ -772,10 +723,12 @@ export default {
   $danger-invert: findColorInvert($danger);
   $light: #EAEAEA;
   $light-invert: findColorInvert($light);
+  $grey: #BCBCBC;
+  $dark: #646464;
 
-  $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert), "warning": ($warning, $warning-invert) )
+  $colors: ( "info": ($info, $info-invert), "link": ($primary, $primary-invert), "primary": ($primary, $primary-invert), "success": ($success, $success-invert), "danger": ($danger, $danger-invert), "light": ($light, $light-invert), "warning": ($warning, $warning-invert), 'dark': ($dark, $dark), 'grey': ($grey, $grey)  )
   
-  .multiselect__tag { background: $success; };
+  .multiselect__tag { background: #EAEAEA; color: $dark };
 
   @import "~bulma";
   @import "~buefy/src/scss/buefy";

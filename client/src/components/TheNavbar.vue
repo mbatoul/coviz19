@@ -13,33 +13,21 @@
       </b-navbar-item>
     </template>
     
-    <template slot="start">
-      <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-map' }">
-        Home
-      </b-navbar-item>
-      <b-navbar-dropdown label="Raw data">
+    <template slot="end">
+      <b-navbar-dropdown label="Coronavirus data">
         <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-data/countries' }">
-          Countries
+          By countries
         </b-navbar-item>
         <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-data/regions' }">
-          Regions
+          By regions
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-item tag="router-link" v-bind:to="{ path: '/about' }">
         About
       </b-navbar-item>
-      <b-navbar-item href="https://github.com/mbatoul/coviz19" target='_blank'>
-        Source code
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/contact' }">
+        Contact
       </b-navbar-item>
-    </template>
-
-    <template slot='end'>
-      <b-button
-        type="is-warning"
-        tag="router-link" v-bind:to="{ path: '/coronavirus-trajectories' }"
-      >
-        See countries' trajectories
-      </b-button>
     </template>
   </b-navbar>
 </template>

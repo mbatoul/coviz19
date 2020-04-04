@@ -6,53 +6,32 @@ class V1::ZonesController < ApplicationController
   def index
     @zones = Zone.where('lat IS NOT NULL AND lng IS NOT NULL')
     @most_recent_data_points_by_zone = DataPoint.most_recent_by_zone
-    @last_update_date = DataPoint.maximum(:date).strftime('%b %d, %Y')
   end
 
-  # GET /zones
-  # GET /zones.json
-  def chart_data
-    @death_chart_data = ChartDataService.call(
-      params[:zones],
-      'death',
-      params[:start_date],
-      params[:end_date],
-      params[:scale],
-    )
-    @confirmed_chart_data = ChartDataService.call(
-      params[:zones],
-      'confirmed',
-      params[:start_date],
-      params[:end_date],
-      params[:scale],
-    )
-    @recovered_chart_data = ChartDataService.call(
-      params[:zones],
-      'recovered',
-      params[:start_date],
-      params[:end_date],
-      params[:scale],
-    )
-    @active_chart_data = ChartDataService.call(
-      params[:zones],
-      'active',
-      params[:start_date],
-      params[:end_date],
-      params[:scale],
-    )
-  end
-
-  def trajectories_data
-    @confirmed_threshold = TrajectoriesDataService::THRESHOLDS[:confirmed]
-    @death_threshold = TrajectoriesDataService::THRESHOLDS[:death]
-    @recovered_threshold = TrajectoriesDataService::THRESHOLDS[:recovered]
-    @active_threshold = TrajectoriesDataService::THRESHOLDS[:active]
+  # GET /charts_data
+  # GET /charts_data.json
+  def charts_data
+    is_log_scale = params[:is_log_scale] == 'true'
+    world_only = params[:world_only] == 'true'
     
-    trajectories_service = TrajectoriesDataService.new
-    @confirmed_data = trajectories_service.confirmed
-    @active_data = trajectories_service.active
-    @death_data = trajectories_service.death
-    @recovered_data = trajectories_service.recovered
+    @charts_data = 
+      case params[:visualization_mode]
+      when 'cumulative'
+        ChartDataService.call(
+          zones: Zone.where(kebab_name: params[:zones_names]),
+          start_date: Date.parse(params[:start_date]),
+          end_date: Date.parse(params[:end_date]),
+          visualization_mode: params[:visualization_mode],
+          is_log_scale: is_log_scale,
+          world_only: world_only
+        )
+      when 'trajectories'
+        TrajectoriesDataService.call(
+          zones: Zone.where(kebab_name: params[:zones_names]),
+          is_log_scale: is_log_scale,
+          world_only: world_only
+        )
+      end
   end
 
   def raw_data
