@@ -146,16 +146,23 @@
 
           <div class="box">
             <div
-              class="chart-container"
-              v-for='(chartData, id) in chartsData'
-              v-bind:key='id'
-              v-show='chartData.chart_data.datasets.length > 0'
-            >
-              <LineChart
-                v-bind:data='chartData.chart_data'
-                v-bind:options="chartData.chart_options"
-                v-bind:key="`${chartsKey}-${id}`"
-              />
+              class='loading small'
+              style='margin: 0 auto;'
+              v-if='isLoading'>
+            </div>
+            <div class="charts" v-else>
+              <div
+                class="chart-container"
+                v-for='(chartData, id) in chartsData'
+                v-bind:key='id'
+                v-show='chartData.chart_data.datasets.length > 0'
+              >
+                <LineChart
+                  v-bind:data='chartData.chart_data'
+                  v-bind:options="chartData.chart_options"
+                  v-bind:key="`${chartsKey}-${id}`"
+                />
+              </div>
             </div>
           </div>
           
@@ -354,10 +361,8 @@ export default {
   },
 
   created () {
-    this.isLoading = true;
     this.updateDates(this.pastMonthDates);
     this.getZones();
-    this.isLoading = false;
   },
 
   methods: {
@@ -415,6 +420,7 @@ export default {
       }
     },
     getChartsData: async function () {
+      this.isLoading = true;
       this.deathChartData = {};
       this.confirmedChartData = {};
       this.recoveredChartData = {};
@@ -434,6 +440,7 @@ export default {
         )
         this.chartsData = [];
         this.chartsData.push(... response.data.charts_data);
+        this.isLoading = false;
       } catch (error) {
         console.error(error);
       }

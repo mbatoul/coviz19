@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class='loading'
+      class='loading small'
       v-if='isLoading'>
     </div>
     <NewsItem
