@@ -49,11 +49,14 @@ class ImportCovidDataService
           zone = Zone.find_or_create_by(kebab_name: kebab_name) do |zone|
             zone.name = child_name
             zone.nature = Zone.natures[nature || 'state']
-            zone.lat = lat
-            zone.lng = lng
             zone.code = get_code(child_name.parameterize)
             zone.parent = parent
           end
+        else
+          zone.update_columns(
+            lat: lat,
+            lng: lng
+          )
         end
         
         data_points = hash.select { |key, value| key.to_s.match(/\d{1,}\/\d{1,}\/\d{1,}/) }
