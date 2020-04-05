@@ -11,7 +11,7 @@
             >
             </div>
           </div>
-          <b-button class='is-primary is-pulled-right'>
+          <b-button class='is-success is-pulled-right'>
             <download-csv
               v-bind:data= 'rawData'
               v-bind:name="'coronavirus-data.csv'"
@@ -19,8 +19,9 @@
               <font-awesome-icon
                 v-bind:icon="['fas', 'file-excel']"
                 size='1x'
+                style='margin-right: 5px;'
               />
-              Download spreadsheet
+              Download
             </download-csv>
           </b-button>          
           <b-field grouped group-multiline>
