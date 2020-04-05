@@ -58,9 +58,16 @@ export default {
 
   methods: {
     getArticles: async function () {
+      let query = this.zoneName;
+
+      if (query === 'us') {
+        query = 'trump'
+      } else if (query === 'world') {
+        query = ''
+      }
       try {
         this.isLoading = true;
-        const response = await newsApi.get(`?q=coronavirus,covid,${this.zoneName === 'world' ? '' : this.zoneName}&pageSize=10`)
+        const response = await newsApi.get(`?q=coronavirus,covid,${query}&pageSize=20`)
         this.articlesList = [];
         this.articlesList.push(... response.data.value);
         this.isLoading = false;
