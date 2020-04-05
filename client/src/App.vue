@@ -21,23 +21,27 @@
           <p>Coviz19 is a real-time visualization dashboard for coronavirus spread. The data we used is published by the <a href="https://github.com/CSSEGISandData/COVID-19" target='_blank'>Johns Hopkins Center for Systems Science and Engineering (CSSE)</a>.</p>
           <div class="has-text-weight-bold">Interactive map</div>
           <ul>
-            <li>Select up to 10 countries or regions simultaneously <strong>directly on map</strong></li>
-            <li>Choose between the 4 categories available (active cases, total confirmed, total deaths and total recovered)</li>
+            <li><strong>Click on the map</strong> to select up to 10 countries or regions</li>
+            <li>Choose between the 4 categories available:</li>
+            <ul>
+              <li>Confirmed is the total number of cases since the beginning of the pandemic</li>
+              <li>Deaths is the total number of deaths since the beginning of the pandemic</li>
+              <li>Recovered is the total number of recoveries since the beginning of the pandemic</li>
+              <li><strong>Active</strong> is the current number of active cases (i.e. <strong>Total Confirmed - Total Deaths - Total Recovered</strong>)</li>
+            </ul>
           </ul>
           <div class="has-text-weight-bold">Visualization options</div>
           <ul>
-            <li>Use the <strong>search field</strong> to find countries and regions or toggle <strong>World only</strong> to show data at a global scale</li>
+            <li>Use the <strong>search field</strong> to find countries and regions</li>
+            <li>Toggle <strong>World only</strong> to show data at a global scale</li>
             <li>Choose between the <strong>Trajectories</strong> and <strong>Cumulative</strong> visualization modes to get different insights</li>
             <li>Use <strong>linear</strong> or <strong>logarithmic</strong> scale</li>
           </ul>
           <div class="has-text-weight-bold">News</div>
           <ul>
-            <li>Get the <strong>latest news and tweets in the countries you selected</strong></li>
+            <li>Get the <strong>latest news and tweets</strong> related to coronavirus in the countries you selected</li>
           </ul>
-          <div class="has-text-weight-bold">Coravirus data</div>
-          <ul>
-            <li>Download the raw coronavirus data in a spreadsheet</li>
-          </ul>
+
           <div class="button-container">
             <b-button class='is-primary' v-on:click='isWelcomeModalActive = false'>See dashboard</b-button>
           </div>
