@@ -151,6 +151,8 @@
                   >
                     Logarithmic
                   </b-switch>
+                  <p class='has-text-grey-dark category-explanation is-size-7'>Log scale allow a large range to be displayed without small values being compressed down into bottom of the graph</p>
+                  
                 </div>
               </div>
 
