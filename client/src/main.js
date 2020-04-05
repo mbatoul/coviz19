@@ -28,10 +28,10 @@ Vue.use(Vuelidate)
 
 const routes = [
   {
-    path: '*', redirect: '/coronavirus-map'
+    path: '*', redirect: '/'
   },
   {
-    path: '/coronavirus-map',
+    path: '/',
     component: Home,
   },
   {

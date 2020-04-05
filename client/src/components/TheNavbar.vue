@@ -4,7 +4,7 @@
     v-bind:fixed-top='true'
   >
     <template slot="brand">
-      <b-navbar-item tag="router-link" v-bind:to="{ path: '/coronavirus-map' }">
+      <b-navbar-item tag="router-link" v-bind:to="{ path: '/' }">
         <img
           src="../assets/logo.png"
           alt="Data visualization dashboard of COVID-19 spread"
