@@ -20,7 +20,7 @@
                 v-bind:icon="['fas', 'file-excel']"
                 size='1x'
               />
-              Export
+              Download spreadsheet
             </download-csv>
           </b-button>          
           <b-field grouped group-multiline>
