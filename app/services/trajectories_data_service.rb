@@ -81,7 +81,7 @@ class TrajectoriesDataService
           diff = result['date'].to_date - results.first['date'].to_date
           data << {
             x: diff.to_i,
-            y: result['total']
+            y: result['total'].round(2)
           }
         end
     
@@ -148,7 +148,7 @@ class TrajectoriesDataService
         diff = result['date'].to_date - results.first['date'].to_date
         data << {
           x: diff.to_i,
-          y: result['total']
+          y: result['total'].round(2)
         }
       end
   
@@ -202,18 +202,17 @@ class TrajectoriesDataService
             drawOnChartArea:false
           }
         }],
-        yAxes: [
-          {
-            ticks: {
-              precision: 0,
-              beginAtZero: true,
-              position: 'left'
-            },
-            gridLines: {
-              drawOnChartArea:false
-            }
+        yAxes: [{
+          
+          ticks: {
+            precision: 0,
+            beginAtZero: true,
+            position: 'left'
           },
-        ],
+          gridLines: {
+            drawOnChartArea:false
+          }
+        }],
       }
     }
   end
