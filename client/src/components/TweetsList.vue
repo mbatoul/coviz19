@@ -1,17 +1,18 @@
 <template>
-  <div>
+  <div class="tweets-wrapper">
     <div
       class='loading small'
       v-if='isLoading'>
     </div>
-    <Tweet
-      v-else
-      v-for='(tweet, id) in tweetsList'
-      v-bind:key='id'
-      v-bind:id='tweet.id_str'
-      v-bind:options="{ cards: 'hidden' }"
-      widget-class='tweet-custom'
-    />
+    <div class='tweets-container' v-else>
+      <Tweet
+        v-for='(tweet, id) in tweetsList'
+        v-bind:key='id'
+        v-bind:id='tweet.id_str'
+        v-bind:options="{ cards: 'hidden' }"
+        widget-class='tweet-custom'
+      />
+    </div>
   </div>
 </template>
 
@@ -69,3 +70,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .tweets-wrapper {
+    width: 100%;
+  }
+</style>
