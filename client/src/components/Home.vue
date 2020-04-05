@@ -713,6 +713,14 @@ export default {
   .scale-field, .field.time-period-wrapper {
     display: block;
   }
+
+  .multiselect__option.multiselect__option--highlight {
+    background: #BCBCBC;
+  }
+
+  .multiselect__option--highlight::after {
+    background: #3273dc
+  }
 </style>
 
 <style lang="sass">
