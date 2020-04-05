@@ -117,7 +117,7 @@ export default {
 
   methods: {
     numberWithCommas: function (number) {
-      return number.toLocaleString();
+      return number.toLocaleString('en-US');
     },
     onCategorySelected: function (category) {
       this.$emit('categorySelected', category);
