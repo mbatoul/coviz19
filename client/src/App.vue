@@ -28,9 +28,9 @@
           <ul>
             <li>Use the <strong>search field</strong> to find countries and regions or toggle <strong>World only</strong> to show data at a global scale</li>
             <li>Choose between the <strong>Trajectories</strong> and <strong>Cumulative</strong> visualization modes to get different insights</li>
-            <li>Decide between <strong>linear</strong> or <strong>logarithmic</strong> scale</li>
+            <li>Use <strong>linear</strong> or <strong>logarithmic</strong> scale</li>
           </ul>
-          <div class="has-text-weight-bold">Latest news</div>
+          <div class="has-text-weight-bold">News</div>
           <ul>
             <li>Get the <strong>latest news and tweets in the countries you selected</strong></li>
           </ul>
