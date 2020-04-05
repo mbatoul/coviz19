@@ -283,7 +283,7 @@ export default {
       chartsData: [],
       maximumZonesSelected: 10,
       helpCategories: {
-        'active': 'Current number of active cases',
+        'active': 'Current number of active cases (i.e. Total Confirmed - Total Deaths - Total Recovered)',
         'confirmed': 'Total number of cases since the beginning of the pandemic',
         'death': 'Total number of deaths since the beginning of the pandemic',
         'recovered': 'Total number of recoveries since the beginning of the pandemic',

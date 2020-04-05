@@ -212,6 +212,7 @@ export default {
     height: 100%;
     width: 100%;
     flex-grow: 1;
+    z-index: 10;
   }
 
   .leaflet-control-container {

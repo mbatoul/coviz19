@@ -14,7 +14,7 @@ import About from './components/About.vue'
 import baseApi from './plugins/base-api.js';
 import Vuelidate from 'vuelidate'
 import JsonCSV from 'vue-json-csv'
-
+import VueCookies from 'vue-cookies'
 library.add(fas)
 library.add(fab)
 Vue.config.productionTip = false
@@ -25,6 +25,7 @@ Vue.component('downloadCsv', JsonCSV)
 Vue.use(Buefy);
 Vue.use(VueRouter);
 Vue.use(Vuelidate)
+Vue.use(VueCookies)
 
 const routes = [
   {

@@ -57,6 +57,9 @@
       <b-navbar-item tag="router-link" v-bind:to="{ path: '/contact' }">
         Contact
       </b-navbar-item>
+      <b-navbar-item v-on:click='onClickOnHelp'>
+        Help
+      </b-navbar-item>
     </template>
   </b-navbar>
 </template>
@@ -67,13 +70,18 @@ export default {
     lastUpdateDate: {
       type: String,
     }
+  },
+
+  methods: {
+    onClickOnHelp: function () {
+      this.$emit('toggle-modal');
+    }
   }
 }
 </script>
 
 <style>
   .navbar {
-    z-index: 10000 !important;
     border-bottom: 1px solid #EAEAEA;
   }
 
