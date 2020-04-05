@@ -190,7 +190,9 @@
                 <div>
                   <span>
                     News
-                    <span class="tag is-normal is-danger is-rounded news-count">20+</span>
+                    <transition name='fade'>
+                      <span class="tag is-normal is-danger is-rounded news-count" v-show='showNewsCountTag'>{{ animatedNewsCount }}+</span>
+                    </transition>
                   </span>
                 </div>
               </template>
@@ -249,6 +251,7 @@ import TweetsList from './TweetsList.vue';
 import LineChart from './LineChart.vue';
 import StringFormatter from '../mixins/string-formatter.js';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
+import { gsap } from "gsap";
 
 export default {
   components: {
@@ -296,11 +299,17 @@ export default {
       isLogScale: false,
       showWorld: false,
       chartsKey: 0,
-      newsKey: 0
+      newsKey: 0,
+      showNewsCountTag: true,
+      newsCount: 0,
+      tweenedNewsCount: 0
     }
   },
 
   computed: {
+    animatedNewsCount: function () {
+      return this.tweenedNewsCount.toFixed(0);
+    },
     selectedZones: function () {
       return Object.keys(this.zones)
         .filter(kebabName => this.selectedZonesNames.includes(kebabName))
@@ -362,11 +371,20 @@ export default {
     selectedZonesNames: function () {
       this.showWorld = this.selectedZonesNames.length === 0;
 
+
       this.updateTotals();
 
       if (this.selectedZonesNames.length) {
         this.getChartsData();
       }
+      
+      setTimeout(() => {
+        this.newsCount = 20;
+        this.showNewsCountTag = true;
+      }, 1000);
+    },
+    newsCount: function(newValue) {
+      gsap.to(this.$data, { duration: 0.5, tweenedNewsCount: newValue });
     },
     dates: function () {
       if (this.selectedZonesNames.length) {
@@ -386,6 +404,10 @@ export default {
     showWorld: function () {
       this.getChartsData();
       this.updateTotals();
+      setTimeout(() => {
+        this.newsCount = 20;
+        this.showNewsCountTag = true;
+      }, 1000);
     }
   },
 
@@ -394,9 +416,20 @@ export default {
     this.getZones();
   },
 
+  mounted () {
+    this.newCount = 20;
+  },
+
   methods: {
-    onMainTabsChange: function () {
+    animateNewsCount: function () {
+      this.showNewsCountTag = false;
+      setTimeout(() => this.newsCount = 0, 1000)
+    },
+    onMainTabsChange: function (index) {
       this.chartsKey += 1;
+      if (index === 1) {
+        this.animateNewsCount();
+      }
     },
     onNewsTabChange: function () {
       this.newsKey += 1;

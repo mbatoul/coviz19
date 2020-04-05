@@ -18,7 +18,7 @@
           <img src="https://coviz-19-bucket.s3.eu-west-3.amazonaws.com/coviz-dashboard.png" class='modal-image'>
         </div>
         <div class="content">
-          <p>Coviz19 is a real-time visualization dashboard for coronavirus spread. The data we used is published by the <a href="https://github.com/CSSEGISandData/COVID-19" target='_blank'>Johns Hopkins Center for Systems Science and Engineering (CSSE)</a>. Compare countries's trends and follow the latest updates.</p>
+          <p>Coviz19 is a real-time visualization dashboard for coronavirus spread. The data we used is published by the <a href="https://github.com/CSSEGISandData/COVID-19" target='_blank'>Johns Hopkins Center for Systems Science and Engineering (CSSE)</a>.</p>
           <div class="has-text-weight-bold">Interactive map</div>
           <ul>
             <li>Select up to 10 countries or regions simultaneously <strong>directly on map</strong></li>
@@ -26,14 +26,13 @@
           </ul>
           <div class="has-text-weight-bold">Visualization options</div>
           <ul>
-            <li>Use the <strong>search field</strong> to find countries and regions</li>
-            <li>Toggle <strong>World only</strong> to show data at a global scale</li>
+            <li>Use the <strong>search field</strong> to find countries and regions or toggle <strong>World only</strong> to show data at a global scale</li>
             <li>Choose between the <strong>Trajectories</strong> and <strong>Cumulative</strong> visualization modes to get different insights</li>
-            <li>Toggle the logarithmic scale to </li>
+            <li>Decide between <strong>linear</strong> or <strong>logarithmic</strong> scale</li>
           </ul>
           <div class="has-text-weight-bold">Latest news</div>
           <ul>
-            <li>Get the <strong>latest news and tweets</strong> in the countries you're interested in</li>
+            <li>Get the <strong>latest news and tweets in the countries you selected</strong></li>
           </ul>
           <div class="has-text-weight-bold">Coravirus data</div>
           <ul>

@@ -14,6 +14,7 @@
     "postinstall": "yarn build && yarn deploy"
   },
   "dependencies": {
+    "gsap": "^3.2.6",
     "v-calendar": "^1.0.1",
     "vue-analytics": "^5.22.1",
     "vue-cookies": "^1.7.0",
