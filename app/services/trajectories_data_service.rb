@@ -88,10 +88,11 @@ class TrajectoriesDataService
         category_chart_data[:datasets] << {
           data: data,
           label: zone.name,
-          borderColor: @colors_per_zones[zone.kebab_name] || WORLD_COLOR,
+          borderColor: @colors_per_zones[zone.kebab_name],
+          backgroundColor: @colors_per_zones[zone.kebab_name],
           fill: false,
           borderWidth: 3,
-          pointRadius: 1
+          pointRadius: 0
         }
       end
   
@@ -155,9 +156,10 @@ class TrajectoriesDataService
         data: data,
         label: 'World',
         borderColor: WORLD_COLOR,
+        backgroundColor: WORLD_COLOR,
         fill: false,
         borderWidth: 3,
-        pointRadius: 1
+        pointRadius: 0
       }
   
       charts_data << {
