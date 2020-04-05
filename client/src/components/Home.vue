@@ -35,176 +35,202 @@
         </div>
 
         <div class="column" v-bind:class='rightColumnClass()'>
-          <div class="box">
-            <label class="label">Category</label>
-            <b-radio v-model="currentCategory"
-              native-value="confirmed">
-              Confirmed
-            </b-radio>
-            <b-radio v-model="currentCategory"
-              native-value="active">
-              Active
-            </b-radio>
-            <b-radio v-model="currentCategory"
-              native-value="death">
-              Deaths
-            </b-radio>
-            <b-radio v-model="currentCategory"
-              native-value="recovered">
-              Recovered
-            </b-radio>
-            <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpCategory }}</p>
-
-            <div class='field multiselect-zones'>
-              <label class="label">Countries and regions</label>
-              <b-radio v-model="showWorld"
-                v-bind:native-value='false'
-              >
-                Compare
-              </b-radio>
-              <b-radio v-model="showWorld"
-                v-bind:native-value='true'
-              >
-                Show world only
-              </b-radio>
-
-              <b-field style='width: 100%;' v-show='!showWorld'>
-                <Multiselect
-                  placeholder="Select one or multiple countries/regions..."
-                  label='name'
-                  track-by='kebab_name'
-                  v-on:select='onZoneSelected'
-                  v-on:remove='onZoneRemoved'
-                  v-bind:value='arrayOfSelectedZones'
-                  v-bind:options='arrayOfAllZones'
-                  v-bind:multiple='true'
-                  v-bind:taggable='true'
-                  v-bind:close-on-select='true'
-                  class='is-danger'
+          <b-tabs type="is-toggle" expanded class='main-tabs' v-on:change='onMainTabsChange'>
+            <b-tab-item>
+              <template slot='header'>
+                <font-awesome-icon
+                  v-bind:icon="['fas', 'database']"
+                  size='1x'
+                  style='margin-right: 10px'
                 />
-              </b-field>
-            </div>
+                <span>Data</span>
+              </template>
+              <div class="box">
+                <label class="label">Category</label>
+                <b-radio v-model="currentCategory"
+                  native-value="confirmed">
+                  Confirmed
+                </b-radio>
+                <b-radio v-model="currentCategory"
+                  native-value="active">
+                  Active
+                </b-radio>
+                <b-radio v-model="currentCategory"
+                  native-value="death">
+                  Deaths
+                </b-radio>
+                <b-radio v-model="currentCategory"
+                  native-value="recovered">
+                  Recovered
+                </b-radio>
+                <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpCategory }}</p>
 
-            <label class="label">Visualization mode</label>
-            <b-radio v-model="visualizationMode"
-              native-value="trajectories">
-              Trajectories
-            </b-radio>
-            <b-radio v-model="visualizationMode"
-              native-value="cumulative">
-              Cumulative
-            </b-radio>
-            <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpVisualizationMode }}</p>
+                <div class='field multiselect-zones'>
+                  <label class="label">Countries and regions</label>
+                  <b-radio v-model="showWorld"
+                    v-bind:native-value='false'
+                  >
+                    Compare
+                  </b-radio>
+                  <b-radio v-model="showWorld"
+                    v-bind:native-value='true'
+                  >
+                    World only
+                  </b-radio>
 
-            <div class="field time-period-wrapper" v-if="visualizationMode !== 'trajectories'">
-              <div class="field time-period">
-                <label class="label">Time period</label>
-                <DatePicker
-                  v-bind:mode="'range'"
-                  v-bind:columns='datePickerColumnsNumber()'
-                  v-bind:min-date='minDate'
-                  v-bind:max-date='maxDate'
-                  v-model='dates'
-                  v-bind:transition="'fade'"
-                  color='blue'
-                />
-              </div>
-              <div class="buttons">
-                <button
-                  class="button is-outlined is-small"
-                  v-on:click='updateDates(pastWeekDates)'
-                >
-                  Past week
-                </button>
-                <button
-                  class="button is-outlined is-small"
-                  v-on:click='updateDates(pastMonthDates)'
-                >
-                  Past month
-                </button>
-                <button
-                  class="button is-outlined is-small"
-                  v-on:click='updateDates({ start: minDate, end: maxDate })'
-                >
-                  Full period
-                </button>
-              </div>
-            </div>
-            <div class="field scale-field">
-              <label class="label">Scale</label>
-              <b-switch
-                v-bind:rounded="false"
-                v-bind:outlined="false"
-                v-bind:size="'large'"
-                v-bind:type="'is-primary'"
-                v-model='isLogScale'
-              >
-                Logarithmic
-              </b-switch>
-            </div>
-          </div>
+                  <b-field style='width: 100%;' v-show='!showWorld'>
+                    <Multiselect
+                      placeholder="Select one or multiple countries/regions..."
+                      label='name'
+                      track-by='kebab_name'
+                      v-on:select='onZoneSelected'
+                      v-on:remove='onZoneRemoved'
+                      v-bind:value='arrayOfSelectedZones'
+                      v-bind:options='arrayOfAllZones'
+                      v-bind:multiple='true'
+                      v-bind:taggable='true'
+                      v-bind:close-on-select='true'
+                      class='is-danger'
+                    />
+                  </b-field>
+                </div>
 
-          <div class="box">
-            <div
-              class='loading small'
-              style='margin: 0 auto;'
-              v-if='isLoading'>
-            </div>
-            <div class="charts" v-else>
-              <div
-                class="chart-container"
-                v-for='(chartData, id) in chartsData'
-                v-bind:key='id'
-                v-show='chartData.chart_data.datasets.length > 0'
-              >
-                <LineChart
-                  v-bind:data='chartData.chart_data'
-                  v-bind:options="chartData.chart_options"
-                  v-bind:key="`${chartsKey}-${id}`"
-                />
+                <label class="label">Visualization mode</label>
+                <b-radio v-model="visualizationMode"
+                  native-value="trajectories">
+                  Trajectories
+                </b-radio>
+                <b-radio v-model="visualizationMode"
+                  native-value="cumulative">
+                  Cumulative
+                </b-radio>
+                <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpVisualizationMode }}</p>
+
+                <div class="field time-period-wrapper" v-if="visualizationMode !== 'trajectories'">
+                  <div class="field time-period">
+                    <label class="label">Time period</label>
+                    <DatePicker
+                      v-bind:mode="'range'"
+                      v-bind:columns='datePickerColumnsNumber()'
+                      v-bind:min-date='minDate'
+                      v-bind:max-date='maxDate'
+                      v-model='dates'
+                      v-bind:transition="'fade'"
+                      color='blue'
+                    />
+                  </div>
+                  <div class="buttons">
+                    <button
+                      class="button is-outlined is-small"
+                      v-on:click='updateDates(pastWeekDates)'
+                    >
+                      Past week
+                    </button>
+                    <button
+                      class="button is-outlined is-small"
+                      v-on:click='updateDates(pastMonthDates)'
+                    >
+                      Past month
+                    </button>
+                    <button
+                      class="button is-outlined is-small"
+                      v-on:click='updateDates({ start: minDate, end: maxDate })'
+                    >
+                      Full period
+                    </button>
+                  </div>
+                </div>
+                <div class="field scale-field">
+                  <label class="label">Scale</label>
+                  <b-switch
+                    v-bind:rounded="false"
+                    v-bind:outlined="false"
+                    v-bind:size="'large'"
+                    v-bind:type="'is-primary'"
+                    v-model='isLogScale'
+                  >
+                    Logarithmic
+                  </b-switch>
+                </div>
               </div>
-            </div>
-          </div>
-          
-          <div class="box is-paddingless">
-            <b-tabs style='height: 550px;'>
-              <b-tab-item label="Tweets">
-                <template slot="header">
-                  <font-awesome-icon
-                    v-bind:icon="['fas', 'newspaper']"
-                    size='2x'
-                    style='margin-right: 15px;'
-                  />
-                  <span> Articles</span>
-                </template>
-                <div class="media-container" style='padding: 10px;'>
-                  <div class='scrollable'>
-                    <NewsList
-                      v-bind:zoneName='zoneForMedia'
+
+              <div class="box" style='min-height: 500px;'>
+                <div
+                  class='loading small'
+                  style='margin: 0 auto;'
+                  v-if='isLoading'>
+                </div>
+                <div class="charts" v-else>
+                  <div
+                    class="chart-container"
+                    v-for='(chartData, id) in chartsData'
+                    v-bind:key='id'
+                    v-show='chartData.chart_data.datasets.length > 0'
+                  >
+                    <LineChart
+                      v-bind:data='chartData.chart_data'
+                      v-bind:options="chartData.chart_options"
+                      v-bind:key="`${chartsKey}-${id}`"
                     />
                   </div>
                 </div>
-              </b-tab-item>
-              <b-tab-item label="Tweets">
-                <template slot="header">
-                  <font-awesome-icon
-                    v-bind:icon="['fab', 'twitter-square']"
-                    size='2x'
-                    style='margin-right: 15px;'
-                  />
-                  <span> Tweets</span>
-                </template>
-                <div class="media-container">
-                  <div class='scrollable'>
+              </div>
+              
+            </b-tab-item>
+
+            <b-tab-item>
+              <template slot='header'>
+                <font-awesome-icon
+                  v-bind:icon="['fas', 'rss-square']"
+                  size='1x'
+                  style='margin-right: 10px'
+                />
+                <div>
+                  <span>
+                    News
+                    <span class="tag is-normal is-danger is-rounded news-count">20+</span>
+                  </span>
+                </div>
+              </template>
+
+              <b-tabs type='is-toggle' expanded>
+                <b-tab-item label="Tweets">
+                  <template slot="header">
+                    <font-awesome-icon
+                      v-bind:icon="['fas', 'newspaper']"
+                      size='1x'
+                      style='margin-right: 10px;'
+                    />
+                    <span> Articles</span>
+                  </template>
+                  <div class="box is-paddingless">
+                    <div class="media-container">
+                      <NewsList
+                        v-bind:zoneName='zoneForNews'
+                        v-bind:key="`${newsKey}-news`"
+                      />
+                    </div>
+                  </div>
+                </b-tab-item>
+                <b-tab-item label="Tweets">
+                  <template slot="header">
+                    <font-awesome-icon
+                      v-bind:icon="['fab', 'twitter-square']"
+                      size='1x'
+                      style='margin-right: 10px;'
+                    />
+                    <span> Tweets</span>
+                  </template>
+                  <div class="media-container">
                     <TweetsList
-                      v-bind:zoneName='zoneForMedia'
+                      v-bind:zoneName='zoneForNews'
+                      v-bind:key="`${newsKey}-tweets`"
                     />
                   </div>
-                </div>
-              </b-tab-item>
-            </b-tabs>
-
-          </div>
+                </b-tab-item>
+              </b-tabs>
+            </b-tab-item>
+          </b-tabs>
         </div>
       </div>
     </div>
@@ -267,7 +293,8 @@ export default {
       isMapExpanded: false,
       isLogScale: false,
       showWorld: false,
-      chartsKey: 0
+      chartsKey: 0,
+      newsKey: 0
     }
   },
 
@@ -318,7 +345,7 @@ export default {
         end: new Date()
       };
     },
-    zoneForMedia: function () {
+    zoneForNews: function () {
       return this.selectedZonesNames[this.selectedZonesNames.length - 1];
     },
     helpCategory: function () {
@@ -366,6 +393,12 @@ export default {
   },
 
   methods: {
+    onMainTabsChange: function () {
+      this.chartsKey += 1;
+    },
+    onNewsTabChange: function () {
+      this.newsKey += 1;
+    },
     toggleLogScale: function () {
       this.isLogScale = !this.isLogScale;
     },
@@ -510,7 +543,7 @@ export default {
 
   .scrollable{
     overflow-y: scroll;
-    height: 450px;
+    /* height: 450px; */
   }
 
   .fa-twitter-square{
@@ -708,6 +741,8 @@ export default {
   .media-container {
     display: flex;
     justify-content: center;
+    min-height: 80vh;
+    padding-top: 10px;
   }
 
   .scale-field, .field.time-period-wrapper {
@@ -720,6 +755,27 @@ export default {
 
   .multiselect__option--highlight::after {
     background: #3273dc
+  }
+
+  .main-tabs .tab-content {
+    padding: 1em 0 !important;
+  }
+
+  .tabs .is-active svg {
+    color: white;
+  }
+
+  .tabs ul {
+    width: 100%;
+  }
+
+  .tabs ul li {
+    max-width: 50%;
+  }
+
+  .news-count {
+    margin-left: 5px;
+    height: 20px;
   }
 </style>
 
