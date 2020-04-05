@@ -682,7 +682,7 @@ export default {
 
 
   .left-side {
-    height: calc(100vh - 52px);
+    height: calc(70vh - 52px);
     padding-top: 0 !important;
   }
 
