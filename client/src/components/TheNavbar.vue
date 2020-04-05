@@ -22,6 +22,35 @@
           By regions
         </b-navbar-item>
       </b-navbar-dropdown>
+
+      <b-navbar-dropdown label="Share">
+        <b-navbar-item href="https://www.facebook.com/sharer/sharer.php?u=#url" target="_blank">
+          <font-awesome-icon
+            v-bind:icon="['fab', 'facebook-square']"
+            size='2x'
+            style='margin-right: 15px;'
+          />
+          Facebook
+        </b-navbar-item>
+        <b-navbar-item href="https://twitter.com/intent/tweet?text=https://www.coviz19.com" target="_blank">
+          
+          <font-awesome-icon
+            v-bind:icon="['fab', 'twitter-square']"
+            size='2x'
+            style='margin-right: 15px;'
+          />
+          Twitter
+        </b-navbar-item>
+        <b-navbar-item href='https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.coviz19.com' target="_blank">
+          <font-awesome-icon
+            v-bind:icon="['fab', 'linkedin']"
+            size='2x'
+            style='margin-right: 15px;'
+          />
+          LinkedIn
+        </b-navbar-item>
+      </b-navbar-dropdown>
+
       <b-navbar-item tag="router-link" v-bind:to="{ path: '/about' }">
         About
       </b-navbar-item>
@@ -46,5 +75,13 @@ export default {
   .navbar {
     z-index: 10000 !important;
     border-bottom: 1px solid #EAEAEA;
+  }
+
+  .navbar-item .fa-facebook-square {
+    color: #3b5998;
+  }
+
+  .navbar-item .fa-linkedin {
+    color: #0072b1;
   }
 </style>
