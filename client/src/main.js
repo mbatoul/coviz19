@@ -13,6 +13,7 @@ import Contact from './components/Contact.vue'
 import About from './components/About.vue'
 import baseApi from './plugins/base-api.js';
 import Vuelidate from 'vuelidate'
+import JsonCSV from 'vue-json-csv'
 
 library.add(fas)
 library.add(fab)
@@ -20,6 +21,7 @@ Vue.config.productionTip = false
 Vue.config.devtools = true;
 Vue.prototype.$http = baseApi;
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('downloadCsv', JsonCSV)
 Vue.use(Buefy);
 Vue.use(VueRouter);
 Vue.use(Vuelidate)

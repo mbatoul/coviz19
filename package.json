@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "v-calendar": "^1.0.1",
-    "vue-analytics": "^5.22.1"
+    "vue-analytics": "^5.22.1",
+    "vue-json-csv": "^1.2.11"
   }
 }

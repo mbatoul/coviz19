@@ -11,6 +11,18 @@
             >
             </div>
           </div>
+          <b-button class='is-primary is-pulled-right'>
+            <download-csv
+              v-bind:data= 'rawData'
+              v-bind:name="'coronavirus-data.csv'"
+            >
+              <font-awesome-icon
+                v-bind:icon="['fas', 'file-excel']"
+                size='1x'
+              />
+              Export
+            </download-csv>
+          </b-button>          
           <b-field grouped group-multiline>
             <b-select v-model="perPage" :disabled="!isPaginated">
               <option value="20">20 per page</option>
@@ -22,7 +34,6 @@
               <b-switch v-model="isPaginated">Paginated</b-switch>
             </div>
           </b-field>
-          
           <transition name='fade'>
             <b-table
               v-if='!isLoading'
