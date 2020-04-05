@@ -775,7 +775,7 @@ export default {
 
   .news-count {
     margin-left: 5px;
-    height: 20px;
+    height: 20px !important;
   }
 </style>
 

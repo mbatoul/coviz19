@@ -4,7 +4,7 @@
       class='loading small'
       v-if='isLoading'>
     </div>
-    <div class='tweets-container' v-else>
+    <div v-else>
       <Tweet
         v-for='(tweet, id) in tweetsList'
         v-bind:key='id'
@@ -74,5 +74,17 @@ export default {
 <style>
   .tweets-wrapper {
     width: 100%;
+  }
+
+  @media(min-width: 1024px) {
+    .tweets-wrapper {
+      display: flex;
+      justify-content: center;
+      /* align-items: center; */
+    }
+  }
+
+  .tweets-container {
+    margin: 0 auto;
   }
 </style>
