@@ -171,23 +171,6 @@
               <b-tab-item label="Tweets">
                 <template slot="header">
                   <font-awesome-icon
-                    v-bind:icon="['fab', 'twitter-square']"
-                    size='2x'
-                    style='margin-right: 15px;'
-                  />
-                  <span> Tweets</span>
-                </template>
-                <div class="media-container">
-                  <div class='scrollable'>
-                    <TweetsList
-                      v-bind:zoneName='zoneForMedia'
-                    />
-                  </div>
-                </div>
-              </b-tab-item>
-              <b-tab-item label="Tweets">
-                <template slot="header">
-                  <font-awesome-icon
                     v-bind:icon="['fas', 'newspaper']"
                     size='2x'
                     style='margin-right: 15px;'
@@ -197,6 +180,23 @@
                 <div class="media-container" style='padding: 10px;'>
                   <div class='scrollable'>
                     <NewsList
+                      v-bind:zoneName='zoneForMedia'
+                    />
+                  </div>
+                </div>
+              </b-tab-item>
+              <b-tab-item label="Tweets">
+                <template slot="header">
+                  <font-awesome-icon
+                    v-bind:icon="['fab', 'twitter-square']"
+                    size='2x'
+                    style='margin-right: 15px;'
+                  />
+                  <span> Tweets</span>
+                </template>
+                <div class="media-container">
+                  <div class='scrollable'>
+                    <TweetsList
                       v-bind:zoneName='zoneForMedia'
                     />
                   </div>
