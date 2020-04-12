@@ -8,7 +8,6 @@ class CreateZones < ActiveRecord::Migration[6.0]
       t.string :code
       t.float :lat
       t.float :lng
-      t.integer :population
       t.references :parent
 
       t.timestamps
