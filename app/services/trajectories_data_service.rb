@@ -196,14 +196,18 @@ class TrajectoriesDataService
           scaleLabel: {
             display: true,
             labelString: X_AXES_TITLES[category.to_sym],
-            fontSize: 14
+            fontSize: 12
           },
           gridLines: {
             drawOnChartArea:false
           }
         }],
         yAxes: [{
-          
+          scaleLabel: {
+            display: true,
+            labelString: 'Cases',
+            fontSize: 12
+          },
           ticks: {
             precision: 0,
             beginAtZero: true,

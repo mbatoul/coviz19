@@ -74,11 +74,12 @@
                   </b-radio>
                   <b-radio v-model="showWorld"
                     v-bind:native-value='true'
+                    v-bind:disabled="visualizationMode === 'prevalence'"
                   >
                     World only
                   </b-radio>
 
-                  <b-field style='width: 100%;' v-show='!showWorld'>
+                  <b-field style='width: 100%;'>
                     <Multiselect
                       placeholder="Select one or multiple countries/regions..."
                       label='name'
@@ -87,6 +88,7 @@
                       v-on:remove='onZoneRemoved'
                       v-bind:value='arrayOfSelectedZones'
                       v-bind:options='arrayOfAllZones'
+                      v-bind:disabled='showWorld'
                       v-bind:multiple='true'
                       v-bind:taggable='true'
                       v-bind:close-on-select='true'
@@ -97,12 +99,18 @@
 
                 <label class="label">Visualization mode</label>
                 <b-radio v-model="visualizationMode"
-                  native-value="trajectories">
-                  Trajectories
-                </b-radio>
-                <b-radio v-model="visualizationMode"
                   native-value="cumulative">
                   Cumulative
+                </b-radio>
+                <b-radio v-model="visualizationMode"
+                  native-value="prevalence"
+                  v-bind:disabled="isLogScale || showWorld"
+                  >
+                  Disease prevalence
+                </b-radio>
+                <b-radio v-model="visualizationMode"
+                  native-value="trajectories">
+                  Trajectories
                 </b-radio>
                 <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpVisualizationMode }}</p>
 
@@ -114,8 +122,8 @@
                       v-bind:columns='datePickerColumnsNumber()'
                       v-bind:min-date='minDate'
                       v-bind:max-date='maxDate'
-                      v-model='dates'
                       v-bind:transition="'fade'"
+                      v-model='dates'
                       color='blue'
                     />
                   </div>
@@ -148,6 +156,7 @@
                     v-bind:size="'large'"
                     v-bind:type="'is-primary'"
                     v-model='isLogScale'
+                    v-bind:disabled="visualizationMode === 'prevalence'"
                   >
                     Logarithmic
                   </b-switch>
@@ -276,7 +285,7 @@ export default {
       totalConfirmed: null,
       totalRecovered: null,
       currentCategory: 'confirmed',
-      visualizationMode: 'trajectories',
+      visualizationMode: 'cumulative',
       dates: {},
       minDate: new Date(2020, 0, 22),
       maxDate: new Date(),
@@ -292,8 +301,9 @@ export default {
         'recovered': 'Total number of recoveries since the beginning of the pandemic',
       },
       helpVisualizationModes: {
-        'cumulative': 'Total day-by-day',
+        'cumulative': 'Cumulative number of cases',
         'trajectories': 'Cumulative number of cases, by number of days since 100th case',
+        'prevalence': 'Number of cases per 100,000 population',
       },
       isMapExpanded: false,
       isLogScale: false,

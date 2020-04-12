@@ -15,6 +15,8 @@ class Zone < ApplicationRecord
 
   scope :countries, -> { where(nature: 'country') }
 
+  WORLD_POPULATION = 7794798729
+
   def all_children(children_array = [])
     children_array += children
 

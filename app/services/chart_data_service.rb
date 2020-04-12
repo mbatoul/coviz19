@@ -32,43 +32,30 @@ class ChartDataService
       }
       @zones.each do |zone|
         data = []
-
         zone_ids = zone.all_children.map(&:id) << zone.id
         
-        query = 
-          if @is_log_scale
-            '
-              SELECT date,
-              CASE 
-                WHEN SUM(value) > 0 THEN LOG(SUM(value))
-                ELSE 0
-              END as total
-            '
-          else
-            '
-              SELECT date, sum(value) AS total 
-            '
-          end
-        query += '
-          FROM data_points
-          WHERE date >= (?)
-          AND date <= (?)
-          AND category = (?)
-          AND zone_id IN (?)
-          GROUP BY date
-          ORDER BY date
-        '
-        results = DataPoint.execute_sql(
-          query,
-          @start_date,
-          @end_date,
-          DataPoint.categories[category],
-          zone_ids
-        )
+        results =  if @visualization_mode == 'prevalence'
+          DataPoint.execute_sql(
+            generate_query,
+            zone.population.to_f,
+            @start_date,
+            @end_date,
+            DataPoint.categories[category],
+            zone_ids
+          )
+        else
+          DataPoint.execute_sql(
+            generate_query,
+            @start_date,
+            @end_date,
+            DataPoint.categories[category],
+            zone_ids
+          )
+        end
         results.each do |result|
           data << {
             x: result['date'].to_date.strftime('%d/%m/%y'),
-            y: result['total']
+            y: result['total'].to_f.round(2)
           }
         end
 
@@ -89,6 +76,38 @@ class ChartDataService
     end
     charts_data
   end
+
+  def generate_query
+    query = 
+      if @visualization_mode == 'prevalence'
+        '
+          SELECT date, ((sum(value) / (?)) * 100000) AS total 
+        '
+      else
+        if @is_log_scale
+          '
+            SELECT date,
+            CASE 
+              WHEN SUM(value) > 0 THEN LOG(SUM(value))
+              ELSE 0
+            END as total
+          '
+        else
+          '
+            SELECT date, sum(value) AS total 
+          '
+        end
+      end
+    query += '
+      FROM data_points
+      WHERE date >= (?)
+      AND date <= (?)
+      AND category = (?)
+      AND zone_id IN (?)
+      GROUP BY date
+      ORDER BY date
+    '
+  end
   
   def format_world_data
     charts_data = []
@@ -101,17 +120,17 @@ class ChartDataService
 
       query = 
         if @is_log_scale
-          '
+          "
             SELECT date,
             CASE 
             WHEN SUM(value) > 0 THEN LOG(SUM(value))
             ELSE 0
             END as total
-          '
+          "
         else
-          '
+          "
             SELECT date, sum(value) AS total
-          '
+          "
         end
       query += '
         FROM data_points
@@ -130,7 +149,7 @@ class ChartDataService
       results.each do |result|
         data << {
           x: result['date'].to_date.strftime('%d/%m/%y'),
-          y: result['total']
+          y: result['total'].to_f.round(2)
         }
       end
 
@@ -159,7 +178,7 @@ class ChartDataService
       scaleBeginAtZero: true,
       title: {
         display: true,
-        text: category.capitalize,
+        text: chart_title(category),
         fontSize: 16,
         position: 'top'
       },
@@ -185,6 +204,11 @@ class ChartDataService
           }
         }],
         yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: y_axes_title,
+            fontSize: 12
+          },
           ticks: {
             precision: 0,
             beginAtZero: true,
@@ -195,5 +219,18 @@ class ChartDataService
         }],
       }
     }
+  end
+
+  def y_axes_title
+    @visualization_mode == 'prevalence' ? 'Cases per 100,000 of population' : 'Cases'
+  end
+
+  def chart_title(category)
+    case @visualization_mode
+    when 'cumulative'
+      "Cumulative number of #{category} cases"
+    when 'prevalence'
+      "Number of #{category} cases per 100,000 of population"
+    end
   end
 end

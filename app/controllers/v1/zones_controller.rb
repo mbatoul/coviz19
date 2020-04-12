@@ -16,7 +16,7 @@ class V1::ZonesController < ApplicationController
     
     @charts_data = 
       case params[:visualization_mode]
-      when 'cumulative'
+      when 'cumulative', 'prevalence'
         ChartDataService.call(
           zones: Zone.where(kebab_name: params[:zones_names]),
           start_date: Date.parse(params[:start_date]),

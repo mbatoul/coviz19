@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_194520) do
     t.string "code"
     t.float "lat"
     t.float "lng"
-    t.integer "total_population"
+    t.integer "population"
     t.bigint "parent_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
