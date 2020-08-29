@@ -35,215 +35,147 @@
         </div>
 
         <div class="column" v-bind:class='rightColumnClass()'>
-          <b-tabs type="is-toggle" expanded class='main-tabs' v-on:change='onMainTabsChange'>
-            <b-tab-item>
-              <template slot='header'>
-                <font-awesome-icon
-                  v-bind:icon="['fas', 'database']"
-                  size='1x'
-                  style='margin-right: 10px'
+          <div class="box">
+            <label class="label">Category</label>
+            <b-radio v-model="currentCategory"
+              native-value="confirmed">
+              Confirmed
+            </b-radio>
+            <b-radio v-model="currentCategory"
+              native-value="active">
+              Active
+            </b-radio>
+            <b-radio v-model="currentCategory"
+              native-value="death">
+              Deaths
+            </b-radio>
+            <b-radio v-model="currentCategory"
+              native-value="recovered">
+              Recovered
+            </b-radio>
+            <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpCategory }}</p>
+
+            <div class='field multiselect-zones'>
+              <label class="label">Countries and regions</label>
+              <b-radio v-model="showWorld"
+                v-bind:native-value='false'
+              >
+                Compare
+              </b-radio>
+              <b-radio v-model="showWorld"
+                v-bind:native-value='true'
+                v-bind:disabled="visualizationMode === 'prevalence'"
+              >
+                World only
+              </b-radio>
+
+              <b-field style='width: 100%;'>
+                <Multiselect
+                  placeholder="Select one or multiple countries/regions..."
+                  label='name'
+                  track-by='kebab_name'
+                  v-on:select='onZoneSelected'
+                  v-on:remove='onZoneRemoved'
+                  v-bind:value='arrayOfSelectedZones'
+                  v-bind:options='arrayOfAllZones'
+                  v-bind:disabled='showWorld'
+                  v-bind:multiple='true'
+                  v-bind:taggable='true'
+                  v-bind:close-on-select='true'
+                  class='is-danger'
                 />
-                <span>Data</span>
-              </template>
-              <div class="box">
-                <label class="label">Category</label>
-                <b-radio v-model="currentCategory"
-                  native-value="confirmed">
-                  Confirmed
-                </b-radio>
-                <b-radio v-model="currentCategory"
-                  native-value="active">
-                  Active
-                </b-radio>
-                <b-radio v-model="currentCategory"
-                  native-value="death">
-                  Deaths
-                </b-radio>
-                <b-radio v-model="currentCategory"
-                  native-value="recovered">
-                  Recovered
-                </b-radio>
-                <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpCategory }}</p>
+              </b-field>
+            </div>
 
-                <div class='field multiselect-zones'>
-                  <label class="label">Countries and regions</label>
-                  <b-radio v-model="showWorld"
-                    v-bind:native-value='false'
-                  >
-                    Compare
-                  </b-radio>
-                  <b-radio v-model="showWorld"
-                    v-bind:native-value='true'
-                    v-bind:disabled="visualizationMode === 'prevalence'"
-                  >
-                    World only
-                  </b-radio>
+            <label class="label">Visualization mode</label>
+            <b-radio v-model="visualizationMode"
+              native-value="cumulative">
+              Cumulative
+            </b-radio>
+            <b-radio v-model="visualizationMode"
+              native-value="prevalence"
+              v-bind:disabled="isLogScale || showWorld"
+              >
+              Disease prevalence
+            </b-radio>
+            <b-radio v-model="visualizationMode"
+              native-value="trajectories">
+              Trajectories
+            </b-radio>
+            <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpVisualizationMode }}</p>
 
-                  <b-field style='width: 100%;'>
-                    <Multiselect
-                      placeholder="Select one or multiple countries/regions..."
-                      label='name'
-                      track-by='kebab_name'
-                      v-on:select='onZoneSelected'
-                      v-on:remove='onZoneRemoved'
-                      v-bind:value='arrayOfSelectedZones'
-                      v-bind:options='arrayOfAllZones'
-                      v-bind:disabled='showWorld'
-                      v-bind:multiple='true'
-                      v-bind:taggable='true'
-                      v-bind:close-on-select='true'
-                      class='is-danger'
-                    />
-                  </b-field>
-                </div>
-
-                <label class="label">Visualization mode</label>
-                <b-radio v-model="visualizationMode"
-                  native-value="cumulative">
-                  Cumulative
-                </b-radio>
-                <b-radio v-model="visualizationMode"
-                  native-value="prevalence"
-                  v-bind:disabled="isLogScale || showWorld"
-                  >
-                  Disease prevalence
-                </b-radio>
-                <b-radio v-model="visualizationMode"
-                  native-value="trajectories">
-                  Trajectories
-                </b-radio>
-                <p class='has-text-grey-dark category-explanation is-size-7'>{{ helpVisualizationMode }}</p>
-
-                <div class="field time-period-wrapper" v-if="visualizationMode !== 'trajectories'">
-                  <div class="field time-period">
-                    <label class="label">Time period</label>
-                    <DatePicker
-                      v-bind:mode="'range'"
-                      v-bind:columns='datePickerColumnsNumber()'
-                      v-bind:min-date='minDate'
-                      v-bind:max-date='maxDate'
-                      v-bind:transition="'fade'"
-                      v-model='dates'
-                      color='blue'
-                    />
-                  </div>
-                  <div class="buttons">
-                    <button
-                      class="button is-outlined is-small"
-                      v-on:click='updateDates(pastWeekDates)'
-                    >
-                      Past week
-                    </button>
-                    <button
-                      class="button is-outlined is-small"
-                      v-on:click='updateDates(pastMonthDates)'
-                    >
-                      Past month
-                    </button>
-                    <button
-                      class="button is-outlined is-small"
-                      v-on:click='updateDates({ start: minDate, end: maxDate })'
-                    >
-                      Full period
-                    </button>
-                  </div>
-                </div>
-                <div class="field scale-field">
-                  <label class="label">Scale</label>
-                  <b-switch
-                    v-bind:rounded="false"
-                    v-bind:outlined="false"
-                    v-bind:size="'large'"
-                    v-bind:type="'is-primary'"
-                    v-model='isLogScale'
-                    v-bind:disabled="visualizationMode === 'prevalence'"
-                  >
-                    Logarithmic
-                  </b-switch>
-                  <p class='has-text-grey-dark category-explanation is-size-7'>Log scale allow a large range to be displayed without small values being too compressed</p>
-                  
-                </div>
+            <div class="field time-period-wrapper" v-if="visualizationMode !== 'trajectories'">
+              <div class="field time-period">
+                <label class="label">Time period</label>
+                <DatePicker
+                  v-bind:mode="'range'"
+                  v-bind:columns='datePickerColumnsNumber()'
+                  v-bind:min-date='minDate'
+                  v-bind:max-date='maxDate'
+                  v-bind:transition="'fade'"
+                  v-model='dates'
+                  color='blue'
+                />
               </div>
-
-              <div class="box" style='min-height: 500px;'>
-                <div
-                  class='loading small'
-                  style='margin: 0 auto;'
-                  v-if='isLoading'>
-                </div>
-                <div class="charts" v-else>
-                  <div
-                    class="chart-container"
-                    v-for='(chartData, id) in chartsData'
-                    v-bind:key='id'
-                    v-show='chartData.chart_data.datasets.length > 0'
-                  >
-                    <LineChart
-                      v-bind:data='chartData.chart_data'
-                      v-bind:options="chartData.chart_options"
-                      v-bind:key="`${chartsKey}-${id}`"
-                    />
-                  </div>
-                </div>
+              <div class="buttons">
+                <button
+                  class="button is-outlined is-small"
+                  v-on:click='updateDates(pastWeekDates)'
+                >
+                  Past week
+                </button>
+                <button
+                  class="button is-outlined is-small"
+                  v-on:click='updateDates(pastMonthDates)'
+                >
+                  Past month
+                </button>
+                <button
+                  class="button is-outlined is-small"
+                  v-on:click='updateDates({ start: minDate, end: maxDate })'
+                >
+                  Full period
+                </button>
               </div>
+            </div>
+            <div class="field scale-field">
+              <label class="label">Scale</label>
+              <b-switch
+                v-bind:rounded="false"
+                v-bind:outlined="false"
+                v-bind:size="'large'"
+                v-bind:type="'is-primary'"
+                v-model='isLogScale'
+                v-bind:disabled="visualizationMode === 'prevalence'"
+              >
+                Logarithmic
+              </b-switch>
+              <p class='has-text-grey-dark category-explanation is-size-7'>Log scale allow a large range to be displayed without small values being too compressed</p>
               
-            </b-tab-item>
+            </div>
+          </div>
 
-            <b-tab-item>
-              <template slot='header'>
-                <font-awesome-icon
-                  v-bind:icon="['fas', 'rss-square']"
-                  size='1x'
-                  style='margin-right: 10px'
+          <div class="box" style='min-height: 500px;'>
+            <div
+              class='loading small'
+              style='margin: 0 auto;'
+              v-if='isLoading'>
+            </div>
+            <div class="charts" v-else>
+              <div
+                class="chart-container"
+                v-for='(chartData, id) in chartsData'
+                v-bind:key='id'
+                v-show='chartData.chart_data.datasets.length > 0'
+              >
+                <LineChart
+                  v-bind:data='chartData.chart_data'
+                  v-bind:options="chartData.chart_options"
+                  v-bind:key="`${chartsKey}-${id}`"
                 />
-                <div>
-                  <span>
-                    News
-                    <transition name='fade'>
-                      <span class="tag is-normal is-danger is-rounded news-count" v-show='showNewsCountTag'>{{ animatedNewsCount }}+</span>
-                    </transition>
-                  </span>
-                </div>
-              </template>
-
-              <b-tabs type='is-toggle' expanded>
-                <b-tab-item label="Tweets">
-                  <template slot="header">
-                    <font-awesome-icon
-                      v-bind:icon="['fas', 'newspaper']"
-                      size='1x'
-                      style='margin-right: 10px;'
-                    />
-                    <span> Articles</span>
-                  </template>
-                  <div class="box is-paddingless">
-                    <div class="media-container">
-                      <NewsList
-                        v-bind:zoneName='zoneForNews'
-                        v-bind:key="`${newsKey}-news`"
-                      />
-                    </div>
-                  </div>
-                </b-tab-item>
-                <b-tab-item label="Tweets">
-                  <template slot="header">
-                    <font-awesome-icon
-                      v-bind:icon="['fab', 'twitter-square']"
-                      size='1x'
-                      style='margin-right: 10px;'
-                    />
-                    <span> Tweets</span>
-                  </template>
-                  <div class="media-container">
-                    <TweetsList
-                      v-bind:zoneName='zoneForNews'
-                      v-bind:key="`${newsKey}-tweets`"
-                    />
-                  </div>
-                </b-tab-item>
-              </b-tabs>
-            </b-tab-item>
-          </b-tabs>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -255,8 +187,7 @@ import CategoriesBar from './CategoriesBar.vue';
 import Multiselect from 'vue-multiselect';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 import TheMap from './TheMap.vue';
-import NewsList from './NewsList.vue';
-import TweetsList from './TweetsList.vue';
+
 import LineChart from './LineChart.vue';
 import StringFormatter from '../mixins/string-formatter.js';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
@@ -267,8 +198,6 @@ export default {
     CategoriesBar,
     Multiselect,
     TheMap,
-    NewsList,
-    TweetsList,
     LineChart,
     DatePicker,
   },

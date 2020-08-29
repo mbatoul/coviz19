@@ -133,7 +133,6 @@ export default {
   }
 
   .box-category {
-    min-width: 180px;
     margin: 0 auto;
     padding: 10px;
     border-radius: 5px;
