@@ -44,7 +44,6 @@
               :current-page.sync="currentPage"
               :pagination-position="paginationPosition"
               :default-sort-direction="defaultSortDirection"
-              :sort-icon="sortIcon"
               :sort-icon-size="sortIconSize"
               default-sort="user.first_name"
               aria-next-label="Next page"
