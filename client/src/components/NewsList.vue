@@ -8,9 +8,9 @@
       v-else
       v-for='(article, id) in articlesList'
       v-bind:key='id'
-      v-bind:author='article.provider.name'
+      v-bind:author='article.source.name'
       v-bind:title='article.title'
-      v-bind:url-to-image='article.image.url'
+      v-bind:url-to-image='article.urlToImage'
       v-bind:url='article.url'
     />
   </div>
@@ -18,7 +18,6 @@
 
 <script>
 import NewsItem from './NewsItem.vue';
-import newsApi from '../plugins/news-api.js'
 
 export default {
   components: {
@@ -58,18 +57,14 @@ export default {
 
   methods: {
     getArticles: async function () {
-      let query = this.zoneName;
-
-      if (query === 'us') {
-        query = 'trump'
-      } else if (query === 'world') {
-        query = ''
-      }
       try {
         this.isLoading = true;
-        const response = await newsApi.get(`?q=coronavirus,covid,${query}&pageSize=20`)
+        let oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        oneWeekAgo = `${oneWeekAgo.getFullYear()}-${oneWeekAgo.getUTCMonth() + 1}-${oneWeekAgo.getUTCDay()}`
+        const response = await this.$http.get(`http://newsapi.org/v2/everything?q=coronavirus&from=${oneWeekAgo}&sortBy=publishedAt&apiKey=${process.env.VUE_APP_NEWS_API_KEY}`)
         this.articlesList = [];
-        this.articlesList.push(... response.data.value);
+        this.articlesList.push(... response.data.articles);
         this.isLoading = false;
       } catch (error) {
         console.error(error)
