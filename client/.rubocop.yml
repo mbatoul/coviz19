@@ -1,0 +1,87 @@
+require:
+  - rubocop-rails
+
+AllCops:
+  Exclude:
+    - 'bin/{rails,rake}'
+    - 'config/**/*'
+    - 'coverage/**/*'
+    - 'db/**/*'
+    - 'log/**/*'
+    - 'public/**/*'
+    - 'tmp/**/*'
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: false
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/MethodLength:
+  Include:
+    - 'app/controllers/**/*.rb'
+  Enabled: true
+  Max: 20
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Naming/PredicateName:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Exclude:
+    - 'test/**/*'
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Style/Documentation:
+  Exclude:
+    - 'test/**/*'
+    - 'app/presenters/**/*'
+
+Style/DocumentationMethod:
+  Enabled: false
+
+Style/ExponentialNotation:
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/SlicingWithRange:
+  Enabled: false
