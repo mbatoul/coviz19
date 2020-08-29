@@ -80,7 +80,6 @@ export default {
     .tweets-wrapper {
       display: flex;
       justify-content: center;
-      /* align-items: center; */
     }
   }
 
