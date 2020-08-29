@@ -5,7 +5,7 @@ module Twitter
   class Search < Twitter::Api
     attr_accessor :q, :geocode, :lang, :locale, :result_type, :count, :until, :since_id, :max_id, :include_entities
 
-    PATH = 'search/tweets.json'.freeze
+    PATH = 'search/tweets.json'
 
     OPTIONS = {
       headers: {
@@ -25,21 +25,21 @@ module Twitter
     def perform
       HTTParty.get(url, OPTIONS)
     end
-    
+
     private
 
-      def query
-        str = ''
+    def query
+      str = ''
 
-        instance_variables.each do |key|
-          str += "#{key.to_s.gsub('@', '')}=#{instance_variable_get(key)}&"
-        end
-
-        str
+      instance_variables.each do |key|
+        str += "#{key.to_s.gsub('@', '')}=#{instance_variable_get(key)}&"
       end
 
-      def url
-        "#{BASE_URL}/#{PATH}?#{query}"
-      end
+      str
+    end
+
+    def url
+      "#{BASE_URL}/#{PATH}?#{query}"
+    end
   end
 end
