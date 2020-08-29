@@ -62,7 +62,7 @@ export default {
         let oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         oneWeekAgo = `${oneWeekAgo.getFullYear()}-${oneWeekAgo.getUTCMonth() + 1}-${oneWeekAgo.getUTCDay()}`
-        const response = await this.$http.get(`http://newsapi.org/v2/everything?q=coronavirus&from=${oneWeekAgo}&sortBy=publishedAt&apiKey=${process.env.VUE_APP_NEWS_API_KEY}`)
+        const response = await this.$http.get(`https://newsapi.org/v2/everything?q=coronavirus&from=${oneWeekAgo}&sortBy=publishedAt&apiKey=${process.env.VUE_APP_NEWS_API_KEY}`)
         this.articlesList = [];
         this.articlesList.push(... response.data.articles);
         this.isLoading = false;
