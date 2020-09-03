@@ -60,9 +60,6 @@
       <b-navbar-item v-on:click='onClickOnHelp'>
         Help
       </b-navbar-item>
-      <b-navbar-item v-on:click='onClickOnHelp'>
-        Help
-      </b-navbar-item>
       <b-navbar-item href='https://github.com/mbatoul/coviz19' target="_blank">
         <font-awesome-icon
           v-bind:icon="['fab', 'github']"
