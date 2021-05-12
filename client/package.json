@@ -22,7 +22,7 @@
     "axios": "^0.19.2",
     "babel-eslint": "^10.0.3",
     "buefy": "^0.8.13",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "core-js": "^3.6.4",
     "d3-scale": "^3.2.1",
     "eslint": "^6.7.2",
